@@ -3,6 +3,11 @@ package com.project.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,9 +40,12 @@ public class Product {
 	private String product_name;
 	private String product_status;
 	private String product_image;
+	private int product_view;
+	private int product_like_Count;
 	private LocalDateTime product_time;
 	
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Size> sizes;
 
 }

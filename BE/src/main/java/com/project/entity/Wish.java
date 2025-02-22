@@ -1,7 +1,6 @@
 package com.project.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
@@ -16,16 +15,18 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Size {
+public class Wish {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long size_id;
+	private Long wish_id;
 	
     @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;  // 찜한 사용자 (FK)
+
+    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
-	
-	private String size_value;
+    private Product product;  // 찜한 상품 (FK)
 
 }
