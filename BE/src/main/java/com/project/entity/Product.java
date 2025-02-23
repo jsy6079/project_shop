@@ -40,6 +40,7 @@ public class Product {
 	private String product_name;
 	private String product_status;
 	private String product_image;
+	private String product_description;
 	private int product_view;
 	private int product_like_Count;
 	private LocalDateTime product_time;

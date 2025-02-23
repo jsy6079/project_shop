@@ -105,12 +105,24 @@ const Main = () => {
   }, []);
 
   const [cateData] = useState([
-    { img: fashion, title: "의류" },
-    { img: sports, title: "신발" },
-    { img: music, title: "가방" },
-    { img: furniture, title: "액세서리" },
-    { img: electronics, title: "패션 잡화" },
-    { img: mobile, title: "라이프 스타일" },
+    { img: fashion, title: "의류", link: "http://localhost:3000/category/1" },
+    { img: sports, title: "신발", link: "http://localhost:3000/category/2" },
+    { img: music, title: "가방", link: "http://localhost:3000/category/3" },
+    {
+      img: furniture,
+      title: "액세서리",
+      link: "http://localhost:3000/category/4",
+    },
+    {
+      img: electronics,
+      title: "패션 잡화",
+      link: "http://localhost:3000/category/5",
+    },
+    {
+      img: mobile,
+      title: "라이프 스타일",
+      link: "http://localhost:3000/category/6",
+    },
   ]);
 
   const settings = {
@@ -207,7 +219,7 @@ const Main = () => {
                   />
                   <div className="content mt-3">
                     <h6 className="mb-0">
-                      <Link to="#" className="title text-dark">
+                      <Link to={item.link} className="title text-dark">
                         {item.title}
                       </Link>
                     </h6>

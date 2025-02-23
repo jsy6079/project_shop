@@ -42,5 +42,23 @@ public class ProductServiceImpe implements ProductService {
 				.collect(Collectors.toList());
 	}
 
+	// 카테고리별 전체 데이터
+	@Override
+	public List<ProductDTO> productByCategory(int categoryId){
+		return pr.findProductsByCategory(categoryId)
+				.stream()
+				.map(ProductDTO::fromEntity)
+				.collect(Collectors.toList());
+	}
 
+	// 카테고리별 검색 데이터 (제품 이름, 제품 설명 기준)
+	@Override
+	public List<ProductDTO> productByKeword(int categoryId, String keyword) {
+		return pr.findProductsByKeyWord(categoryId,keyword)
+				.stream()
+				.map(ProductDTO::fromEntity)
+				.collect(Collectors.toList());
+	}
 }
+
+

@@ -17,6 +17,7 @@ public class ProductDTO {
 	
     private Long product_id;
     private String product_image;
+    private String product_description;
     private String product_name;
     private int product_price;
     private String product_status;
@@ -31,6 +32,7 @@ public class ProductDTO {
         return new ProductDTO(
             product.getProduct_id(),
             product.getProduct_image(),
+            product.getProduct_description(),
             product.getProduct_name(),
             product.getProduct_price(),
             product.getProduct_status(),
