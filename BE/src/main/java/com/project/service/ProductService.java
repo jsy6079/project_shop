@@ -21,5 +21,8 @@ public interface ProductService {
 
 	// 카테고리별 검색 데이터 (제품 이름, 제품 설명 기준)
 	List<ProductDTO> productByKeword(int categoryId, String keyword);
+	
+	// 해당 제품 상세보기
+	List<ProductDTO> productDetail(int productId);
 
 }

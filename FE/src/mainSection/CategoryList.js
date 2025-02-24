@@ -7,6 +7,7 @@ import { Heart, Eye, ShoppingCart } from "react-feather";
 //Import Images
 import product6 from "../assets/images/shop/product/s6.jpg";
 import product12 from "../assets/images/shop/product/s12.jpg";
+import portfolio from "../assets/images/bg-portfolio.jpg";
 
 const categories = [
   { id: 1, name: "의류" },
@@ -26,22 +27,17 @@ const CategoryList = () => {
   const [keyword, setKeyword] = useState([]);
 
   // 카테고리 별 데이터 API
-  const fetchProducts = async (categoryId) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:8080/api/product/category/${categoryId}`
-      );
-      setProducts(response.data);
-      setOriginalProducts(response.data); // 초기 데이터를 저장
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    }
-  };
-
-  // 카테고리 별
   useEffect(() => {
     if (categoryId) {
-      fetchProducts(categoryId);
+      axios
+        .get(`http://localhost:8080/api/product/category/${categoryId}`)
+        .then((response) => {
+          setProducts(response.data);
+          setOriginalProducts(response.data); // 초기 데이터를 저장
+        })
+        .catch((error) => {
+          console.error("API 호출 중 에러 발생:", error);
+        });
     }
   }, [categoryId]);
 
@@ -124,14 +120,6 @@ const CategoryList = () => {
     <>
       <section className="bg-half-170 bg-light d-table w-100">
         <Container>
-          <Row className="mt-5 justify-content-center">
-            <Col lg={12} className="text-center">
-              <div className="pages-heading">
-                <h4 className="title mb-0"> {categoryName}</h4>
-              </div>
-            </Col>
-          </Row>
-
           <div className="position-breadcrumb">
             <nav aria-label="breadcrumb" className="d-inline-block">
               <ul className="breadcrumb bg-white rounded shadow mb-0 px-4 py-2">
@@ -234,19 +222,23 @@ const CategoryList = () => {
                             key !== 0 ? "mt-2" : ""
                           }`}
                         >
-                          <Link to="#">
+                          <Link
+                            to={`/detail/${product.category_id}/${product.product_id}`}
+                          >
                             <img
                               src={product12}
                               className="img-fluid avatar avatar-small rounded shadow"
-                              alt="Landrick"
                             />
                           </Link>
                           <div className="flex-1 content ms-3">
-                            <Link to="#" className="text-dark h6">
+                            <Link
+                              to={`/detail/${product.category_id}/${product.product_id}`}
+                              className="text-dark h6"
+                            >
                               {product.product_name}
                             </Link>
                             <h6 className="text-dark small fst-italic mb-0 mt-1">
-                              {product.product_price}원
+                              {product.product_price.toLocaleString()}원
                             </h6>
                           </div>
                         </li>
@@ -290,29 +282,31 @@ const CategoryList = () => {
                   <Col key={key} lg={4} md={6} xs={12} className="mt-4 pt-2">
                     <Card className="shop-list border-0 position-relative">
                       <div className="shop-image position-relative overflow-hidden rounded shadow">
-                        <Link to="shop-product-detail">
-                          <img
-                            src={product6}
-                            className="img-fluid"
-                            alt="Landrick"
-                          />
+                        <Link
+                          to={`/detail/${product.category_id}/${product.product_id}`}
+                        >
+                          <img src={product6} className="img-fluid" />
                         </Link>
-                        {product.isOverlay && (
-                          <Link
-                            to="shop-product-detail"
-                            className="overlay-work"
-                          ></Link>
-                        )}
+                        <ul className="list-unstyled shop-icons">
+                          <li>
+                            <Link
+                              to="#"
+                              className="btn btn-icon btn-pills btn-soft-danger"
+                            >
+                              <Heart className="icons" />
+                            </Link>
+                          </li>
+                        </ul>
                       </div>
                       <CardBody className="content pt-4 p-2">
                         <Link
-                          to="shop-product-detail"
+                          to={`/detail/${product.category_id}/${product.product_id}`}
                           className="text-dark product-name h6"
                         >
                           {product.product_name}
                         </Link>
                         <h6 className="text-dark small fst-italic mb-0 mt-1">
-                          {product.product_price}원
+                          {product.product_price.toLocaleString()}원
                         </h6>
                       </CardBody>
                     </Card>

@@ -3,7 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { Container, Row, Col, Card, CardBody } from "reactstrap";
 import Slider from "react-slick";
-import { Heart, Eye, ShoppingCart } from "react-feather";
+import { Heart } from "react-feather";
 
 // Slick Slider CSS
 import "slick-carousel/slick/slick.css";
@@ -11,8 +11,6 @@ import "slick-carousel/slick/slick-theme.css";
 
 // Images
 import bg1 from "../assets/images/shop/bg1.jpg";
-import bg2 from "../assets/images/shop/bg2.jpg";
-import bg3 from "../assets/images/shop/bg3.jpg";
 import fea1 from "../assets/images/shop/fea1.jpg";
 import fea2 from "../assets/images/shop/fea2.jpg";
 import fea3 from "../assets/images/shop/fea3.jpg";
@@ -34,27 +32,11 @@ import product16 from "../assets/images/shop/product/s16.jpg";
 const Main = () => {
   const items = [
     {
-      image: bg2,
-      class: "slider-rtl-2",
-      titleLine1: "광고1",
-      titleLine2: "광고입니다",
-      desc: "Launch your campaign and benefit from our expertise on designing and managing conversion centered bootstrap v5 html page.",
-      link: "#",
-    },
-    {
-      image: bg3,
-      class: "slider-rtl-3",
-      titleLine1: "광고2",
-      titleLine2: "광고입니다다",
-      desc: "Launch your campaign and benefit from our expertise on designing and managing conversion centered bootstrap v5 html page.",
-      link: "#",
-    },
-    {
       image: bg1,
-      class: "slider-rtl-1",
-      titleLine1: "광고 3",
-      titleLine2: "광고입니다",
-      desc: "Launch your campaign and benefit from our expertise on designing and managing conversion centered bootstrap v5 html page.",
+      class: "slider-rtl-2",
+      titleLine1: "Moa",
+      titleLine2: "모두의 아이템",
+      desc: "다양한 카테고리에서 원하는 아이템을 찾아보세요.",
       link: "#",
     },
   ];
@@ -139,9 +121,7 @@ const Main = () => {
   useEffect(() => {
     const e1 = document.getElementsByClassName("slick-slide");
     for (let i = 0; i < 3; i++) {
-      if (i === 0) e1[i].style.background = `url(${bg2}) center center`;
-      if (i === 1) e1[i].style.background = `url(${bg3}) center center`;
-      if (i === 2) e1[i].style.background = `url(${bg1}) center center`;
+      if (i === 0) e1[i].style.background = `url(${bg1}) center center`;
     }
   }, []);
 
@@ -177,33 +157,11 @@ const Main = () => {
           ))}
         </Slider>
       </section>
-
-      {/* // -------------------- collection ------------------------ */}
-      <Container fluid className="mt-4">
-        <Row>
-          {cardData.map((item, key) => (
-            <Col key={key} md={4} className="mt-4 pt-2">
-              <Card className="shop-features border-0 rounded overflow-hidden">
-                <img src={item.img} className="img-fluid" alt="" />
-                <div className="category-title ms-md-4 ms-2">
-                  <h4>
-                    어떤걸로 <br /> 디자인
-                  </h4>
-                  <Link to="#" className="btn btn-sm btn-soft-primary mt-2">
-                    자세히 보기
-                  </Link>
-                </div>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </Container>
-
       {/* // -------------------- TopCategoris ------------------------ */}
       <Container className="mt-100 mt-60">
         <Row>
           <Col xs={12}>
-            <h5 className="mb-0">Category🔖</h5>
+            <h4 className="mb-0">Category🔖</h4>
           </Col>
         </Row>
 
@@ -270,7 +228,9 @@ const Main = () => {
                     </li>
                   </ul>
                   <div className="shop-image position-relative overflow-hidden rounded shadow">
-                    <Link to={`/shop-product-detail/${product.product_id}`}>
+                    <Link
+                      to={`/detail/${product.category_id}/${product.product_id}`}
+                    >
                       <img
                         src={product5}
                         className="img-fluid"
@@ -286,35 +246,19 @@ const Main = () => {
                           <Heart className="icons" />
                         </Link>
                       </li>
-                      <li className="mt-2">
-                        <Link
-                          to={`/shop-product-detail/${product.product_id}`}
-                          className="btn btn-icon btn-pills btn-soft-primary"
-                        >
-                          <Eye className="icons" />
-                        </Link>
-                      </li>
-                      <li className="mt-2">
-                        <Link
-                          to="shop-cart"
-                          className="btn btn-icon btn-pills btn-soft-warning"
-                        >
-                          <ShoppingCart className="icons" />
-                        </Link>
-                      </li>
                     </ul>
                   </div>
 
                   <CardBody className="content pt-4 p-2">
                     <Link
-                      to={`/shop-product-detail/${product.product_id}`}
+                      to={`/detail/${product.category_id}/${product.product_id}`}
                       className="text-dark product-name h6"
                     >
                       {product.product_name}
                     </Link>
                     <div className="d-flex justify-content-between mt-1">
                       <h6 className="text-muted small fst-italic mb-0 mt-1">
-                        {product.product_price}원
+                        {product.product_price.toLocaleString()}원
                       </h6>
                       <ul className="list-unstyled text-warning mb-0">
                         <li className="list-inline-item">
@@ -363,7 +307,9 @@ const Main = () => {
                     </li>
                   </ul>
                   <div className="shop-image position-relative overflow-hidden rounded shadow">
-                    <Link to={`shop-product-detail/${product.product_id}`}>
+                    <Link
+                      to={`/detail/${product.category_id}/${product.product_id}`}
+                    >
                       <img
                         src={product15}
                         className="img-fluid"
@@ -379,34 +325,18 @@ const Main = () => {
                           <Heart className="icons" />
                         </Link>
                       </li>
-                      <li className="mt-2">
-                        <Link
-                          to={`shop-product-detail/${product.product_id}`}
-                          className="btn btn-icon btn-pills btn-soft-primary"
-                        >
-                          <Eye className="icons" />
-                        </Link>
-                      </li>
-                      <li className="mt-2">
-                        <Link
-                          to="shop-cart"
-                          className="btn btn-icon btn-pills btn-soft-warning"
-                        >
-                          <ShoppingCart className="icons" />
-                        </Link>
-                      </li>
                     </ul>
                   </div>
                   <CardBody className="content pt-4 p-2">
                     <Link
-                      to={`shop-product-detail/${product.product_id}`}
+                      to={`/detail/${product.category_id}/${product.product_id}`}
                       className="text-dark product-name h6"
                     >
                       {product.product_name}
                     </Link>
                     <div className="d-flex justify-content-between mt-1">
                       <h6 className="text-muted small fst-italic mb-0 mt-1">
-                        {product.product_price}원
+                        {product.product_price.toLocaleString()}원
                       </h6>
                       <ul className="list-unstyled text-warning mb-0">
                         <li className="list-inline-item">
@@ -443,16 +373,15 @@ const Main = () => {
                 <Col xs={12}>
                   <div className="section-title">
                     <h2 className="fw-bold mb-4">
-                      혜택받으세요 혜택 <br /> 30프로
+                      원하는 아이템을 미리 찜하세요! <br /> 특별한 득템의 기회!
                     </h2>
                     <p className="para-desc para-white text-muted mb-0">
-                      Launch your campaign and benefit from our expertise on
-                      designing and managing conversion centered bootstrap v5
-                      html page.
+                      지금 회원가입하고, <br />
+                      인기 상품을 먼저 만나보세요.
                     </p>
                     <div className="mt-4">
                       <Link to="#" className="btn btn-primary">
-                        쿠폰 받기
+                        ✨Sign Up✨
                       </Link>
                     </div>
                   </div>
@@ -465,7 +394,7 @@ const Main = () => {
         <Container className="mt-100 mt-60">
           <Row>
             <Col xs={12}>
-              <h5 className="mb-0">New Uploads✨</h5>
+              <h5 className="mb-0">New Uploads🚀</h5>
             </Col>
           </Row>
 
@@ -484,7 +413,9 @@ const Main = () => {
                     </li>
                   </ul>
                   <div className="shop-image position-relative overflow-hidden rounded shadow">
-                    <Link to={`/shop-product-detail/${product.product_id}`}>
+                    <Link
+                      to={`/detail/${product.category_id}/${product.product_id}`}
+                    >
                       <img
                         src={product16}
                         className="img-fluid"
@@ -501,34 +432,18 @@ const Main = () => {
                           <Heart className="icons" />
                         </Link>
                       </li>
-                      <li className="mt-2">
-                        <Link
-                          to={`/shop-product-detail/${product.product_id}`}
-                          className="btn btn-icon btn-pills btn-soft-primary"
-                        >
-                          <Eye className="icons" />
-                        </Link>
-                      </li>
-                      <li className="mt-2">
-                        <Link
-                          to="shop-cart"
-                          className="btn btn-icon btn-pills btn-soft-warning"
-                        >
-                          <ShoppingCart className="icons" />
-                        </Link>
-                      </li>
                     </ul>
                   </div>
                   <CardBody className="content pt-4 p-2">
                     <Link
-                      to={`/shop-product-detail/${product.product_id}`}
+                      to={`/detail/${product.category_id}/${product.product_id}`}
                       className="text-dark product-name h6"
                     >
                       {product.product_name}
                     </Link>
                     <div className="d-flex justify-content-between mt-1">
                       <h6 className="text-dark small fst-italic mb-0 mt-1">
-                        {product.product_price}원
+                        {product.product_price.toLocaleString()}원
                       </h6>
                     </div>
                   </CardBody>

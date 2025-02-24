@@ -1,9 +1,12 @@
 package com.project.repository;
 
+import java.util.Collection;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import com.project.dto.ProductDTO;
 import com.project.entity.Product;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -27,4 +30,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // 카테고리별 검색 데이터 (제품 이름, 제품 설명 기준)
     @Query(value = "SELECT * FROM product WHERE category_id = :categoryId AND (product_name LIKE CONCAT('%', :keyword, '%') OR product_description LIKE CONCAT('%', :keyword, '%'))", nativeQuery = true)
     List<Product> findProductsByKeyWord(@Param("categoryId") int categoryId, @Param("keyword") String keyword);
+
+    // 해당 제품 상세보기
+    @Query(value = "SELECT * FROM product WHERE product_id = :productId", nativeQuery = true)
+    List<Product> findProductsDetail(@Param("productId") int productId);
+    
 }

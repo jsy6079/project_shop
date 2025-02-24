@@ -16,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -45,8 +46,7 @@ public class Product {
 	private int product_like_Count;
 	private LocalDateTime product_time;
 	
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<Size> sizes;
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
+    private Size size;  // 단일 Size 관계로 변경
 
 }

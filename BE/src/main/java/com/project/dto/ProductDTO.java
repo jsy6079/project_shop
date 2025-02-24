@@ -26,6 +26,8 @@ public class ProductDTO {
     private Long category_id;  // FK로 category_id 추가
     private Long user_id;      // FK로 user_id 추가
     private int product_like_Count;
+    private String user_name;
+    private String size_value;
 
     // 엔티티를 DTO로 변환하는 메서드
     public static ProductDTO fromEntity(Product product) {
@@ -40,7 +42,9 @@ public class ProductDTO {
             product.getProduct_view(),
             product.getCategory() != null ? product.getCategory().getCategory_id() : null,
             product.getUser() != null ? product.getUser().getUser_id() : null,
-            product.getProduct_like_Count()
+            product.getProduct_like_Count(),
+            product.getUser().getUser_name(),
+            product.getSize() != null ? product.getSize().getSize_value() : null
         );
     }
 }

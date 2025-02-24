@@ -7,6 +7,7 @@ import Main from "./mainSection/Main";
 import "./assets/css/materialdesignicons.min.css";
 import "./Apps.scss";
 import CategoryList from "./mainSection/CategoryList";
+import ProductDetail from "./mainSection/ProductDetail";
 
 function App() {
   return (
@@ -16,6 +17,10 @@ function App() {
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/category/:categoryId" element={<CategoryList />} />
+        <Route
+          path="/detail/:categoryId/:productId"
+          element={<ProductDetail />}
+        />
       </Routes>
       <Footer />
     </Router>

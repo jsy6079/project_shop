@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,7 +23,7 @@ public class Size {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long size_id;
 	
-    @ManyToOne
+	@OneToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 	

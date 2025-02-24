@@ -59,6 +59,15 @@ public class ProductServiceImpe implements ProductService {
 				.map(ProductDTO::fromEntity)
 				.collect(Collectors.toList());
 	}
+	
+	// 해당 제품 상세보기
+	@Override
+	public List<ProductDTO> productDetail(int productId) {
+		return pr.findProductsDetail(productId)
+				.stream()
+				.map(ProductDTO::fromEntity)
+				.collect(Collectors.toList());
+	}
 }
 
 
