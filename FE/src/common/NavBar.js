@@ -8,21 +8,16 @@ import {
   Modal,
   ModalBody,
 } from "reactstrap";
-import { ShoppingCart, Heart, User } from "react-feather";
+import { ShoppingCart, Heart, User, LogIn } from "react-feather";
 
 //import images
-import logoDark from "../assets/images/logo-dark.png";
-import logoLight from "../assets/images/logo-light.png";
 import logoMoa from "../assets/images/logo-moa.png";
-import shop1 from "../assets/images/shop/product/s-1.jpg";
-import shop2 from "../assets/images/shop/product/s-2.jpg";
-import shop3 from "../assets/images/shop/product/s-3.jpg";
-
 //Import Icons
 
 function NavBar(props) {
   const [dropdownOpenShop, setDropdownOpenShop] = useState(false);
   const [wishlistModal, setWishlistModal] = useState(false);
+  const [loginModal, setLoginModal] = useState(false);
   const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -38,6 +33,10 @@ function NavBar(props) {
     setWishlistModal((prevState) => !prevState);
   };
 
+  const toggleLoginModal = () => {
+    setLoginModal((prevState) => !prevState);
+  };
+
   const toggleDropdownIsOpen = () => {
     setDropdownIsOpen(!dropdownIsOpen);
   };
@@ -47,15 +46,35 @@ function NavBar(props) {
     const top = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
     const topNav = document.getElementById("topnav");
     const settingBtn = document.querySelector(".settingbtn");
-    if (top > 80) {
-      topNav.classList.add("nav-sticky");
-      settingBtn.classList.add("btn-primary");
-    } else {
-      topNav?.classList.remove("nav-sticky");
-      settingBtn?.classList.add("btn-primary");
-      settingBtn?.classList.remove("btn-soft-primary");
+
+    if (topNav) {
+      if (top > 80) {
+        topNav.classList.add("nav-sticky");
+      } else {
+        topNav.classList.remove("nav-sticky");
+      }
+    }
+
+    if (settingBtn) {
+      if (top > 80) {
+        settingBtn.classList.add("btn-primary");
+      } else {
+        settingBtn.classList.remove("btn-soft-primary");
+      }
     }
   };
+
+  useEffect(() => {
+    const topNav = document.getElementById("topnav");
+
+    if (topNav) {
+      window.addEventListener("scroll", scrollNavigation, true);
+    }
+
+    return () => {
+      window.removeEventListener("scroll", scrollNavigation, true);
+    };
+  }, [props.type]);
 
   const isToggleMenu = () => {
     const isToggle = document.getElementById("isToggle");
@@ -147,6 +166,20 @@ function NavBar(props) {
                 to="#"
                 className="btn btn-icon btn-pills btn-primary"
                 color="primary"
+                onClick={toggleLoginModal}
+              >
+                <LogIn className="icons" />
+              </Link>
+            </li>
+          </ul>
+
+          {/* 로그인 후 아이콘 사용 */}
+          {/* <ul className="buy-button list-inline mb-0">
+            <li className="list-inline-item mb-0 pe-1">
+              <Link
+                to="#"
+                className="btn btn-icon btn-pills btn-primary"
+                color="primary"
                 onClick={toggleWishlistModal}
               >
                 <Heart className="icons" />
@@ -190,7 +223,7 @@ function NavBar(props) {
                 </DropdownMenu>
               </Dropdown>
             </li>
-          </ul>
+          </ul> */}
 
           <div id="navigation">
             <ul className="navigation-menu">
@@ -236,6 +269,7 @@ function NavBar(props) {
           </div>
         </div>
       </header>
+      {/* 찜 모달창 */}
       <Modal
         isOpen={wishlistModal}
         tabIndex="-1"
@@ -261,6 +295,36 @@ function NavBar(props) {
               <div className="mt-4">
                 <Link to="#" className="btn btn-outline-primary">
                   + Create new wishlist
+                </Link>
+              </div>
+            </div>
+          </div>
+        </ModalBody>
+      </Modal>
+      {/* 로그인 모달창 */}
+      <Modal
+        isOpen={loginModal}
+        tabIndex="-1"
+        centered
+        contentClassName="rounded shadow-lg border-0 overflow-hidden"
+        toggle={toggleLoginModal}
+      >
+        <ModalBody className="py-5">
+          <div className="text-center">
+            <div
+              className="icon d-flex align-items-center justify-content-center bg-soft-danger rounded-circle mx-auto"
+              style={{ height: "95px", width: "95px" }}
+            >
+              <h1 className="mb-0">
+                <i className="uil uil-heart align-middle"></i>
+              </h1>
+            </div>
+            <div className="mt-4">
+              <h4>내가 찜한 상품을 한눈에 모아보세요</h4>
+              <p className="text-muted">카카오로 쉽고 빠르게 시작해보세요😊</p>
+              <div className="mt-4">
+                <Link to="#" className="btn btn-outline-primary">
+                  카카오 로그인
                 </Link>
               </div>
             </div>

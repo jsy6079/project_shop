@@ -376,14 +376,10 @@ const Main = () => {
                       원하는 아이템을 미리 찜하세요! <br /> 특별한 득템의 기회!
                     </h2>
                     <p className="para-desc para-white text-muted mb-0">
-                      지금 회원가입하고, <br />
+                      지금 로그인하고, <br />
                       인기 상품을 먼저 만나보세요.
                     </p>
-                    <div className="mt-4">
-                      <Link to="#" className="btn btn-primary">
-                        ✨Sign Up✨
-                      </Link>
-                    </div>
+                    <div className="mt-4"></div>
                   </div>
                 </Col>
               </Row>

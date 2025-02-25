@@ -13,6 +13,7 @@ import logoLight from "../assets/images/logo-light.png";
 
 // Import Components
 import BackToTop from "../components/Layout/backToTop";
+import ChatBot from "../components/Chatbot/Chatbot";
 
 const Loader = () => (
   <div id="preloader">
@@ -354,8 +355,8 @@ const Footer = () => {
             </Col>
           </Row>
         </Container>
-
-        <BackToTop />
+        <ChatBot />
+        {/* <BackToTop /> */}
       </footer>
     </Suspense>
   );
