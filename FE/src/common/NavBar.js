@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import {
   Dropdown,
@@ -12,7 +13,6 @@ import { ShoppingCart, Heart, User, LogIn } from "react-feather";
 
 //import images
 import logoMoa from "../assets/images/logo-moa.png";
-//Import Icons
 
 function NavBar(props) {
   const [dropdownOpenShop, setDropdownOpenShop] = useState(false);
@@ -134,6 +134,19 @@ function NavBar(props) {
     }
   };
 
+  // const KAKAO_CLIENT_ID = "faf66baf81767443fb366c81ac9da085";
+  // const REDIRECT_URI = "http://localhost:8080/auth/login/kakao";
+
+  // const handleKakaoLogin = () => {
+  //   const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+  //   window.location.href = kakaoAuthUrl;
+  // };
+
+  const handleKakaoLogin = () => {
+    const KAKAO_AUTH_URL = "http://localhost:8080/oauth2/authorization/kakao";
+    window.location.href = KAKAO_AUTH_URL;
+  };
+
   return (
     <React.Fragment>
       <header id="topnav" className="defaultscroll sticky">
@@ -142,7 +155,6 @@ function NavBar(props) {
             <img src={logoMoa} height="40" className="logo-light-mode" alt="" />
             <img src={logoMoa} height="40" className="logo-dark-mode" alt="" />
           </Link>
-
           <div className="menu-extras">
             <div className="menu-item">
               <Link
@@ -159,7 +171,6 @@ function NavBar(props) {
               </Link>
             </div>
           </div>
-
           <ul className="buy-button list-inline mb-0">
             <li className="list-inline-item mb-0 pe-1">
               <Link
@@ -323,9 +334,12 @@ function NavBar(props) {
               <h4>내가 찜한 상품을 한눈에 모아보세요</h4>
               <p className="text-muted">카카오로 쉽고 빠르게 시작해보세요😊</p>
               <div className="mt-4">
-                <Link to="#" className="btn btn-outline-primary">
+                <button
+                  className="btn btn-outline-primary"
+                  onClick={handleKakaoLogin}
+                >
                   카카오 로그인
-                </Link>
+                </button>
               </div>
             </div>
           </div>

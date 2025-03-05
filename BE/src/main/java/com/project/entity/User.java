@@ -20,6 +20,7 @@ public class User {
     
     private String user_name;
     private String user_email;
+    private String profileImg;
     private String user_phone;
     private String user_address;
     private Long user_money;

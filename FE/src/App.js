@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./components/Layout/ScrollToTop";
 import NavBar from "./common/NavBar";
@@ -8,8 +8,19 @@ import "./assets/css/materialdesignicons.min.css";
 import "./Apps.scss";
 import CategoryList from "./mainSection/CategoryList";
 import ProductDetail from "./mainSection/ProductDetail";
+import Cookies from "js-cookie";
 
 function App() {
+  useEffect(() => {
+    const token = Cookies.get("token");
+
+    if (token) {
+      console.log("로그인 중 + jwt 토큰" + token);
+    } else {
+      console.log("로그인 X");
+    }
+  }, []);
+
   return (
     <Router>
       <ScrollToTop />
