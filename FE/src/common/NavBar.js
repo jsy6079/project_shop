@@ -14,7 +14,7 @@ import { ShoppingCart, Heart, User, LogIn } from "react-feather";
 //import images
 import logoMoa from "../assets/images/logo-moa.png";
 
-function NavBar(props) {
+function NavBar({ type, user }) {
   const [dropdownOpenShop, setDropdownOpenShop] = useState(false);
   const [wishlistModal, setWishlistModal] = useState(false);
   const [loginModal, setLoginModal] = useState(false);
@@ -74,7 +74,7 @@ function NavBar(props) {
     return () => {
       window.removeEventListener("scroll", scrollNavigation, true);
     };
-  }, [props.type]);
+  }, [type]);
 
   const isToggleMenu = () => {
     const isToggle = document.getElementById("isToggle");
@@ -95,7 +95,7 @@ function NavBar(props) {
     return () => {
       window.removeEventListener("scroll", scrollNavigation, true);
     };
-  }, [props.type]);
+  }, [type]);
 
   const initMenu = () => {
     activateMenu();
@@ -171,70 +171,71 @@ function NavBar(props) {
               </Link>
             </div>
           </div>
-          <ul className="buy-button list-inline mb-0">
-            <li className="list-inline-item mb-0 pe-1">
-              <Link
-                to="#"
-                className="btn btn-icon btn-pills btn-primary"
-                color="primary"
-                onClick={toggleLoginModal}
-              >
-                <LogIn className="icons" />
-              </Link>
-            </li>
-          </ul>
-
-          {/* 로그인 후 아이콘 사용 */}
-          {/* <ul className="buy-button list-inline mb-0">
-            <li className="list-inline-item mb-0 pe-1">
-              <Link
-                to="#"
-                className="btn btn-icon btn-pills btn-primary"
-                color="primary"
-                onClick={toggleWishlistModal}
-              >
-                <Heart className="icons" />
-              </Link>
-            </li>
-            <li className="list-inline-item mb-0">
-              <Dropdown
-                color="primary"
-                isOpen={dropdownIsOpen}
-                toggle={toggleDropdownIsOpen}
-              >
-                <DropdownToggle
-                  type="button"
+          {user ? (
+            <ul className="buy-button list-inline mb-0">
+              <li className="list-inline-item mb-0 pe-1">
+                <Link
+                  to="#"
+                  className="btn btn-icon btn-pills btn-primary"
                   color="primary"
-                  id="buyButton"
-                  className="btn btn-icon btn-pills settingbtn"
+                  onClick={toggleWishlistModal}
                 >
-                  <User className="icons" />
-                </DropdownToggle>
-                <DropdownMenu
-                  direction="start"
-                  className="dd-menu dropdown-menu-end bg-white shadow rounded border-0 mt-3 py-3"
-                  style={{ width: "200px" }}
+                  <Heart className="icons" />
+                </Link>
+              </li>
+              <li className="list-inline-item mb-0">
+                <Dropdown
+                  color="primary"
+                  isOpen={dropdownIsOpen}
+                  toggle={toggleDropdownIsOpen}
                 >
-                  <Link className="dropdown-item" to="#">
-                    <i className="uil uil-user align-middle me-1"></i> Account
-                  </Link>
-                  <Link className="dropdown-item" to="#">
-                    <i className="uil uil-clipboard-notes align-middle me-1"></i>{" "}
-                    Order History
-                  </Link>
-                  <Link className="dropdown-item" to="#">
-                    <i className="uil uil-arrow-circle-down align-middle me-1"></i>{" "}
-                    Download
-                  </Link>
-                  <div className="dropdown-divider my-3 border-top"></div>
-                  <Link className="dropdown-item" to="#">
-                    <i className="uil uil-sign-out-alt align-middle me-1"></i>{" "}
-                    Logout
-                  </Link>
-                </DropdownMenu>
-              </Dropdown>
-            </li>
-          </ul> */}
+                  <DropdownToggle
+                    type="button"
+                    color="primary"
+                    id="buyButton"
+                    className="btn btn-icon btn-pills settingbtn"
+                  >
+                    <User className="icons" />
+                  </DropdownToggle>
+                  <DropdownMenu
+                    direction="start"
+                    className="dd-menu dropdown-menu-end bg-white shadow rounded border-0 mt-3 py-3"
+                    style={{ width: "200px" }}
+                  >
+                    <Link className="dropdown-item" to="#">
+                      <i className="uil uil-user align-middle me-1"></i> 내 정보
+                    </Link>
+                    <Link className="dropdown-item" to="#">
+                      <i className="uil uil-clipboard-notes align-middle me-1"></i>{" "}
+                      쇼핑 정보
+                    </Link>
+                    <Link className="dropdown-item" to="#">
+                      <i className="uil uil-arrow-circle-down align-middle me-1"></i>{" "}
+                      거래 현황
+                    </Link>
+                    <div className="dropdown-divider my-2 border-top"></div>
+                    <Link className="dropdown-item" to="#">
+                      <i className="uil uil-sign-out-alt align-middle me-1"></i>{" "}
+                      로그아웃
+                    </Link>
+                  </DropdownMenu>
+                </Dropdown>
+              </li>
+            </ul>
+          ) : (
+            <ul className="buy-button list-inline mb-0">
+              <li className="list-inline-item mb-0 pe-1">
+                <Link
+                  to="#"
+                  className="btn btn-icon btn-pills btn-primary"
+                  color="primary"
+                  onClick={toggleLoginModal}
+                >
+                  <LogIn className="icons" />
+                </Link>
+              </li>
+            </ul>
+          )}
 
           <div id="navigation">
             <ul className="navigation-menu">

@@ -5,7 +5,6 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import javax.crypto.SecretKey;
 import java.util.Date;
 
@@ -27,8 +26,10 @@ public class JwtUtil {
 
     
     // JWT 생성 (사용자 이메일을 기반으로 생성)
-    public String generateToken(String email) {
+    public String generateToken(String email, String username, String imgUrl) {
         return Jwts.builder()
+        		.claim("name", username)
+        		.claim("imgUrl", imgUrl)
                 .subject(email) 
                 .issuedAt(new Date()) 
                 .expiration(new Date(System.currentTimeMillis() + expirationTime))
@@ -37,7 +38,7 @@ public class JwtUtil {
     }
 
     
-    // JWT 검증 및 사용자 이메일 반환
+    // JWT 검증 및 사용자 정보 반환
     public String validateToken(String token) {
         try {
             return Jwts.parser() 
@@ -53,4 +54,31 @@ public class JwtUtil {
         }
         return null;
     }
+
+    // 토큰 추출
+    private Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+    }
+
+    // 이메일 값
+	public String extractEmail(String token) {
+		return extractAllClaims(token).getSubject();
+	}
+
+
+	// 유저이름 값
+	public String extractUsername(String token) {
+		return extractAllClaims(token).get("name", String.class);
+	}
+
+
+	// 유저 프로필 사진 값
+	public String extractImgUrl(String token) {
+		return extractAllClaims(token).get("imgUrl", String.class);
+	}
 }

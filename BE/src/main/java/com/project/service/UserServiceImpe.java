@@ -51,7 +51,7 @@ public class UserServiceImpe implements UserService {
         User user = saveOrUpdateUser(userInfo.get("email"), userInfo.get("nickname"), userInfo.get("profileImage"));
 
         // JWT 토큰 발급
-        String jwtToken = jwtUtil.generateToken(user.getUser_email());
+        String jwtToken = jwtUtil.generateToken(user.getUser_email(), user.getUser_name(), user.getProfileImg());
 
         // 응답 생성
         Map<String, String> response = new HashMap<>();
