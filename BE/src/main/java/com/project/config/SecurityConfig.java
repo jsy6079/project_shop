@@ -33,8 +33,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource())) 
             .authorizeHttpRequests(auth -> auth
             		.requestMatchers("/**").permitAll() // 모든 요청을 인증 없이 허용
-//                .requestMatchers("/auth/kakao/**").permitAll() 
-//                .requestMatchers("/user/update-info").authenticated() 
+//            		.requestMatchers("/user/**").authenticated() 
 //                .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
@@ -50,15 +49,17 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:3000")); // React 프론트엔드 허용
+        config.setAllowCredentials(true); 
+        config.setAllowedOrigins(List.of("http://localhost:3000")); 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedHeaders(List.of("*")); 
+        config.setExposedHeaders(List.of("Authorization", "Set-Cookie")); 
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
     }
+
     
 
 

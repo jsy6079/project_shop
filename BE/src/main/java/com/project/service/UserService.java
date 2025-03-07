@@ -16,10 +16,8 @@ public interface UserService {
 
 	// 카카오 로그인 + JWT
 	ResponseEntity<Map<String, String>> kakaoLogin(OAuth2AuthenticationToken authenticationToken);
-
-
-
-
 	
+	// 카카오 로그아웃 + JWT
+	ResponseEntity<Map<String, String>> kakaoLogout(String accessToken);
 
 }

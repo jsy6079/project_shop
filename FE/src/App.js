@@ -8,10 +8,12 @@ import "./assets/css/materialdesignicons.min.css";
 import "./Apps.scss";
 import CategoryList from "./mainSection/CategoryList";
 import ProductDetail from "./mainSection/ProductDetail";
+import MyMain from "./myPage/MyMain";
 import axios from "axios";
+import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
 
   const fetchUserInfo = () => {
     axios
@@ -31,7 +33,7 @@ function App() {
   useEffect(() => {
     fetchUserInfo(); // 초기 실행
 
-    const interval = setInterval(fetchUserInfo, 60000); // 1분 -> 현재 만료 시간 및 쿠키 삭제 시간 1분
+    const interval = setInterval(fetchUserInfo, 3600000); // 1시간 -> 현재 만료 시간 및 쿠키 삭제 시간 1시간
 
     return () => clearInterval(interval);
   }, []);
@@ -41,12 +43,20 @@ function App() {
       <ScrollToTop />
       <NavBar user={user} />
       <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/category/:categoryId" element={<CategoryList />} />
+        <Route path="/" element={<Main user={user} />} />
+        <Route
+          path="/category/:categoryId"
+          element={<CategoryList user={user} />}
+        />
         <Route
           path="/detail/:categoryId/:productId"
-          element={<ProductDetail />}
+          element={<ProductDetail user={user} />}
         />
+        {/* 로그인 해야 접근 가능 */}
+        <Route element={<ProtectedRoute user={user} />}>
+          <Route path="/user/myinfo" element={<MyMain user={user} />}></Route>/
+        </Route>
+        {/* */}
       </Routes>
       <Footer />
     </Router>

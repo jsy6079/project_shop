@@ -18,7 +18,7 @@ const categories = [
   { id: 6, name: "라이프 스타일" },
 ];
 
-const CategoryList = () => {
+const CategoryList = ({ user }) => {
   const { categoryId } = useParams();
   const [products, setProducts] = useState([]);
   const [products2, setProducts2] = useState([]);
@@ -113,6 +113,14 @@ const CategoryList = () => {
       setProducts(response.data);
     } catch (error) {
       console.error("검색 중 오류 발생:", error);
+    }
+  };
+
+  const wishConfirm = () => {
+    const isCofirm = window.confirm("해당 상품을 찜 하시겠습니까?");
+
+    if (isCofirm) {
+      console.log("DB 구현");
     }
   };
 
@@ -293,7 +301,12 @@ const CategoryList = () => {
                               to="#"
                               className="btn btn-icon btn-pills btn-soft-danger"
                             >
-                              <Heart className="icons" />
+                              {user ? (
+                                <Heart
+                                  className="icons"
+                                  onClick={wishConfirm}
+                                />
+                              ) : null}
                             </Link>
                           </li>
                         </ul>

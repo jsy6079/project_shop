@@ -24,6 +24,8 @@ public class UserServiceImpe implements UserService {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final OAuth2AuthorizedClientService authorizedClientRepository;
+    private final RestTemplate restTemplate;
+
 
     // 카카오 로그인 처리
     @Override
@@ -56,6 +58,7 @@ public class UserServiceImpe implements UserService {
         // 응답 생성
         Map<String, String> response = new HashMap<>();
         response.put("token", jwtToken);
+        response.put("accessToken", accessToken.getTokenValue());
 
         return ResponseEntity.ok(response);
     }
@@ -105,5 +108,33 @@ public class UserServiceImpe implements UserService {
                 newUser.setProfileImg(profileImage);
                 return userRepository.save(newUser);
             });
+    }
+
+
+    // 카카오 로그아웃 처리
+	@Override
+	  public ResponseEntity<Map<String, String>> kakaoLogout(String accessToken) {
+        if (accessToken == null || accessToken.isEmpty()) {
+            System.out.println("accessToken이 존재하지 않습니다");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "accessToken이 존재하지 않습니다"));
+        }
+
+        // 1. 카카오 로그아웃 API 호출
+        String kakaoLogoutUrl = "https://kapi.kakao.com/v1/user/logout";
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(kakaoLogoutUrl, HttpMethod.POST, entity, String.class);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            System.out.println("카카오 로그아웃 성공");
+            return ResponseEntity.ok(Map.of("message", "카카오 로그아웃 성공"));
+        } else {
+            System.out.println("카카오 로그아웃 실패: " + response.getBody());
+            return ResponseEntity.status(response.getStatusCode())
+                    .body(Map.of("error", "카카오 로그아웃 실패"));
+        }
     }
 }

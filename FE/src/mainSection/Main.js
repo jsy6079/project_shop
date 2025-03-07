@@ -29,7 +29,7 @@ import ctaImg from "../assets/images/shop/cta.jpg";
 import product15 from "../assets/images/shop/product/s15.jpg";
 import product16 from "../assets/images/shop/product/s16.jpg";
 
-const Main = () => {
+const Main = ({ user }) => {
   const items = [
     {
       image: bg1,
@@ -124,6 +124,32 @@ const Main = () => {
       if (i === 0) e1[i].style.background = `url(${bg1}) center center`;
     }
   }, []);
+
+  // 찜 목록 등록
+  const wishConfirm = async (username, product_id) => {
+    const isCofirm = window.confirm("해당 상품을 찜 하시겠습니까?");
+
+    if (isCofirm) {
+      try {
+        const response = await axios.post(
+          "http://localhost:8080/api/wishlist/regist",
+          {
+            username,
+            product_id,
+          }
+        );
+
+        if (response.status === 200) {
+          alert("찜 목록에 추가되었습니다.");
+        } else {
+          alert("찜 목록 추가 실패패");
+        }
+      } catch (error) {
+        console.log("찜 실패", error);
+        alert("서버 오류");
+      }
+    }
+  };
 
   return (
     <>
@@ -243,7 +269,14 @@ const Main = () => {
                           to="#"
                           className="btn btn-icon btn-pills btn-soft-danger"
                         >
-                          <Heart className="icons" />
+                          {user ? (
+                            <Heart
+                              className="icons"
+                              onClick={() =>
+                                wishConfirm(user.username, product.product_id)
+                              }
+                            />
+                          ) : null}
                         </Link>
                       </li>
                     </ul>
@@ -322,7 +355,14 @@ const Main = () => {
                           to="#"
                           className="btn btn-icon btn-pills btn-soft-danger"
                         >
-                          <Heart className="icons" />
+                          {user ? (
+                            <Heart
+                              className="icons"
+                              onClick={() =>
+                                wishConfirm(user.username, product.product_id)
+                              }
+                            />
+                          ) : null}
                         </Link>
                       </li>
                     </ul>
@@ -425,7 +465,14 @@ const Main = () => {
                           to="#"
                           className="btn btn-icon btn-pills btn-soft-danger"
                         >
-                          <Heart className="icons" />
+                          {user ? (
+                            <Heart
+                              className="icons"
+                              onClick={() =>
+                                wishConfirm(user.username, product.product_id)
+                              }
+                            />
+                          ) : null}
                         </Link>
                       </li>
                     </ul>

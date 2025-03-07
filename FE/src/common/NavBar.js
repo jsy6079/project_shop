@@ -134,17 +134,24 @@ function NavBar({ type, user }) {
     }
   };
 
-  // const KAKAO_CLIENT_ID = "faf66baf81767443fb366c81ac9da085";
-  // const REDIRECT_URI = "http://localhost:8080/auth/login/kakao";
-
-  // const handleKakaoLogin = () => {
-  //   const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-  //   window.location.href = kakaoAuthUrl;
-  // };
-
+  // 카카오 로그인
   const handleKakaoLogin = () => {
     const KAKAO_AUTH_URL = "http://localhost:8080/oauth2/authorization/kakao";
     window.location.href = KAKAO_AUTH_URL;
+  };
+
+  const logout = () => {
+    axios
+      .post("http://localhost:8080/auth/login/logout", null, {
+        withCredentials: true, // 쿠키 포함 요청
+      })
+      .then(() => {
+        alert("로그아웃 되었습니다.");
+        window.location.href = "/";
+      })
+      .catch((error) => {
+        console.error("로그아웃 실패:", error.response);
+      });
   };
 
   return (
@@ -173,7 +180,7 @@ function NavBar({ type, user }) {
           </div>
           {user ? (
             <ul className="buy-button list-inline mb-0">
-              <li className="list-inline-item mb-0 pe-1">
+              {/* <li className="list-inline-item mb-0 pe-1">
                 <Link
                   to="#"
                   className="btn btn-icon btn-pills btn-primary"
@@ -182,7 +189,7 @@ function NavBar({ type, user }) {
                 >
                   <Heart className="icons" />
                 </Link>
-              </li>
+              </li> */}
               <li className="list-inline-item mb-0">
                 <Dropdown
                   color="primary"
@@ -202,19 +209,20 @@ function NavBar({ type, user }) {
                     className="dd-menu dropdown-menu-end bg-white shadow rounded border-0 mt-3 py-3"
                     style={{ width: "200px" }}
                   >
-                    <Link className="dropdown-item" to="#">
+                    <Link className="dropdown-item" to="/user/myinfo">
                       <i className="uil uil-user align-middle me-1"></i> 내 정보
                     </Link>
+
                     <Link className="dropdown-item" to="#">
-                      <i className="uil uil-clipboard-notes align-middle me-1"></i>{" "}
-                      쇼핑 정보
-                    </Link>
-                    <Link className="dropdown-item" to="#">
-                      <i className="uil uil-arrow-circle-down align-middle me-1"></i>{" "}
+                      <i className="uil uil-transaction align-middle me-1"></i>{" "}
                       거래 현황
                     </Link>
-                    <div className="dropdown-divider my-2 border-top"></div>
                     <Link className="dropdown-item" to="#">
+                      <i className="uil uil-store align-middle me-1"></i>{" "}
+                      판매물폼 등록
+                    </Link>
+                    <div className="dropdown-divider my-2 border-top"></div>
+                    <Link className="dropdown-item" onClick={logout}>
                       <i className="uil uil-sign-out-alt align-middle me-1"></i>{" "}
                       로그아웃
                     </Link>
@@ -282,7 +290,7 @@ function NavBar({ type, user }) {
         </div>
       </header>
       {/* 찜 모달창 */}
-      <Modal
+      {/* <Modal
         isOpen={wishlistModal}
         tabIndex="-1"
         centered
@@ -312,7 +320,7 @@ function NavBar({ type, user }) {
             </div>
           </div>
         </ModalBody>
-      </Modal>
+      </Modal> */}
       {/* 로그인 모달창 */}
       <Modal
         isOpen={loginModal}
@@ -324,11 +332,11 @@ function NavBar({ type, user }) {
         <ModalBody className="py-5">
           <div className="text-center">
             <div
-              className="icon d-flex align-items-center justify-content-center bg-soft-danger rounded-circle mx-auto"
+              className="icon d-flex align-items-center justify-content-center bg-soft-primary rounded-circle mx-auto"
               style={{ height: "95px", width: "95px" }}
             >
               <h1 className="mb-0">
-                <i className="uil uil-heart align-middle"></i>
+                <i className="uil uil-user-check align-middle"></i>
               </h1>
             </div>
             <div className="mt-4">
@@ -336,7 +344,7 @@ function NavBar({ type, user }) {
               <p className="text-muted">카카오로 쉽고 빠르게 시작해보세요😊</p>
               <div className="mt-4">
                 <button
-                  className="btn btn-outline-primary"
+                  className="btn btn-outline-warning"
                   onClick={handleKakaoLogin}
                 >
                   카카오 로그인

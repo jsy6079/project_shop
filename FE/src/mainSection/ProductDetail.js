@@ -32,7 +32,7 @@ import client2 from "../assets/images/client/02.jpg";
 import product3 from "../assets/images/shop/product/s3.jpg";
 import product8 from "../assets/images/shop/product/s8.jpg";
 
-const ProductDetail = () => {
+const ProductDetail = ({ user }) => {
   const { categoryId } = useParams();
   const { productId } = useParams();
   const [products, setProducts] = useState([]);
@@ -94,6 +94,14 @@ const ProductDetail = () => {
     autoplay: true,
     slidesToShow: 4,
     slidesToScroll: 2,
+  };
+
+  const wishConfirm = () => {
+    const isCofirm = window.confirm("해당 상품을 찜 하시겠습니까?");
+
+    if (isCofirm) {
+      console.log("DB 구현");
+    }
   };
 
   return (
@@ -166,10 +174,32 @@ const ProductDetail = () => {
                   </Row>
 
                   <div className="mt-4 pt-2">
-                    <Link to="#" className="btn btn-primary">
+                    <Link
+                      to="#"
+                      className="btn btn-primary"
+                      onClick={() => {
+                        if (!user) {
+                          alert("로그인 후 이용 가능합니다.");
+                        } else {
+                          console.log("DB 연결 준비");
+                        }
+                      }}
+                    >
                       구매하기
                     </Link>
-                    <Link to="shop-cart" className="btn btn-soft-danger ms-2">
+                    <Link
+                      to="#"
+                      className="btn btn-soft-danger ms-2"
+                      onClick={() => {
+                        if (!user) {
+                          alert("로그인 후 이용 가능합니다.");
+                        } else {
+                          {
+                            wishConfirm();
+                          }
+                        }
+                      }}
+                    >
                       찜하기{" "}
                     </Link>
                   </div>
@@ -186,7 +216,7 @@ const ProductDetail = () => {
               <ul className="nav nav-pills shadow flex-column flex-sm-row d-md-inline-flex mb-0 p-1 bg-white rounded position-relative overflow-hidden">
                 <NavItem className="m-1">
                   <div className="text-center">
-                    <h6 className="mb-0">⭐️ 해당 판매자 평가 및 후기 ⭐️</h6>
+                    <h6 className="mb-0">⭐️ 해당 판매자 리뷰 내역 ⭐️</h6>
                   </div>
                 </NavItem>
               </ul>
@@ -300,10 +330,10 @@ const ProductDetail = () => {
                       <form className="ms-lg-4">
                         <Row>
                           <Col xs={12}>
-                            <h5>Add your review:</h5>
+                            <h5>리뷰 작성</h5>
                           </Col>
                           <Col xs={12} className="mt-4">
-                            <h6 className="small fw-bold">Your Rating:</h6>
+                            <h6 className="small fw-bold">별점</h6>
                             <Link to="#" className="d-inline-block me-3">
                               <ul className="list-unstyled mb-0 small">
                                 <li className="list-inline-item">
@@ -406,12 +436,12 @@ const ProductDetail = () => {
                           </Col>
                           <Col md={12} className="mt-3">
                             <div className="mb-3">
-                              <Label className="form-label">Your Review:</Label>
+                              <Label className="form-label">상세내용:</Label>
                               <div className="form-icon position-relative">
                                 <MessageCircle className="fea icon-sm icons" />
                                 <textarea
                                   id="message"
-                                  placeholder="Your Comment"
+                                  placeholder="비방,욕설이 담긴 글은 관리자에 의해 삭제될수있습니다."
                                   rows="5"
                                   name="message"
                                   className="form-control ps-5"
@@ -421,49 +451,20 @@ const ProductDetail = () => {
                             </div>
                           </Col>
 
-                          <div className="col-lg-6">
-                            <div className="mb-3">
-                              <Label className="form-label">
-                                Name <span className="text-danger">*</span>
-                              </Label>
-                              <div className="form-icon position-relative">
-                                <User className="fea icon-sm icons" />
-                                <input
-                                  id="name"
-                                  name="name"
-                                  type="text"
-                                  placeholder="Name"
-                                  className="form-control ps-5"
-                                  required=""
-                                />
-                              </div>
-                            </div>
-                          </div>
-
-                          <Col lg={6}>
-                            <div className="mb-3">
-                              <Label className="form-label">
-                                Your Email{" "}
-                                <span className="text-danger">*</span>
-                              </Label>
-                              <div className="form-icon position-relative">
-                                <Mail className="fea icon-sm icons" />
-                                <input
-                                  id="email"
-                                  type="email"
-                                  placeholder="Email"
-                                  name="email"
-                                  className="form-control ps-5"
-                                  required=""
-                                />
-                              </div>
-                            </div>
-                          </Col>
-
                           <Col md={12}>
                             <div className="send d-grid">
-                              <button type="submit" className="btn btn-primary">
-                                Submit
+                              <button
+                                type="submit"
+                                className="btn btn-primary"
+                                onClick={() => {
+                                  if (!user) {
+                                    alert("로그인 후 이용 가능합니다.");
+                                  } else {
+                                    console.log("DB 연결 준비");
+                                  }
+                                }}
+                              >
+                                작성하기
                               </button>
                             </div>
                           </Col>
@@ -520,7 +521,9 @@ const ProductDetail = () => {
                       </ul>
 
                       <div className="shop-image position-relative overflow-hidden rounded shadow">
-                        <Link to="shop-product-detail">
+                        <Link
+                          to={`/detail/${product.category_id}/${product.product_id}`}
+                        >
                           <img src={product8} className="img-fluid" />
                         </Link>
                         <ul className="list-unstyled shop-icons">
@@ -530,7 +533,12 @@ const ProductDetail = () => {
                               className="btn btn-icon btn-pills btn-soft-danger"
                             >
                               <i>
-                                <Heart className="icons" />
+                                {user ? (
+                                  <Heart
+                                    className="icons"
+                                    onClick={wishConfirm}
+                                  />
+                                ) : null}
                               </i>
                             </Link>
                           </li>
@@ -538,7 +546,7 @@ const ProductDetail = () => {
                       </div>
                       <CardBody className="content pt-4 p-2">
                         <Link
-                          to="shop-product-detail"
+                          to={`/detail/${product.category_id}/${product.product_id}`}
                           className="text-dark product-name h6"
                         >
                           {product.product_name}
