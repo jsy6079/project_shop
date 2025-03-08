@@ -12,13 +12,18 @@ import {
   TabPane,
   Form,
   Label,
+  Pagination,
+  PaginationItem,
+  PaginationLink,
 } from "reactstrap";
 import { User, UserCheck, Mail, Key } from "react-feather";
 import classnames from "classnames";
-import client from "../assets/images/client/05.jpg";
 
 const MyMain = ({ user }) => {
   const [activeTab, setActiveTab] = useState("1");
+  const [wishProducts, setWishProducts] = useState([]);
+  const [page, setPage] = useState(0); // 현재 페이지
+  const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
 
   const toggleTab = (tab) => {
     if (activeTab !== tab) {
@@ -26,7 +31,54 @@ const MyMain = ({ user }) => {
     }
   };
 
-  console.log("MyMain user props:", user);
+  // 찜 목록 조회 + 페이징 포함
+  const fetchWishList = async (pageNumber) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/wishlist/view/${user.email}?page=${pageNumber}&size=5`
+      );
+      setWishProducts(response.data.content);
+      setTotalPages(response.data.totalPages);
+    } catch (error) {
+      console.error("찜 목록을 가져오는 중 오류 발생:", error);
+    }
+  };
+  useEffect(() => {
+    if (user?.email) {
+      fetchWishList(page);
+    }
+  }, [user?.email, page]);
+
+  // 찜 목록 삭제
+  const deleteConfirm = async (email, product_id) => {
+    const isCofirm = window.confirm("해당 찜 상품을 삭제하시겠습니까?");
+
+    if (isCofirm) {
+      try {
+        const response = await axios.delete(
+          `http://localhost:8080/api/wishlist/delete/${email}/${product_id}`,
+          {
+            email,
+            product_id,
+          }
+        );
+
+        if (response.status === 200) {
+          alert(response.data);
+          setWishProducts((prevWishProducts) =>
+            prevWishProducts.filter((item) => item.product_id !== product_id)
+          );
+
+          fetchWishList(page);
+        } else {
+          alert("찜 목록 삭제 실패");
+        }
+      } catch (error) {
+        console.log("찜 삭제 실패", error);
+        alert("서버 오류");
+      }
+    }
+  };
 
   return (
     <>
@@ -447,71 +499,104 @@ const MyMain = ({ user }) => {
                         <thead>
                           <tr>
                             <th scope="col" className="border-bottom">
-                              Order no.
+                              상품명
                             </th>
                             <th scope="col" className="border-bottom">
-                              Date
+                              가격
                             </th>
                             <th scope="col" className="border-bottom">
-                              Status
+                              상품 상태
                             </th>
                             <th scope="col" className="border-bottom">
-                              Total
+                              상세 페이지
                             </th>
-                            <th scope="col" className="border-bottom">
-                              Action
-                            </th>
+                            <th scope="col" className="border-bottom"></th>
                           </tr>
                         </thead>
-                        <tbody>
-                          <tr>
-                            <th scope="row">7107</th>
-                            <td>1st November 2020</td>
-                            <td className="text-success">Delivered</td>
-                            <td>
-                              $ 320{" "}
-                              <span className="text-muted">for 2items</span>
-                            </td>
-                            <td>
-                              <Link to="#" className="text-primary">
-                                View <i className="uil uil-arrow-right"></i>
-                              </Link>
-                            </td>
-                          </tr>
-
-                          <tr>
-                            <th scope="row">8007</th>
-                            <td>4th November 2020</td>
-                            <td className="text-muted">Processing</td>
-                            <td>
-                              $ 800{" "}
-                              <span className="text-muted">for 1item</span>
-                            </td>
-                            <td>
-                              <Link to="#" className="text-primary">
-                                View <i className="uil uil-arrow-right"></i>
-                              </Link>
-                            </td>
-                          </tr>
-
-                          <tr>
-                            <th scope="row">8008</th>
-                            <td>4th November 2020</td>
-                            <td className="text-danger">Canceled</td>
-                            <td>
-                              $ 800{" "}
-                              <span className="text-muted">for 1item</span>
-                            </td>
-                            <td>
-                              <Link to="#" className="text-primary">
-                                View <i className="uil uil-arrow-right"></i>
-                              </Link>
-                            </td>
-                          </tr>
-                        </tbody>
+                        {wishProducts.map((product, key) => (
+                          <tbody key={key}>
+                            <tr>
+                              <th scope="row">{product.product_name}</th>
+                              <td>
+                                {product.product_price.toLocaleString()}원
+                              </td>
+                              <td className="text-success">
+                                {product.product_status}
+                              </td>
+                              <td>
+                                {" "}
+                                <Link
+                                  to={`/detail/${product.category_id}/${product.product_id}`}
+                                  className="text-primary"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  View <i className="uil uil-arrow-right"></i>
+                                </Link>
+                              </td>
+                              <td>
+                                <button
+                                  className="dropdown-item"
+                                  onClick={() =>
+                                    deleteConfirm(
+                                      user.email,
+                                      product.product_id
+                                    )
+                                  }
+                                >
+                                  <i className="uil uil-multiply align-middle me-1"></i>
+                                </button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        ))}
                       </Table>
                     </div>
+                    <div className="text-center mt-3">
+                      <Pagination className="d-inline-flex">
+                        <PaginationItem disabled={page === 0}>
+                          <PaginationLink
+                            href="#"
+                            previous
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setPage(page - 1);
+                            }}
+                          >
+                            이전
+                          </PaginationLink>
+                        </PaginationItem>
+
+                        {[...Array(totalPages)].map((_, index) => (
+                          <PaginationItem key={index} active={index === page}>
+                            <PaginationLink
+                              href="#"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setPage(index);
+                              }}
+                            >
+                              {index + 1}
+                            </PaginationLink>
+                          </PaginationItem>
+                        ))}
+
+                        <PaginationItem disabled={page + 1 === totalPages}>
+                          <PaginationLink
+                            href="#"
+                            next
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setPage(page + 1);
+                            }}
+                          >
+                            다음
+                          </PaginationLink>
+                        </PaginationItem>
+                      </Pagination>
+                    </div>
                   </TabPane>
+
                   {/* 마일리지 마일리지 마일리지 마일리지 마일리지 마일리지 마일리지 마일리지 마일리지 마일리지 마일리지 마일리지 마일리지 마일리지  */}
                   <TabPane
                     className="show fade bg-white shadow rounded p-4"

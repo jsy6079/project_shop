@@ -2,6 +2,7 @@ package com.project.entity;
 
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,7 +20,10 @@ public class User {
     private Long user_id;
     
     private String user_name;
-    private String user_email;
+    
+    @Column(name = "user_email")
+    private String userEmail;
+    
     private String profileImg;
     private String user_phone;
     private String user_address;

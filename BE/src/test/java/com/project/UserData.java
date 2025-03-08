@@ -18,7 +18,7 @@ public class UserData {
 	public void insertUserData() {
 			User user = new User();
 	        user.setUser_name("판매자");
-	        user.setUser_email("test@example.com");
+	        user.setUserEmail("test@example.com");
 	        user.setUser_phone("010-1234-1111");
 	        user.setUser_address("서울시 강남구");
 	        user.setUser_money(10000L);

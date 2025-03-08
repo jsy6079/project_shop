@@ -126,7 +126,7 @@ const Main = ({ user }) => {
   }, []);
 
   // 찜 목록 등록
-  const wishConfirm = async (username, product_id) => {
+  const wishConfirm = async (email, product_id) => {
     const isCofirm = window.confirm("해당 상품을 찜 하시겠습니까?");
 
     if (isCofirm) {
@@ -134,15 +134,15 @@ const Main = ({ user }) => {
         const response = await axios.post(
           "http://localhost:8080/api/wishlist/regist",
           {
-            username,
+            email,
             product_id,
           }
         );
 
         if (response.status === 200) {
-          alert("찜 목록에 추가되었습니다.");
+          alert(response.data);
         } else {
-          alert("찜 목록 추가 실패패");
+          alert("찜 목록 추가 실패");
         }
       } catch (error) {
         console.log("찜 실패", error);
@@ -273,7 +273,7 @@ const Main = ({ user }) => {
                             <Heart
                               className="icons"
                               onClick={() =>
-                                wishConfirm(user.username, product.product_id)
+                                wishConfirm(user.email, product.product_id)
                               }
                             />
                           ) : null}
@@ -359,7 +359,7 @@ const Main = ({ user }) => {
                             <Heart
                               className="icons"
                               onClick={() =>
-                                wishConfirm(user.username, product.product_id)
+                                wishConfirm(user.email, product.product_id)
                               }
                             />
                           ) : null}
@@ -469,7 +469,7 @@ const Main = ({ user }) => {
                             <Heart
                               className="icons"
                               onClick={() =>
-                                wishConfirm(user.username, product.product_id)
+                                wishConfirm(user.email, product.product_id)
                               }
                             />
                           ) : null}

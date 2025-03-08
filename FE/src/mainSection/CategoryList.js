@@ -116,11 +116,29 @@ const CategoryList = ({ user }) => {
     }
   };
 
-  const wishConfirm = () => {
+  // 찜 목록 등록
+  const wishConfirm = async (email, product_id) => {
     const isCofirm = window.confirm("해당 상품을 찜 하시겠습니까?");
 
     if (isCofirm) {
-      console.log("DB 구현");
+      try {
+        const response = await axios.post(
+          "http://localhost:8080/api/wishlist/regist",
+          {
+            email,
+            product_id,
+          }
+        );
+
+        if (response.status === 200) {
+          alert(response.data);
+        } else {
+          alert("찜 목록 추가 실패");
+        }
+      } catch (error) {
+        console.log("찜 실패", error);
+        alert("서버 오류");
+      }
     }
   };
 
@@ -304,7 +322,9 @@ const CategoryList = ({ user }) => {
                               {user ? (
                                 <Heart
                                   className="icons"
-                                  onClick={wishConfirm}
+                                  onClick={() =>
+                                    wishConfirm(user.email, product.product_id)
+                                  }
                                 />
                               ) : null}
                             </Link>

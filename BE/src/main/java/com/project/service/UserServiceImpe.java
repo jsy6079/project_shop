@@ -53,7 +53,7 @@ public class UserServiceImpe implements UserService {
         User user = saveOrUpdateUser(userInfo.get("email"), userInfo.get("nickname"), userInfo.get("profileImage"));
 
         // JWT 토큰 발급
-        String jwtToken = jwtUtil.generateToken(user.getUser_email(), user.getUser_name(), user.getProfileImg());
+        String jwtToken = jwtUtil.generateToken(user.getUserEmail(), user.getUser_name(), user.getProfileImg());
 
         // 응답 생성
         Map<String, String> response = new HashMap<>();
@@ -103,7 +103,7 @@ public class UserServiceImpe implements UserService {
             .orElseGet(() -> {
                 // 새 유저 저장
                 User newUser = new User();
-                newUser.setUser_email(email);
+                newUser.setUserEmail(email);
                 newUser.setUser_name(nickname);
                 newUser.setProfileImg(profileImage);
                 return userRepository.save(newUser);

@@ -1,6 +1,7 @@
 package com.project.repository;
 
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,7 +11,14 @@ import com.project.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	@Query(value = "SELECT * FROM user WHERE user_email = :user_email", nativeQuery = true)
-	Optional<User> findByUserEmail(@Param("user_email") String email);
+//	@Query(value = "SELECT * FROM user WHERE user_email = :user_email", nativeQuery = true)
+//	Optional<User> findByUserEmail(@Param("user_email") String email);
+	
+	// 이메일로 user 찾기
+	Optional<User> findByUserEmail(String email);
+	
+
+
+
 
 }
