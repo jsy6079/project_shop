@@ -26,10 +26,14 @@ public class JwtUtil {
 
     
     // JWT 생성 (사용자 이메일을 기반으로 생성)
-    public String generateToken(String email, String username, String imgUrl) {
+    public String generateToken(String email, String username, String imgUrl, String phone, String address, Long money, Long score) {
         return Jwts.builder()
         		.claim("name", username)
         		.claim("imgUrl", imgUrl)
+        		.claim("phone", phone)
+        		.claim("address", address)
+        		.claim("money", money)
+        		.claim("score", score)
                 .subject(email) 
                 .issuedAt(new Date()) 
                 .expiration(new Date(System.currentTimeMillis() + expirationTime))
@@ -80,5 +84,29 @@ public class JwtUtil {
 	// 유저 프로필 사진 값
 	public String extractImgUrl(String token) {
 		return extractAllClaims(token).get("imgUrl", String.class);
+	}
+
+
+	// 유저 전화번호 값
+	public String extractPhone(String token) {
+		return extractAllClaims(token).get("phone", String.class);
+	}
+
+
+	// 유저 주소 값
+	public String extractAddress(String token) {
+		return extractAllClaims(token).get("address", String.class);
+	}
+
+
+	// 유저 마일리지 값
+	public Long extractMoney(String token) {
+		return extractAllClaims(token).get("money", Long.class);
+	}
+
+
+	// 유저 등급 점수 값
+	public Long extractScore(String token) {
+		return extractAllClaims(token).get("score", Long.class);
 	}
 }

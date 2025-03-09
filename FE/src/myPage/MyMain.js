@@ -15,8 +15,9 @@ import {
   Pagination,
   PaginationItem,
   PaginationLink,
+  Badge,
 } from "reactstrap";
-import { User, UserCheck, Mail, Key } from "react-feather";
+import { Mail, Phone, MapPin } from "react-feather";
 import classnames from "classnames";
 
 const MyMain = ({ user }) => {
@@ -24,6 +25,7 @@ const MyMain = ({ user }) => {
   const [wishProducts, setWishProducts] = useState([]);
   const [page, setPage] = useState(0); // 현재 페이지
   const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
+  const [userInfo, setUserInfo] = useState(user); // userInfo로 유저 값 가져오기
 
   const toggleTab = (tab) => {
     if (activeTab !== tab) {
@@ -31,11 +33,63 @@ const MyMain = ({ user }) => {
     }
   };
 
+  // 거래 상태 별 뱃지 스타일 적용
+  function getBadgeColor(product_status) {
+    switch (product_status) {
+      case "거래가능":
+        return "primary";
+
+      case "거래불가":
+        return "danger";
+
+      case "거래종료":
+        return "secondary";
+    }
+  }
+
+  // 전화번호, 주소 변경
+  const handleChange = (e) => {
+    setUserInfo({
+      ...userInfo,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // 전화번호, 주소 수정
+  const handleSave = async () => {
+    if (!userInfo.phone.trim()) {
+      alert("전화번호를 입력해 주세요.");
+      return;
+    }
+
+    if (!userInfo.address.trim()) {
+      alert("주소를 입력해 주세요.");
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        "http://localhost:8080/api/user/update",
+        userInfo,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      alert("정보가 수정되었습니다.");
+    } catch (error) {
+      console.error("수정 실패:", error);
+      console.log(userInfo);
+      alert("서버오류");
+    }
+  };
+
   // 찜 목록 조회 + 페이징 포함
   const fetchWishList = async (pageNumber) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/wishlist/view/${user.email}?page=${pageNumber}&size=5`
+        `http://localhost:8080/api/wishlist/view/${userInfo.email}?page=${pageNumber}&size=5`
       );
       setWishProducts(response.data.content);
       setTotalPages(response.data.totalPages);
@@ -44,10 +98,10 @@ const MyMain = ({ user }) => {
     }
   };
   useEffect(() => {
-    if (user?.email) {
+    if (userInfo?.email) {
       fetchWishList(page);
     }
-  }, [user?.email, page]);
+  }, [userInfo?.email, page]);
 
   // 찜 목록 삭제
   const deleteConfirm = async (email, product_id) => {
@@ -115,22 +169,15 @@ const MyMain = ({ user }) => {
               <Col md={4}>
                 <div className="d-flex align-items-center">
                   <img
-                    src={user.imgUrl}
+                    src={userInfo.imgUrl}
                     className="avatar avatar-md-md rounded-circle"
                     alt=""
                   />
                   <div className="ms-3">
                     <h6 className="text-muted mb-0">반갑습니다,😊 </h6>
-                    <h5 className="mb-0">{user.username} 님</h5>
+                    <h5 className="mb-0">{userInfo.username} 님</h5>
                   </div>
                 </div>
-              </Col>
-              <Col md={8} className="mt-4 mt-sm-0 pt-2 pt-sm-0">
-                <p className="text-muted mb-0">
-                  Launch your campaign and benefit from our expertise on
-                  designing and managing conversion centered bootstrap v5 html
-                  page.
-                </p>
               </Col>
             </Row>
 
@@ -258,29 +305,16 @@ const MyMain = ({ user }) => {
                     className="fade bg-white show shadow rounded p-4"
                     tabId="1"
                   >
-                    <h6 className="text-muted">
-                      Hello <span className="text-dark">cally_joseph</span> (not{" "}
-                      <span className="text-dark">cally_joseph</span>?{" "}
-                      <Link to="#" className="text-danger">
-                        Log out
-                      </Link>
-                      )
+                    <h6 className="text-dark">
+                      {userInfo.username} 회원님의 등급은
+                      <span className="text-danger"> A</span>
+                      <span className="text-dark"> 등급 입니다.</span>
                     </h6>
 
-                    <h6 className="text-muted mb-0">
-                      From your account dashboard you can view your{" "}
-                      <Link to="#" className="text-danger">
-                        recent orders
-                      </Link>
-                      , manage your{" "}
-                      <Link to="#" className="text-danger">
-                        shipping and billing addresses
-                      </Link>
-                      , and{" "}
-                      <Link to="#" className="text-danger">
-                        edit your password and account details
-                      </Link>
-                      .
+                    <h6 className="text-dark mb-0">
+                      내 마일리지 :{" "}
+                      <span className="text-primary"> {userInfo.money}</span>
+                      <span className="text-dark"> 원</span>
                     </h6>
                   </TabPane>
 
@@ -292,127 +326,64 @@ const MyMain = ({ user }) => {
                       <Row>
                         <Col md={6}>
                           <div className="mb-3">
-                            <Label className="form-label">First Name</Label>
-                            <div className="form-icon position-relative">
-                              <User className="fea icon-sm icons" />
-                              <input
-                                name="name"
-                                id="first-name"
-                                type="text"
-                                className="form-control ps-5"
-                                defaultValue="Cally"
-                              />
-                            </div>
-                          </div>
-                        </Col>
-                        <Col md={6}>
-                          <div className="mb-3">
-                            <Label className="form-label">Last Name</Label>
-                            <div className="form-icon position-relative">
-                              <UserCheck className="fea icon-sm icons" />
-                              <input
-                                name="name"
-                                id="last-name"
-                                type="text"
-                                className="form-control ps-5"
-                                defaultValue="Joseph"
-                              />
-                            </div>
-                          </div>
-                        </Col>
-                        <Col md={6}>
-                          <div className="mb-3">
-                            <Label className="form-label">Your Email</Label>
+                            <Label className="form-label">이메일</Label>
                             <div className="form-icon position-relative">
                               <Mail className="fea icon-sm icons" />
                               <input
                                 name="email"
                                 id="email"
-                                type="email"
+                                type="text"
                                 className="form-control ps-5"
-                                defaultValue="callyjoseph@gmail.com"
+                                defaultValue={userInfo.email}
+                                readOnly
                               />
                             </div>
                           </div>
                         </Col>
                         <Col md={6}>
                           <div className="mb-3">
-                            <Label className="form-label">Display Name</Label>
+                            <Label className="form-label">전화번호</Label>
                             <div className="form-icon position-relative">
-                              <UserCheck className="fea icon-sm icons" />
+                              <Phone className="fea icon-sm icons" />
                               <input
-                                name="name"
-                                id="display-name"
+                                name="phone"
+                                id="phone"
                                 type="text"
                                 className="form-control ps-5"
-                                defaultValue="cally_joseph"
+                                value={userInfo.phone}
+                                onChange={handleChange}
+                              />
+                            </div>
+                          </div>
+                        </Col>
+                        <Col md={12}>
+                          <div className="mb-3">
+                            <Label className="form-label">주소</Label>
+                            <div className="form-icon position-relative">
+                              <MapPin className="fea icon-sm icons" />
+                              <input
+                                name="address"
+                                id="address"
+                                type="text"
+                                className="form-control ps-5"
+                                value={userInfo.address}
+                                onChange={handleChange}
                               />
                             </div>
                           </div>
                         </Col>
 
                         <div className="col-lg-12 mt-2 mb-0">
-                          <button className="btn btn-primary">
-                            Save Changes
+                          <button
+                            type="button"
+                            className="btn btn-primary"
+                            onClick={handleSave}
+                          >
+                            변경사항 수정하기
                           </button>
                         </div>
                       </Row>
                     </Form>
-
-                    <h5 className="mt-4">Change password :</h5>
-                    <form>
-                      <div className="row mt-3">
-                        <div className="col-lg-12">
-                          <div className="mb-3">
-                            <Label className="form-label">Old password :</Label>
-                            <div className="form-icon position-relative">
-                              <Key className="fea icon-sm icons" />
-                              <input
-                                type="password"
-                                className="form-control ps-5"
-                                placeholder="Old password"
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="col-lg-12">
-                          <div className="mb-3">
-                            <Label className="form-label">New password :</Label>
-                            <div className="form-icon position-relative">
-                              <Key className="fea icon-sm icons" />
-                              <input
-                                type="password"
-                                className="form-control ps-5"
-                                placeholder="New password"
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="col-lg-12">
-                          <div className="mb-3">
-                            <Label className="form-label">
-                              Re-type New password :
-                            </Label>
-                            <div className="form-icon position-relative">
-                              <Key className="fea icon-sm icons" />
-                              <input
-                                type="password"
-                                className="form-control ps-5"
-                                placeholder="Re-type New password"
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="col-lg-12 mt-2 mb-0">
-                          <button className="btn btn-primary">
-                            Save Password
-                          </button>
-                        </div>
-                      </div>
-                    </form>
                   </TabPane>
 
                   <TabPane
@@ -424,66 +395,21 @@ const MyMain = ({ user }) => {
                         <thead>
                           <tr>
                             <th scope="col" className="border-bottom">
-                              Order no.
+                              리뷰 작성자
                             </th>
                             <th scope="col" className="border-bottom">
-                              Date
+                              리뷰 내용
                             </th>
                             <th scope="col" className="border-bottom">
-                              Status
-                            </th>
-                            <th scope="col" className="border-bottom">
-                              Total
-                            </th>
-                            <th scope="col" className="border-bottom">
-                              Action
+                              점수
                             </th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr>
                             <th scope="row">7107</th>
-                            <td>1st November 2020</td>
+                            <td>1st November 2020..</td>
                             <td className="text-success">Delivered</td>
-                            <td>
-                              $ 320{" "}
-                              <span className="text-muted">for 2items</span>
-                            </td>
-                            <td>
-                              <Link to="#" className="text-primary">
-                                View <i className="uil uil-arrow-right"></i>
-                              </Link>
-                            </td>
-                          </tr>
-
-                          <tr>
-                            <th scope="row">8007</th>
-                            <td>4th November 2020</td>
-                            <td className="text-muted">Processing</td>
-                            <td>
-                              $ 800{" "}
-                              <span className="text-muted">for 1item</span>
-                            </td>
-                            <td>
-                              <Link to="#" className="text-primary">
-                                View <i className="uil uil-arrow-right"></i>
-                              </Link>
-                            </td>
-                          </tr>
-
-                          <tr>
-                            <th scope="row">8008</th>
-                            <td>4th November 2020</td>
-                            <td className="text-danger">Canceled</td>
-                            <td>
-                              $ 800{" "}
-                              <span className="text-muted">for 1item</span>
-                            </td>
-                            <td>
-                              <Link to="#" className="text-primary">
-                                View <i className="uil uil-arrow-right"></i>
-                              </Link>
-                            </td>
                           </tr>
                         </tbody>
                       </Table>
@@ -521,7 +447,13 @@ const MyMain = ({ user }) => {
                                 {product.product_price.toLocaleString()}원
                               </td>
                               <td className="text-success">
-                                {product.product_status}
+                                <span
+                                  className={`badge bg-${getBadgeColor(
+                                    product.product_status
+                                  )}`}
+                                >
+                                  {product.product_status}
+                                </span>
                               </td>
                               <td>
                                 {" "}
@@ -539,7 +471,7 @@ const MyMain = ({ user }) => {
                                   className="dropdown-item"
                                   onClick={() =>
                                     deleteConfirm(
-                                      user.email,
+                                      userInfo.email,
                                       product.product_id
                                     )
                                   }

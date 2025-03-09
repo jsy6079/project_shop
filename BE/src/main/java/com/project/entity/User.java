@@ -28,5 +28,6 @@ public class User {
     private String user_phone;
     private String user_address;
     private Long user_money;
+    private Long user_reviewScore;
 
 }
