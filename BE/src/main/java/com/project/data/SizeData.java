@@ -1,28 +1,27 @@
-package com.project;
+package com.project.data;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import com.project.entity.Product;
 import com.project.entity.Size;
 import com.project.repository.ProductRepository;
 import com.project.repository.SizeRepository;
 
-@SpringBootTest
-public class sizeData {
+import lombok.RequiredArgsConstructor;
+
+@Component
+@Profile("dev")
+@RequiredArgsConstructor
+public class SizeData {
 	
-	@Autowired
-	private SizeRepository sr;
-	
-	@Autowired
-	private ProductRepository pr;
-	
-	@Test
-	public void insertSizeDate() {
-		
+	private final ProductRepository pr;
+	private final SizeRepository sr;
+
+	public void insertDate() {
+		if(sr.count() == 0) {
 		// 모든 상품 데이터 가져오기
 		List<Product> products = pr.findAll();
 		
@@ -48,11 +47,7 @@ public class sizeData {
 		System.out.println("카테고리별 사이즈 데이터 삽입 완료");
 
 		}
-		
 	
-		
-		}
-
-
-
+	}
+}
 

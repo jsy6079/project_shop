@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Container,
   Row,
@@ -15,23 +15,40 @@ import {
   Pagination,
   PaginationItem,
   PaginationLink,
-  Badge,
 } from "reactstrap";
 import { Mail, Phone, MapPin } from "react-feather";
 import classnames from "classnames";
 
-const MyMain = ({ user }) => {
+const AccountManagement = ({ user }) => {
   const [activeTab, setActiveTab] = useState("1");
-  const [wishProducts, setWishProducts] = useState([]);
-  const [page, setPage] = useState(0); // 현재 페이지
-  const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
+  const [wishProducts, setWishProducts] = useState([]); // 찜
+  const [viewProducts, setViewProducts] = useState([]); // 리뷰
   const [userInfo, setUserInfo] = useState(user); // userInfo로 유저 값 가져오기
+
+  const [wishPage, setWishPage] = useState(0); // 찜 목록 페이지
+  const [wishTotalPages, setWishTotalPages] = useState(1); // 찜 전체 페이지 수
+
+  const [reviewPage, setReviewPage] = useState(0); // 리뷰 목록 페이지
+  const [reviewTotalPages, setReviewTotalPages] = useState(1); // 리뷰 전체 페이지 수
 
   const toggleTab = (tab) => {
     if (activeTab !== tab) {
       setActiveTab(tab);
     }
   };
+
+  // 점수에 따른 거래 등급 부여
+  function reviewGrade(score) {
+    if (score >= 0 && score <= 20) {
+      return "실버";
+    } else if (score >= 21 && score <= 40) {
+      return "골드";
+    } else if (score >= 41 && score <= 60) {
+      return "플래티넘";
+    } else if (score >= 61 && score <= 80) {
+      return "VIP";
+    }
+  }
 
   // 거래 상태 별 뱃지 스타일 적용
   function getBadgeColor(product_status) {
@@ -85,26 +102,65 @@ const MyMain = ({ user }) => {
     }
   };
 
-  // 찜 목록 조회 + 페이징 포함
+  // 찜 페이징
+
+  const wishPageGroupSize = 5;
+  const wishCurrentGroup = Math.floor(wishPage / wishPageGroupSize);
+  const wishStartPage = wishCurrentGroup * wishPageGroupSize;
+  const wishEndPage = Math.min(
+    wishStartPage + wishPageGroupSize,
+    wishTotalPages
+  );
+
+  // 리뷰 페이징징
+  const reviewPageGroupSize = 5;
+  const reviewCurrentGroup = Math.floor(reviewPage / reviewPageGroupSize);
+  const reviewStartPage = reviewCurrentGroup * reviewPageGroupSize;
+  const reviewEndPage = Math.min(
+    reviewStartPage + reviewPageGroupSize,
+    reviewTotalPages
+  );
+
+  // 찜 목록 조회
   const fetchWishList = async (pageNumber) => {
     try {
       const response = await axios.get(
         `http://localhost:8080/api/wishlist/view/${userInfo.email}?page=${pageNumber}&size=5`
       );
       setWishProducts(response.data.content);
-      setTotalPages(response.data.totalPages);
+      setWishTotalPages(response.data.totalPages); // 찜의 totalPages 따로 관리
     } catch (error) {
       console.error("찜 목록을 가져오는 중 오류 발생:", error);
     }
   };
+
+  // 리뷰 목록 조회
+  const fetchReviewList = async (pageNumber) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/review/view/${userInfo.email}?page=${pageNumber}&size=5`
+      );
+      setViewProducts(response.data.content);
+      setReviewTotalPages(response.data.totalPages); // 리뷰의 totalPages 따로 관리
+    } catch (error) {
+      console.error("리뷰 목록을 가져오는 중 오류 발생:", error);
+    }
+  };
+
   useEffect(() => {
     if (userInfo?.email) {
-      fetchWishList(page);
+      fetchWishList(wishPage); // 찜 목록 페이지 변화 감지
     }
-  }, [userInfo?.email, page]);
+  }, [userInfo?.email, wishPage]);
+
+  useEffect(() => {
+    if (userInfo?.email) {
+      fetchReviewList(reviewPage); // 리뷰 목록 페이지 변화 감지
+    }
+  }, [userInfo?.email, reviewPage]);
 
   // 찜 목록 삭제
-  const deleteConfirm = async (email, product_id) => {
+  const deleteWish = async (email, product_id) => {
     const isCofirm = window.confirm("해당 찜 상품을 삭제하시겠습니까?");
 
     if (isCofirm) {
@@ -123,7 +179,7 @@ const MyMain = ({ user }) => {
             prevWishProducts.filter((item) => item.product_id !== product_id)
           );
 
-          fetchWishList(page);
+          fetchWishList(wishPage);
         } else {
           alert("찜 목록 삭제 실패");
         }
@@ -306,13 +362,17 @@ const MyMain = ({ user }) => {
                     tabId="1"
                   >
                     <h6 className="text-dark">
-                      {userInfo.username} 회원님의 등급은
-                      <span className="text-danger"> A</span>
+                      {userInfo.username} 회원님의 등급은{" "}
+                      <span className="text-info">
+                        {reviewGrade(userInfo.score)}
+                      </span>
                       <span className="text-dark"> 등급 입니다.</span>
+                      <p className="text-secondary">
+                        리뷰 점수 : {userInfo.score}점
+                      </p>
                     </h6>
-
                     <h6 className="text-dark mb-0">
-                      내 마일리지 :{" "}
+                      내 마일리지 :
                       <span className="text-primary"> {userInfo.money}</span>
                       <span className="text-dark"> 원</span>
                     </h6>
@@ -405,14 +465,76 @@ const MyMain = ({ user }) => {
                             </th>
                           </tr>
                         </thead>
-                        <tbody>
-                          <tr>
-                            <th scope="row">7107</th>
-                            <td>1st November 2020..</td>
-                            <td className="text-success">Delivered</td>
-                          </tr>
-                        </tbody>
+                        {viewProducts.map((review, key) => (
+                          <tbody>
+                            <tr>
+                              <th scope="row">{review.buyer_name}</th>
+                              <td>{review.review_text}</td>
+                              <td className="text-success">
+                                {review.review_score}
+                              </td>
+                              <button className="dropdown-item">
+                                <i className="uil uil-multiply align-middle me-1"></i>
+                              </button>
+                            </tr>
+                          </tbody>
+                        ))}
                       </Table>
+                      <div className="text-center mt-3">
+                        <Pagination className="d-inline-flex justify-content-center">
+                          <PaginationItem disabled={reviewCurrentGroup === 0}>
+                            <PaginationLink
+                              href="#"
+                              previous
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setReviewPage(
+                                  (reviewCurrentGroup - 1) * reviewPageGroupSize
+                                );
+                              }}
+                            >
+                              이전
+                            </PaginationLink>
+                          </PaginationItem>
+
+                          {[...Array(reviewEndPage - reviewStartPage)].map(
+                            (_, index) => (
+                              <PaginationItem
+                                key={reviewStartPage + index}
+                                active={reviewStartPage + index === reviewPage}
+                              >
+                                <PaginationLink
+                                  href="#"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setReviewPage(reviewStartPage + index);
+                                  }}
+                                >
+                                  {reviewStartPage + index + 1}
+                                </PaginationLink>
+                              </PaginationItem>
+                            )
+                          )}
+
+                          <PaginationItem
+                            disabled={reviewEndPage >= reviewTotalPages}
+                          >
+                            <PaginationLink
+                              href="#"
+                              next
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setReviewPage(
+                                  reviewCurrentGroup * reviewPageGroupSize +
+                                    reviewPageGroupSize
+                                );
+                              }}
+                            >
+                              다음
+                            </PaginationLink>
+                          </PaginationItem>
+                        </Pagination>
+                      </div>
                     </div>
                   </TabPane>
                   {/* 찜 목록 찜 목록 찜 목록 찜 목록 찜 목록 찜 목록 찜 목록 찜 목록 찜 목록 찜 목록 찜 목록 찜 목록 찜 목록 찜 목록 찜 목록 찜 목록   */}
@@ -470,7 +592,7 @@ const MyMain = ({ user }) => {
                                 <button
                                   className="dropdown-item"
                                   onClick={() =>
-                                    deleteConfirm(
+                                    deleteWish(
                                       userInfo.email,
                                       product.product_id
                                     )
@@ -485,41 +607,53 @@ const MyMain = ({ user }) => {
                       </Table>
                     </div>
                     <div className="text-center mt-3">
-                      <Pagination className="d-inline-flex">
-                        <PaginationItem disabled={page === 0}>
+                      <Pagination className="d-inline-flex justify-content-center">
+                        <PaginationItem disabled={wishCurrentGroup === 0}>
                           <PaginationLink
                             href="#"
                             previous
                             onClick={(e) => {
                               e.preventDefault();
-                              setPage(page - 1);
+                              setWishPage(
+                                (wishCurrentGroup - 1) * wishPageGroupSize
+                              );
                             }}
                           >
                             이전
                           </PaginationLink>
                         </PaginationItem>
 
-                        {[...Array(totalPages)].map((_, index) => (
-                          <PaginationItem key={index} active={index === page}>
-                            <PaginationLink
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setPage(index);
-                              }}
+                        {[...Array(wishEndPage - wishStartPage)].map(
+                          (_, index) => (
+                            <PaginationItem
+                              key={wishStartPage + index}
+                              active={wishStartPage + index === wishPage}
                             >
-                              {index + 1}
-                            </PaginationLink>
-                          </PaginationItem>
-                        ))}
+                              <PaginationLink
+                                href="#"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setWishPage(wishStartPage + index);
+                                }}
+                              >
+                                {wishStartPage + index + 1}
+                              </PaginationLink>
+                            </PaginationItem>
+                          )
+                        )}
 
-                        <PaginationItem disabled={page + 1 === totalPages}>
+                        <PaginationItem
+                          disabled={wishEndPage >= wishTotalPages}
+                        >
                           <PaginationLink
                             href="#"
                             next
                             onClick={(e) => {
                               e.preventDefault();
-                              setPage(page + 1);
+                              setWishPage(
+                                wishCurrentGroup * wishPageGroupSize +
+                                  wishPageGroupSize
+                              );
                             }}
                           >
                             다음
@@ -800,4 +934,4 @@ const MyMain = ({ user }) => {
   );
 };
 
-export default MyMain;
+export default AccountManagement;

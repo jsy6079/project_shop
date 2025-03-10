@@ -23,7 +23,7 @@ public class Review {
 	
 	private String review_text;
 	
-	private String review_score;
+	private Long review_score;
 	
     // 리뷰 작성자 (FK)
     @ManyToOne

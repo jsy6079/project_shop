@@ -1,20 +1,22 @@
-package com.project;
+package com.project.data;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import com.project.entity.Category;
 import com.project.repository.CategoryRepository;
 
-@SpringBootTest
+import lombok.RequiredArgsConstructor;
+
+@Component
+@Profile("dev")
+@RequiredArgsConstructor
 public class CategoryData {
 	
-	@Autowired
-	private CategoryRepository cr;
-	
-	@Test
-	public void insertCategoryData() {
+	private final CategoryRepository cr;
+
+	public void insertDate() {
+		if (cr.count() == 0) {
 		String[] cn = {"의류","신발","가방","액세서리","패션잡화","라이프스타일"};
 		
 		for(String name : cn) {
@@ -24,6 +26,9 @@ public class CategoryData {
 		}
 		
 		System.out.println("카테고리 데이터 삽입 성공");
+		
+		}
+		
 	}
 
 }

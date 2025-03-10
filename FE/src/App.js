@@ -8,7 +8,7 @@ import "./assets/css/materialdesignicons.min.css";
 import "./Apps.scss";
 import CategoryList from "./mainSection/CategoryList";
 import ProductDetail from "./mainSection/ProductDetail";
-import MyMain from "./myPage/MyMain";
+import Mypage from "./myPage/Mypage";
 import axios from "axios";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -54,7 +54,7 @@ function App() {
         />
         {/* 로그인 해야 접근 가능 */}
         <Route element={<ProtectedRoute user={user} />}>
-          <Route path="/user/myinfo" element={<MyMain user={user} />}></Route>/
+          <Route path="/user/myinfo" element={<Mypage user={user} />}></Route>/
         </Route>
         {/* */}
       </Routes>
