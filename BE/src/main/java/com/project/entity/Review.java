@@ -25,6 +25,8 @@ public class Review {
 	
 	private Long review_score;
 	
+	private boolean review_request_delete;
+	
     // 리뷰 작성자 (FK)
     @ManyToOne
     @JoinColumn(name = "buyer_id", nullable = false)

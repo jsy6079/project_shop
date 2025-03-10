@@ -2,6 +2,7 @@ package com.project.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.project.dto.ProductDTO;
@@ -35,6 +36,13 @@ public class ReviewServiceImpe implements ReviewService {
 
 		 return reviewPage.map(review -> ReviewDTO.fromEntity(review));
 
+	}
+
+
+	// 관리자에게 리뷰 삭제 요청 : 요청 값 변경 (false -> true)
+	@Override
+	public void reviewRequestDelete(Long review_id) {
+		rr.updateReviewRquestDelete(review_id);
 	}
 	
 

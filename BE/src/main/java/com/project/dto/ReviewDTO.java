@@ -24,6 +24,9 @@ public class ReviewDTO {
 	private String buyer_name;
 	private String seller_name;
 	private Long product_id;
+	private boolean review_request_delete;
+	
+
 	
 	
 	// 엔티티를 DTO로 변환하는 메서드
@@ -37,7 +40,9 @@ public class ReviewDTO {
 //	        review.getSeller().getUser_id(),
 	        review.getBuyer().getUser_name(),
 	        review.getSeller().getUser_name(),
-	        review.getProduct().getProduct_id()
+	        review.getProduct().getProduct_id(),
+	        review.isReview_request_delete()
+	        
 	    );
 	}
 

@@ -47,6 +47,6 @@ public class Product {
 	private LocalDateTime product_time;
 	
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
-    private Size size;  // 단일 Size 관계로 변경
+    private Size size;  
 
 }

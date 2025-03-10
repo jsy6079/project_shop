@@ -180,16 +180,6 @@ function NavBar({ type, user }) {
           </div>
           {user ? (
             <ul className="buy-button list-inline mb-0">
-              {/* <li className="list-inline-item mb-0 pe-1">
-                <Link
-                  to="#"
-                  className="btn btn-icon btn-pills btn-primary"
-                  color="primary"
-                  onClick={toggleWishlistModal}
-                >
-                  <Heart className="icons" />
-                </Link>
-              </li> */}
               <li className="list-inline-item mb-0">
                 <Dropdown
                   color="primary"

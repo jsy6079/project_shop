@@ -11,9 +11,12 @@ import ProductDetail from "./mainSection/ProductDetail";
 import Mypage from "./myPage/Mypage";
 import axios from "axios";
 import ProtectedRoute from "./ProtectedRoute";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 function App() {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchUserInfo = () => {
     axios
@@ -27,6 +30,9 @@ function App() {
       .catch((error) => {
         console.error("유저 정보를 가져오는 데 실패했습니다:", error);
         setUser(null);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -37,6 +43,10 @@ function App() {
 
     return () => clearInterval(interval);
   }, []);
+
+  if (loading) {
+    return <Skeleton width={200} height={20} />;
+  }
 
   return (
     <Router>

@@ -15,6 +15,9 @@ import com.project.dto.ReviewDTO;
 import com.project.service.ReviewService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("/api/review")
@@ -31,6 +34,15 @@ public class ReviewController {
 
 		Page<ReviewDTO> response = rs.reviewList(email,pageable);
 		return ResponseEntity.ok(response);
+	}
+	
+	// 관리자에게 리뷰 삭제 요청 : 요청 값 변경 (false -> true)
+	@PutMapping("/request/{review_id}")
+	public ResponseEntity<String> putReviewRequestDelete(@PathVariable (name = "review_id") Long review_id) {
+		
+		rs.reviewRequestDelete(review_id);
+		
+		return ResponseEntity.ok("리뷰 삭제 요청이 정상적으로 접수되었습니다.");
 	}
 
 }

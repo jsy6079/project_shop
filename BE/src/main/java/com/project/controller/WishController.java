@@ -48,7 +48,9 @@ public class WishController {
 	// 찜 목록 삭제
 	@DeleteMapping("/delete/{email}/{product_id}")
 	public ResponseEntity<String> deleteWishProducts(@PathVariable (name = "email") String email, @PathVariable (name = "product_id") Long product_id){
-		return ws.deleteWish(email, product_id);
+		ws.deleteWish(email, product_id);
+		
+		return ResponseEntity.ok("해당 찜이 삭제되었습니다.");
 	}
 
 }

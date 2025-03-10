@@ -15,7 +15,7 @@ public interface WishService {
 	Page<ProductDTO> wishProducts(String email,Pageable pageable);
 
 	// 찜 목록 삭제
-	ResponseEntity<String> deleteWish(String email, Long product_id);
+	void deleteWish(String email, Long product_id);
 	
 
 	

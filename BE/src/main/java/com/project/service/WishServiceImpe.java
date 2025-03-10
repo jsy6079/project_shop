@@ -78,7 +78,7 @@ public class WishServiceImpe implements WishService {
 
 	// 찜 목록 삭제
 	@Override
-	public ResponseEntity<String> deleteWish(String email, Long product_id) {
+	public void deleteWish(String email, Long product_id) {
 		
 		// email로 User 찾기
 		User user = ur.findByUserEmail(email)
@@ -88,7 +88,6 @@ public class WishServiceImpe implements WishService {
 		
 		 wr.deleteWish(user.getUser_id(), product_id);
 		
-		return ResponseEntity.ok("삭제되었습니다.");
 	}
 
 	
