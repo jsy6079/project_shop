@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import com.project.entity.Review;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,12 +20,18 @@ public class ReviewDTO {
 	private Long review_id;
 	private LocalDateTime review_time;
 	private Long review_score;
+	
+	@Size(max = 100)
+	@NotBlank(message = "리뷰 내용 입력해주세요.")
 	private String review_text;
-//	private Long buyer_id;
-//	private Long seller_id;
+	
 	private String buyer_name;
+	private String buyer_email;
+	private String buyer_name_img;
 	private String seller_name;
+	private String seller_email;
 	private Long product_id;
+	private String product_name;
 	private boolean review_request_delete;
 	
 
@@ -36,11 +44,13 @@ public class ReviewDTO {
 	        review.getReviewTime(),
 	        review.getReview_score(),
 	        review.getReview_text(),
-//	        review.getBuyer().getUser_id(),
-//	        review.getSeller().getUser_id(),
 	        review.getBuyer().getUser_name(),
+	        review.getBuyer().getUserEmail(),
+	        review.getBuyer().getProfileImg(),
 	        review.getSeller().getUser_name(),
+	        review.getSeller().getUserEmail(),
 	        review.getProduct().getProduct_id(),
+	        review.getProduct().getProduct_name(),
 	        review.isReview_request_delete()
 	        
 	    );

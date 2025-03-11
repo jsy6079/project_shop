@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.project.entity.Product;
 import com.project.entity.Review;
 import com.project.entity.User;
 
@@ -21,6 +22,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 	@Modifying
 	@Transactional
 	@Query(value = "UPDATE Review r SET r.review_request_delete = true WHERE r.review_id = :review_id", nativeQuery = true)
-	void updateReviewRquestDelete(@Param("review_id") Long review_id); 
+	void updateReviewRquestDelete(@Param("review_id") Long review_id);
+
+	// 이미 해당 제품에 리뷰를 했는가
+	boolean existsByBuyerAndProduct(User buyer, Product product); 
 
 }

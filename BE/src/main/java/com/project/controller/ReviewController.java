@@ -7,13 +7,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.dto.ReviewDTO;
+import com.project.dto.WishDTO;
 import com.project.service.ReviewService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,6 +46,15 @@ public class ReviewController {
 		rs.reviewRequestDelete(review_id);
 		
 		return ResponseEntity.ok("리뷰 삭제 요청이 정상적으로 접수되었습니다.");
+	}
+	
+	
+	// 리뷰 등록
+	@PostMapping("/regist")
+	public ResponseEntity<String> registReviewProducts(@Valid @RequestBody ReviewDTO reviewDTO){
+		String response = rs.registReview(reviewDTO);
+		
+		return ResponseEntity.ok(response); 
 	}
 
 }

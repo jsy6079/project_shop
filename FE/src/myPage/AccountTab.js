@@ -129,7 +129,7 @@ const AccountTab = ({ userInfo, setUserInfo, reviewGrade }) => {
 
   return (
     <>
-      <TabPane className="fade bg-white show shadow rounded p-4">
+      <TabPane className="fade bg-white show p-4" tabId="1">
         <h6 className="text-dark">
           {userInfo.username} 회원님의 등급은{" "}
           <span className="text-info">{reviewGrade(userInfo.score)}</span>
@@ -142,7 +142,7 @@ const AccountTab = ({ userInfo, setUserInfo, reviewGrade }) => {
         </h6>
       </TabPane>
 
-      <TabPane className="show fade bg-white shadow rounded p-4" tabId="1">
+      <TabPane className="show fade bg-white  p-4" tabId="1">
         <Form>
           <Row>
             <Col md={6}>
@@ -173,6 +173,7 @@ const AccountTab = ({ userInfo, setUserInfo, reviewGrade }) => {
                     className="form-control ps-5"
                     value={userInfo.phone}
                     onChange={handleChange}
+                    maxLength={13}
                   />
                 </div>
               </div>
@@ -189,6 +190,7 @@ const AccountTab = ({ userInfo, setUserInfo, reviewGrade }) => {
                     className="form-control ps-5"
                     value={userInfo.address}
                     onChange={handleChange}
+                    maxLength={100}
                   />
                 </div>
               </div>
@@ -207,7 +209,7 @@ const AccountTab = ({ userInfo, setUserInfo, reviewGrade }) => {
         </Form>
       </TabPane>
 
-      <TabPane className="show fade bg-white shadow rounded p-4" tabId="1">
+      <TabPane className="show fade bg-white  p-4" tabId="1">
         <div className="table-responsive bg-white shadow rounded">
           <Table className="mb-0 table-center table-nowrap">
             <thead>
@@ -239,6 +241,13 @@ const AccountTab = ({ userInfo, setUserInfo, reviewGrade }) => {
                       .map((_, i) => (
                         <li key={i} className="list-inline-item">
                           <i className="mdi mdi-star"></i>
+                        </li>
+                      ))}
+                    {Array(5 - review.review_score)
+                      .fill()
+                      .map((_, i) => (
+                        <li key={`empty-${i}`} className="list-inline-item">
+                          <i className="mdi mdi-star-outline"></i>{" "}
                         </li>
                       ))}
                   </td>

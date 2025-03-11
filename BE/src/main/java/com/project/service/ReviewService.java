@@ -14,5 +14,8 @@ public interface ReviewService {
 	// 관리자에게 리뷰 삭제 요청 : 요청 값 변경 (false -> true)
 	void reviewRequestDelete(Long review_id);
 
+	// 리뷰 등록
+	String registReview(ReviewDTO reviewDTO);
+
 	
 }

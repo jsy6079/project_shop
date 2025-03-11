@@ -96,7 +96,7 @@ const WishListTab = ({ userInfo }) => {
   };
 
   return (
-    <TabPane className="show fade bg-white shadow rounded p-4" tabId="2">
+    <TabPane className="show fade bg-white p-4" tabId="2">
       <div className="table-responsive bg-white shadow rounded">
         <Table className="mb-0 table-center table-nowrap">
           <thead>

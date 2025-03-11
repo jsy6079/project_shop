@@ -28,6 +28,7 @@ public class ProductDTO {
     private int product_like_Count;
     private String user_name;
     private String size_value;
+    private String user_email;
 
     // 엔티티를 DTO로 변환하는 메서드
     public static ProductDTO fromEntity(Product product) {
@@ -44,7 +45,8 @@ public class ProductDTO {
             product.getUser() != null ? product.getUser().getUser_id() : null,
             product.getProduct_like_Count(),
             product.getUser().getUser_name(),
-            product.getSize() != null ? product.getSize().getSize_value() : null
+            product.getSize() != null ? product.getSize().getSize_value() : null,
+            product.getUser().getUserEmail()
         );
     }
 }

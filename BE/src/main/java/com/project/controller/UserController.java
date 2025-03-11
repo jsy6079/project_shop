@@ -10,6 +10,7 @@ import com.project.dto.UserDTO;
 import com.project.entity.User;
 import com.project.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -21,7 +22,7 @@ public class UserController {
 	
 	// 유저 정보 수정 (전화번호, 주소)
 	@PutMapping("/update")
-	public ResponseEntity<String> getUserInfoUpdate(@RequestBody UserDTO userinfo){
+	public ResponseEntity<String> getUserInfoUpdate(@Valid @RequestBody UserDTO userinfo){
 		us.getUserInfo(userinfo);
 		
 		return ResponseEntity.ok("수정 성공");

@@ -12,22 +12,15 @@ import {
   CardBody,
   Badge,
   Alert,
+  Pagination,
+  PaginationItem,
+  PaginationLink,
 } from "reactstrap";
 import { Link, useParams } from "react-router-dom";
 import Slider from "react-slick";
-import {
-  Heart,
-  Eye,
-  ShoppingCart,
-  MessageCircle,
-  User,
-  Mail,
-} from "react-feather";
+import { Heart, MessageCircle } from "react-feather";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-
-import client1 from "../assets/images/client/01.jpg";
-import client2 from "../assets/images/client/02.jpg";
 
 import product3 from "../assets/images/shop/product/s3.jpg";
 import product8 from "../assets/images/shop/product/s8.jpg";
@@ -38,6 +31,11 @@ const ProductDetail = ({ user }) => {
   const [products, setProducts] = useState([]);
   const [products2, setProducts2] = useState([]);
   const [activeTab, setActiveTab] = useState("1");
+  const [viewProducts, setViewProducts] = useState([]); // 리뷰
+  const [reviewPage, setReviewPage] = useState(0); // 리뷰 목록 페이지
+  const [reviewTotalPages, setReviewTotalPages] = useState(1); // 리뷰 전체 페이지 수
+  const [reviewContent, setReviewContent] = useState(""); // 리뷰 내용 저장
+  const [reviewScore, setReviewScore] = useState(5); // 리뷰 점수 저장
 
   // 카테고리 별 데이터 API
   useEffect(() => {
@@ -53,19 +51,43 @@ const ProductDetail = ({ user }) => {
     }
   }, [categoryId]);
 
-  // 상세보기 API
+  // 상세보기 API + 리뷰 email 값 호출
   useEffect(() => {
     if (productId) {
       axios
         .get(`http://localhost:8080/api/product/detail/${productId}`)
         .then((response) => {
           setProducts2(response.data);
+          const productData = response.data[0]; // 배열에서 첫번째 상품
+          fetchReviewList(productData.user_email, 0); // 리뷰 목록 호출
         })
         .catch((error) => {
           console.error("API 호출 중 에러 발생:", error);
         });
     }
   }, [productId]);
+
+  // 리뷰 페이징
+  const reviewPageGroupSize = 5;
+  const reviewCurrentGroup = Math.floor(reviewPage / reviewPageGroupSize);
+  const reviewStartPage = reviewCurrentGroup * reviewPageGroupSize;
+  const reviewEndPage = Math.min(
+    reviewStartPage + reviewPageGroupSize,
+    reviewTotalPages
+  );
+
+  // 리뷰 목록 조회 (상세페이지에서는 product 테이블의 user_email 값)
+  const fetchReviewList = async (user_email, pageNumber) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/review/view/${user_email}?page=${pageNumber}&size=5`
+      );
+      setViewProducts(response.data.content);
+      setReviewTotalPages(response.data.totalPages);
+    } catch (error) {
+      console.error("리뷰 목록을 가져오는 중 오류 발생:", error);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {};
@@ -120,6 +142,59 @@ const ProductDetail = ({ user }) => {
         alert("서버 오류");
       }
     }
+  };
+
+  // 리뷰 등록
+  const reviewConfirm = async (
+    email,
+    product_id,
+    seller_email,
+    reviewContent,
+    reviewScore
+  ) => {
+    try {
+      // DTO 에 맞춰 꼭 명칭 변경해주기!
+      const response = await axios.post(
+        "http://localhost:8080/api/review/regist",
+        {
+          buyer_email: email,
+          product_id: product_id,
+          seller_email: seller_email,
+          review_text: reviewContent,
+          review_score: reviewScore,
+        }
+      );
+
+      if (response.status === 200) {
+        alert(response.data);
+        setReviewContent(""); // 입력 초기화
+        setReviewScore(5); // 별점 초기화
+        setReviewPage(0); // 첫 페이지로 이동
+        fetchReviewList(products2[0].user_email, 0); // ⭐ 리뷰 새로고침
+      } else {
+        alert("리뷰 작성 실패");
+      }
+    } catch (error) {
+      console.log("리뷰 작성 실패", error);
+      alert("서버 오류");
+    }
+  };
+
+  useEffect(() => {
+    if (products2.length > 0 && products2[0]?.user_email) {
+      fetchReviewList(products2[0].user_email, reviewPage);
+    }
+  }, [reviewPage, products2]);
+
+  // 시간 데이터 조정
+  const formatDate = (dateTimeStr) => {
+    const date = new Date(dateTimeStr);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${year}.${month}.${day} ${hours}:${minutes}`;
   };
 
   return (
@@ -243,251 +318,193 @@ const ProductDetail = ({ user }) => {
                 <TabPane className="card border-0 fade show" tabId="1">
                   <Row>
                     <Col lg={6}>
-                      <ul className="media-list list-unstyled mb-0">
-                        <li>
-                          <div className="d-flex justify-content-between">
-                            <div className="d-flex align-items-center">
-                              <Link className="pe-3" to="#">
-                                <img
-                                  src={client1}
-                                  className="img-fluid avatar avatar-md-sm rounded-circle shadow"
-                                  alt="img"
-                                />
-                              </Link>
-                              <div className="flex-1 commentor-detail">
-                                <h6 className="mb-0">
-                                  <Link
-                                    to="#"
-                                    className="text-dark media-heading"
-                                  >
-                                    Lorenzo Peterson
-                                  </Link>
-                                </h6>
-                                <small className="text-muted">
-                                  15th August, 2019 at 01:25 pm
-                                </small>
-                              </div>
-                            </div>
-                            <ul className="list-unstyled mb-0">
-                              <li className="list-inline-item">
-                                <i className="mdi mdi-star text-warning"></i>
-                              </li>{" "}
-                              <li className="list-inline-item">
-                                <i className="mdi mdi-star text-warning"></i>
-                              </li>{" "}
-                              <li className="list-inline-item">
-                                <i className="mdi mdi-star text-warning"></i>
-                              </li>{" "}
-                              <li className="list-inline-item">
-                                <i className="mdi mdi-star text-warning"></i>
-                              </li>{" "}
-                              <li className="list-inline-item">
-                                <i className="mdi mdi-star text-warning"></i>
-                              </li>
-                            </ul>
-                          </div>
-                          <div className="mt-3">
-                            <p className="text-muted fst-italic p-3 bg-light rounded">
-                              " Awesome product "
-                            </p>
-                          </div>
-                        </li>
+                      {/*  리뷰 리뷰 등록등록록 리뷰 리뷰 등록등록록 리뷰 리뷰 등록등록록*/}
+                      {viewProducts.map((review, key) => (
+                        <ul className="media-list list-unstyled mb-0" key={key}>
+                          <li>
+                            <div className="d-flex justify-content-between">
+                              <div className="d-flex align-items-center">
+                                <div className="pe-3" to="#">
+                                  <img
+                                    src={review.buyer_name_img}
+                                    className="img-fluid avatar avatar-md-sm rounded-circle shadow"
+                                    alt="img"
+                                  />
+                                </div>
 
-                        <li className="mt-4">
-                          <div className="d-flex justify-content-between">
-                            <div className="d-flex align-items-center">
-                              <Link className="pe-3" to="#">
-                                <img
-                                  src={client2}
-                                  className="img-fluid avatar avatar-md-sm rounded-circle shadow"
-                                  alt="img"
-                                />
-                              </Link>
-                              <div className="flex-1 commentor-detail">
-                                <h6 className="mb-0">
-                                  <Link
-                                    to="#"
-                                    className="media-heading text-dark"
-                                  >
-                                    Tammy Camacho
-                                  </Link>
-                                </h6>
-                                <small className="text-muted">
-                                  15th August, 2019 at 05:44 pm
-                                </small>
+                                <div className="flex-1 commentor-detail">
+                                  <h6 className="mb-0">
+                                    <div className="text-dark media-heading">
+                                      {review.buyer_name}
+                                      <span className="text-secondary media-heading">
+                                        {" "}
+                                        ({review.product_name})
+                                      </span>
+                                    </div>
+                                  </h6>
+                                  <small className="text-muted">
+                                    {formatDate(review.review_time)}
+                                  </small>
+                                </div>
                               </div>
+                              <ul className="list-unstyled mb-0">
+                                {Array(review.review_score)
+                                  .fill()
+                                  .map((_, i) => (
+                                    <li key={i} className="list-inline-item">
+                                      <i className="mdi mdi-star text-warning"></i>
+                                    </li>
+                                  ))}
+                                {Array(5 - review.review_score)
+                                  .fill()
+                                  .map((_, i) => (
+                                    <li
+                                      key={`empty-${i}`}
+                                      className="list-inline-item"
+                                    >
+                                      <i className="mdi mdi-star-outline text-warning"></i>{" "}
+                                    </li>
+                                  ))}
+                              </ul>
                             </div>
-                            <ul className="list-unstyled mb-0">
-                              <li className="list-inline-item">
-                                <i className="mdi mdi-star text-warning"></i>
-                              </li>{" "}
-                              <li className="list-inline-item">
-                                <i className="mdi mdi-star text-warning"></i>
-                              </li>{" "}
-                              <li className="list-inline-item">
-                                <i className="mdi mdi-star text-warning"></i>
-                              </li>{" "}
-                              <li className="list-inline-item">
-                                <i className="mdi mdi-star text-warning"></i>
-                              </li>{" "}
-                              <li className="list-inline-item">
-                                <i className="mdi mdi-star-outline text-warning"></i>
-                              </li>
-                            </ul>
-                          </div>
-                          <div className="mt-3">
-                            <p className="text-muted fst-italic p-3 bg-light rounded mb-0">
-                              " Good "
-                            </p>
-                          </div>
-                        </li>
-                      </ul>
+                            <div className="mt-3">
+                              <p className="text-muted fst-italic p-3 bg-light rounded">
+                                {review.review_text}
+                              </p>
+                            </div>
+                          </li>
+                        </ul>
+                      ))}
+                      {/*  리뷰 리뷰 등록등록록 리뷰 리뷰 등록등록록 리뷰 리뷰 등록등록록*/}
+                      <div className="text-center mt-3">
+                        <Pagination className="d-inline-flex justify-content-center">
+                          <PaginationItem disabled={reviewCurrentGroup === 0}>
+                            <PaginationLink
+                              href="#"
+                              previous
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setReviewPage(
+                                  (reviewCurrentGroup - 1) * reviewPageGroupSize
+                                );
+                              }}
+                            >
+                              이전
+                            </PaginationLink>
+                          </PaginationItem>
+
+                          {[...Array(reviewEndPage - reviewStartPage)].map(
+                            (_, index) => (
+                              <PaginationItem
+                                key={reviewStartPage + index}
+                                active={reviewStartPage + index === reviewPage}
+                              >
+                                <PaginationLink
+                                  href="#"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setReviewPage(reviewStartPage + index);
+                                  }}
+                                >
+                                  {reviewStartPage + index + 1}
+                                </PaginationLink>
+                              </PaginationItem>
+                            )
+                          )}
+
+                          <PaginationItem
+                            disabled={reviewEndPage >= reviewTotalPages}
+                          >
+                            <PaginationLink
+                              href="#"
+                              next
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setReviewPage(
+                                  reviewCurrentGroup * reviewPageGroupSize +
+                                    reviewPageGroupSize
+                                );
+                              }}
+                            >
+                              다음
+                            </PaginationLink>
+                          </PaginationItem>
+                        </Pagination>
+                      </div>
                     </Col>
 
                     <Col lg={6} className="mt-4 mt-lg-0 pt-2 pt-lg-0">
-                      <form className="ms-lg-4">
-                        <Row>
-                          <Col xs={12}>
-                            <h5>리뷰 작성</h5>
-                          </Col>
-                          <Col xs={12} className="mt-4">
-                            <h6 className="small fw-bold">별점</h6>
-                            <Link to="#" className="d-inline-block me-3">
-                              <ul className="list-unstyled mb-0 small">
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star-outline text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star-outline text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star-outline text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star-outline text-warning"></i>
-                                </li>
-                              </ul>
-                            </Link>
-
-                            <Link to="#" className="d-inline-block me-3">
-                              <ul className="list-unstyled mb-0 small">
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star-outline text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star-outline text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star-outline text-warning"></i>
-                                </li>
-                              </ul>
-                            </Link>
-
-                            <Link to="#" className="d-inline-block me-3">
-                              <ul className="list-unstyled mb-0 small">
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star-outline text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star-outline text-warning"></i>
-                                </li>
-                              </ul>
-                            </Link>
-
-                            <Link to="#" className="d-inline-block me-3">
-                              <ul className="list-unstyled mb-0 small">
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star-outline text-warning"></i>
-                                </li>
-                              </ul>
-                            </Link>
-
-                            <Link to="#" className="d-inline-block">
-                              <ul className="list-unstyled mb-0 small">
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star text-warning"></i>
-                                </li>{" "}
-                                <li className="list-inline-item">
-                                  <i className="mdi mdi-star text-warning"></i>
-                                </li>
-                              </ul>
-                            </Link>
-                          </Col>
-                          <Col md={12} className="mt-3">
-                            <div className="mb-3">
-                              <Label className="form-label">상세내용:</Label>
-                              <div className="form-icon position-relative">
-                                <MessageCircle className="fea icon-sm icons" />
-                                <textarea
-                                  id="message"
-                                  placeholder="비방,욕설이 담긴 글은 관리자에 의해 삭제될수있습니다."
-                                  rows="5"
-                                  name="message"
-                                  className="form-control ps-5"
-                                  required=""
-                                ></textarea>
-                              </div>
-                            </div>
-                          </Col>
-
-                          <Col md={12}>
-                            <div className="send d-grid">
-                              <button
-                                type="submit"
-                                className="btn btn-primary"
-                                onClick={() => {
-                                  if (!user) {
-                                    alert("로그인 후 이용 가능합니다.");
-                                  } else {
-                                    console.log("DB 연결 준비");
-                                  }
-                                }}
+                      {products2.map((product, key) => (
+                        <form className="ms-lg-4">
+                          <Row>
+                            <Col xs={12}>
+                              <h5>리뷰 작성</h5>
+                            </Col>
+                            <Col xs={12} className="mt-4">
+                              <h6 className="small fw-bold">별점</h6>
+                              <select
+                                className="form-select w-auto"
+                                value={reviewScore}
+                                onChange={(e) =>
+                                  setReviewScore(Number(e.target.value))
+                                } // 숫자로 변환
                               >
-                                작성하기
-                              </button>
-                            </div>
-                          </Col>
-                        </Row>
-                      </form>
+                                <option value={5}>5점 (★★★★★)</option>
+                                <option value={4}>4점 (★★★★☆)</option>
+                                <option value={3}>3점 (★★★☆☆)</option>
+                                <option value={2}>2점 (★★☆☆☆)</option>
+                                <option value={1}>1점 (★☆☆☆☆)</option>
+                              </select>
+                            </Col>
+                            <Col md={12} className="mt-3">
+                              <div className="mb-3">
+                                <Label className="form-label">상세내용:</Label>
+                                <div className="form-icon position-relative">
+                                  <MessageCircle className="fea icon-sm icons" />
+                                  <textarea
+                                    id="message"
+                                    placeholder="비방,욕설이 담긴 글은 관리자에 의해 삭제될수있습니다. (100자 이내)"
+                                    rows="5"
+                                    name="message"
+                                    className="form-control ps-5"
+                                    value={reviewContent}
+                                    maxLength={100}
+                                    onChange={(e) =>
+                                      setReviewContent(e.target.value)
+                                    }
+                                  ></textarea>
+                                </div>
+                              </div>
+                            </Col>
+
+                            <Col md={12}>
+                              <div className="send d-grid">
+                                <button
+                                  type="button"
+                                  className="btn btn-primary"
+                                  onClick={() => {
+                                    if (!user) {
+                                      alert("로그인 후 이용 가능합니다.");
+                                    } else {
+                                      {
+                                        reviewConfirm(
+                                          user.email,
+                                          product.product_id,
+                                          product.user_email,
+                                          reviewContent,
+                                          reviewScore
+                                        );
+                                      }
+                                    }
+                                  }}
+                                >
+                                  작성하기
+                                </button>
+                              </div>
+                            </Col>
+                          </Row>
+                        </form>
+                      ))}
                     </Col>
                   </Row>
                 </TabPane>
