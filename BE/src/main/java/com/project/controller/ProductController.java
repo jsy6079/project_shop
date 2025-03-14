@@ -64,5 +64,8 @@ public class ProductController {
 		 return ResponseEntity.ok(products);
 	 }
 	 
+	 // 판매 물품 등록
+	 
+	 
 	
 }

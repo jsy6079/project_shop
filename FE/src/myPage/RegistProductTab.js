@@ -18,6 +18,12 @@ const RegistProductTab = ({ userInfo }) => {
   const maxImages = 3; // 최대 업로드 수 제한
   const [selectedCategory, setSelectedCategory] = useState(""); // 선택된 카테고리
   const [sizeOption, setSizeOption] = useState([]); // 해당 카테고리의 사이즈
+  const [productName, setProductName] = useState(""); // 폼 처리 (상품명)
+  const [productPrice, setProductPrice] = useState(""); // 폼 처리 (상품 금액)
+  const [productCategory, setProductCategory] = useState(""); // 폼 처리 (상품 카테고리)
+  const [productSize, setProductSize] = useState(""); // 폼 처리 (상품 사이즈)
+  const [productDescription, setProductDescription] = useState(""); // 폼 처리 (상세설명)
+  const [productImage, setProductImage] = useState([]); // 폼 처리 (상품 사진진)
 
   // 파일 선택 처리 ~~
   const handleFileChange = (e) => {
@@ -28,6 +34,15 @@ const RegistProductTab = ({ userInfo }) => {
       alert(`최대 ${maxImages}장까지만 업로드 가능합니다.`);
       return;
     }
+    setProductImage((prev) => [...prev, ...files]); // 실제 파일 추가
+
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviews((prev) => [...prev, reader.result]); // 미리보기
+      };
+      reader.readAsDataURL(file);
+    });
 
     files.forEach((file) => {
       const reader = new FileReader();
@@ -45,8 +60,10 @@ const RegistProductTab = ({ userInfo }) => {
 
   // 이미지 삭제 처리
   const handleDeleteImage = (index) => {
-    const updatedImages = imagePreviews.filter((_, i) => i !== index);
-    setImagePreviews(updatedImages);
+    const updatedPreviews = imagePreviews.filter((_, i) => i !== index);
+    const updatedFiles = productImage.filter((_, i) => i !== index);
+    setImagePreviews(updatedPreviews);
+    setProductImage(updatedFiles);
   };
 
   // ~~ 파일 선택 처리
@@ -64,43 +81,65 @@ const RegistProductTab = ({ userInfo }) => {
 
   const handleCategoryList = (e) => {
     const selected = e.target.value;
-    setSelectedCategory(selected);
-    setSizeOption(sizeList[selected] || []); // 없을 때 빈 배열
+    setSelectedCategory(selected); // 선택한 카테고리 저장
+    setSizeOption(sizeList[selected] || []); // 사이즈 옵션 업데이트
   };
 
   // ~~ 카테고리 선택 시 사이즈
 
   // 판매 등록하기 ~~
-  const reviewConfirm = async (
-    email,
-    product_id,
-    seller_email,
-    reviewContent,
-    reviewScore
-  ) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("productName", productName); // 상품명
+    formData.append("productPrice", productPrice); // 상품가격
+    formData.append("productCategory", productCategory); // 상품카테고리
+    formData.append("productSize", productSize); // 상품사이즈
+    formData.append("productDescription", productDescription); // 상품설명
+    formData.append("email", userInfo.email);
+    productImage.forEach((file) => {
+      formData.append("productImage[]", file); // 배열 형태로 보내기
+    });
+
+    // DTO 에 맞춰 꼭 명칭 변경해주기!
     try {
-      // DTO 에 맞춰 꼭 명칭 변경해주기!
       const response = await axios.post(
         "http://localhost:8080/api/product/regist",
+        formData,
+
         {
-          buyer_email: email,
-          product_id: product_id,
-          seller_email: seller_email,
-          review_text: reviewContent,
-          review_score: reviewScore,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
-
       if (response.status === 200) {
         alert(response.data);
+        // 초기화 작업
+        setProductName("");
+        setProductPrice("");
+        setProductCategory("");
+        setProductSize("");
+        setProductDescription("");
+        setImagePreviews([]);
+        setProductImage([]);
       } else {
         alert("판매 등록 실패");
       }
     } catch (error) {
       console.log("판매 등록 실패", error);
+      formData.forEach((value, key) => {
+        if (value instanceof File) {
+          console.log("파일:", key, value.name);
+        } else {
+          console.log("값:", key, value);
+        }
+      });
       alert("서버 오류");
     }
   };
+
   // ~~ 판매 등록하기
 
   return (
@@ -109,7 +148,7 @@ const RegistProductTab = ({ userInfo }) => {
         <Container>
           <Row className="justify-content-center">
             <Col lg={10} md={7}>
-              <Form className=" p-4">
+              <Form className=" p-4" onSubmit={handleSubmit}>
                 <Row>
                   <Row>
                     <Col md="12">
@@ -128,6 +167,8 @@ const RegistProductTab = ({ userInfo }) => {
                           type="text"
                           className="form-control ps-5"
                           placeholder="상품명을 입력해주세요."
+                          value={productName}
+                          onChange={(e) => setProductName(e.target.value)}
                           required
                         />
                       </div>
@@ -151,6 +192,8 @@ const RegistProductTab = ({ userInfo }) => {
                           type="number"
                           className="form-control ps-5"
                           placeholder="금액을 입력해주세요."
+                          value={productPrice}
+                          onChange={(e) => setProductPrice(e.target.value)}
                           required
                         />
                       </div>
@@ -184,6 +227,8 @@ const RegistProductTab = ({ userInfo }) => {
                         className="form-control custom-select"
                         id="Sortbylist-Shop"
                         disabled={!selectedCategory} // 카테고리 안 고르면 비활성화
+                        value={productSize} // 선택된 값 표시
+                        onChange={(e) => setProductSize(e.target.value)} // 사이즈 값 저장
                       >
                         <option value="">선택해주세요</option>
                         {sizeOption.map((size, key) => {
@@ -211,6 +256,8 @@ const RegistProductTab = ({ userInfo }) => {
                         rows="4"
                         className="form-control ps-5"
                         placeholder="해당 상품에 대해 설명해주세요."
+                        value={productDescription}
+                        onChange={(e) => setProductDescription(e.target.value)}
                       ></textarea>
                     </div>
                   </Col>
