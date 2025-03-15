@@ -16,11 +16,10 @@ import { MessageCircle, ShoppingCart, CreditCard } from "react-feather";
 const RegistProductTab = ({ userInfo }) => {
   const [imagePreviews, setImagePreviews] = useState([]); // 미리보기 이미지 저장
   const maxImages = 3; // 최대 업로드 수 제한
-  const [selectedCategory, setSelectedCategory] = useState(""); // 선택된 카테고리
+  const [selectedCategory, setSelectedCategory] = useState(""); // 폼 처리 (상품 카테고리)
   const [sizeOption, setSizeOption] = useState([]); // 해당 카테고리의 사이즈
   const [productName, setProductName] = useState(""); // 폼 처리 (상품명)
   const [productPrice, setProductPrice] = useState(""); // 폼 처리 (상품 금액)
-  const [productCategory, setProductCategory] = useState(""); // 폼 처리 (상품 카테고리)
   const [productSize, setProductSize] = useState(""); // 폼 처리 (상품 사이즈)
   const [productDescription, setProductDescription] = useState(""); // 폼 처리 (상세설명)
   const [productImage, setProductImage] = useState([]); // 폼 처리 (상품 사진진)
@@ -66,6 +65,11 @@ const RegistProductTab = ({ userInfo }) => {
     setProductImage(updatedFiles);
   };
 
+  // 파일 등록 시 추가 안내 팝업
+  const imageInfo = () => {
+    alert("첫 번째 사진이 해당 상품의 썸네일 이미지로 노출됩니다.");
+  };
+
   // ~~ 파일 선택 처리
 
   // 카테고리 선택 시 사이즈 ~~
@@ -81,6 +85,7 @@ const RegistProductTab = ({ userInfo }) => {
 
   const handleCategoryList = (e) => {
     const selected = e.target.value;
+    console.log(selected + "????????");
     setSelectedCategory(selected); // 선택한 카테고리 저장
     setSizeOption(sizeList[selected] || []); // 사이즈 옵션 업데이트
   };
@@ -94,7 +99,7 @@ const RegistProductTab = ({ userInfo }) => {
     const formData = new FormData();
     formData.append("productName", productName); // 상품명
     formData.append("productPrice", productPrice); // 상품가격
-    formData.append("productCategory", productCategory); // 상품카테고리
+    formData.append("productCategory", selectedCategory); // 상품카테고리
     formData.append("productSize", productSize); // 상품사이즈
     formData.append("productDescription", productDescription); // 상품설명
     formData.append("email", userInfo.email);
@@ -119,7 +124,7 @@ const RegistProductTab = ({ userInfo }) => {
         // 초기화 작업
         setProductName("");
         setProductPrice("");
-        setProductCategory("");
+        setSelectedCategory("");
         setProductSize("");
         setProductDescription("");
         setImagePreviews([]);
@@ -208,6 +213,7 @@ const RegistProductTab = ({ userInfo }) => {
                         className="form-control custom-select"
                         id="Sortbylist-Shop"
                         onChange={handleCategoryList} // 카테고리 선택 시 호출
+                        required
                       >
                         <option value="">선택해주세요</option>
                         <option value="의류">의류</option>
@@ -229,6 +235,7 @@ const RegistProductTab = ({ userInfo }) => {
                         disabled={!selectedCategory} // 카테고리 안 고르면 비활성화
                         value={productSize} // 선택된 값 표시
                         onChange={(e) => setProductSize(e.target.value)} // 사이즈 값 저장
+                        required
                       >
                         <option value="">선택해주세요</option>
                         {sizeOption.map((size, key) => {
@@ -271,8 +278,10 @@ const RegistProductTab = ({ userInfo }) => {
                         className="form-control"
                         id="fileupload"
                         multiple
+                        onClick={imageInfo}
                         onChange={handleFileChange}
                         disabled={imagePreviews.length >= maxImages} // 3장 다 올리면 비활성화
+                        required
                       />
                       <small className="text-muted">
                         (최대 {maxImages}장까지 업로드 가능합니다.)

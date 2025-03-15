@@ -22,9 +22,6 @@ import { Heart, MessageCircle } from "react-feather";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-import product3 from "../assets/images/shop/product/s3.jpg";
-import product8 from "../assets/images/shop/product/s8.jpg";
-
 const ProductDetail = ({ user }) => {
   const { categoryId } = useParams();
   const { productId } = useParams();
@@ -152,6 +149,10 @@ const ProductDetail = ({ user }) => {
     reviewContent,
     reviewScore
   ) => {
+    if (!reviewContent.trim()) {
+      alert("리뷰 내용을 입력해주세요.");
+      return;
+    }
     try {
       // DTO 에 맞춰 꼭 명칭 변경해주기!
       const response = await axios.post(
@@ -219,13 +220,20 @@ const ProductDetail = ({ user }) => {
           {products2.map((product, key) => (
             <Row key={key} className="align-items-center">
               <Col md={5}>
-                <Slider {...settings}>
-                  {products.map((product, key) => (
-                    <div key={key}>
-                      <img src={product3} className="img-fluid rounded" />
-                    </div>
-                  ))}
-                </Slider>
+                {products2[0]?.product_image?.length > 0 ? (
+                  <Slider {...settings}>
+                    {products2[0].product_image.map((image, idx) => (
+                      <div key={idx}>
+                        <img src={image} className="img-fluid rounded" />
+                      </div>
+                    ))}
+                  </Slider>
+                ) : (
+                  <img
+                    src="https://moa-upload-files.s3.ap-northeast-2.amazonaws.com/products/noImage.png"
+                    className="img-fluid rounded"
+                  />
+                )}
               </Col>
 
               <Col md={7} className="mt-4 mt-sm-0 pt-2 pt-sm-0">
@@ -472,6 +480,7 @@ const ProductDetail = ({ user }) => {
                                     onChange={(e) =>
                                       setReviewContent(e.target.value)
                                     }
+                                    required
                                   ></textarea>
                                 </div>
                               </div>
@@ -524,51 +533,27 @@ const ProductDetail = ({ user }) => {
                 {products.map((product, key) => (
                   <div key={key} style={{ marginLeft: 5, marginRight: 5 }}>
                     <Card className="shop-list border-0 position-relative overflow-hidden m-2">
-                      <ul className="label list-unstyled mb-0">
-                        <li>
-                          <Link
-                            to="#"
-                            className="badge badge-link rounded-pill bg-danger"
-                          >
-                            Hot
-                          </Link>
-                        </li>
-                      </ul>
-
-                      <ul className="label list-unstyled mb-0">
-                        <li>
-                          <Link
-                            to="#"
-                            className="badge badge-link rounded-pill bg-primary"
-                          >
-                            New
-                          </Link>
-                        </li>
-
-                        <li>
-                          <Link
-                            to="#"
-                            className="badge badge-link rounded-pill bg-success"
-                          >
-                            Pop
-                          </Link>
-                        </li>
-                      </ul>
-
                       <div className="shop-image position-relative overflow-hidden rounded shadow">
                         <Link
                           to={`/detail/${product.category_id}/${product.product_id}`}
                         >
-                          <img src={product8} className="img-fluid" />
+                          <img
+                            src={
+                              product?.product_image?.length > 0
+                                ? product.product_image[0]
+                                : "https://moa-upload-files.s3.ap-northeast-2.amazonaws.com/products/noImage.png"
+                            }
+                            className="img-fluid rounded"
+                          />
                         </Link>
-                        <ul className="list-unstyled shop-icons">
-                          <li>
-                            <Link
-                              to="#"
-                              className="btn btn-icon btn-pills btn-soft-danger"
-                            >
-                              <i>
-                                {user ? (
+                        {user ? (
+                          <ul className="list-unstyled shop-icons">
+                            <li>
+                              <Link
+                                to="#"
+                                className="btn btn-icon btn-pills btn-soft-danger"
+                              >
+                                <i>
                                   <Heart
                                     className="icons"
                                     onClick={() =>
@@ -578,11 +563,11 @@ const ProductDetail = ({ user }) => {
                                       )
                                     }
                                   />
-                                ) : null}
-                              </i>
-                            </Link>
-                          </li>
-                        </ul>
+                                </i>
+                              </Link>
+                            </li>
+                          </ul>
+                        ) : null}
                       </div>
                       <CardBody className="content pt-4 p-2">
                         <Link

@@ -4,11 +4,6 @@ import { Link, useParams } from "react-router-dom";
 import { Container, Row, Col, Card, CardBody, Form, Input } from "reactstrap";
 import { Heart, Eye, ShoppingCart } from "react-feather";
 
-//Import Images
-import product6 from "../assets/images/shop/product/s6.jpg";
-import product12 from "../assets/images/shop/product/s12.jpg";
-import portfolio from "../assets/images/bg-portfolio.jpg";
-
 const categories = [
   { id: 1, name: "의류" },
   { id: 2, name: "신발" },
@@ -252,7 +247,11 @@ const CategoryList = ({ user }) => {
                             to={`/detail/${product.category_id}/${product.product_id}`}
                           >
                             <img
-                              src={product12}
+                              src={
+                                product?.product_image?.length > 0
+                                  ? product.product_image[0]
+                                  : "https://moa-upload-files.s3.ap-northeast-2.amazonaws.com/products/noImage.png"
+                              }
                               className="img-fluid avatar avatar-small rounded shadow"
                             />
                           </Link>
@@ -311,7 +310,14 @@ const CategoryList = ({ user }) => {
                         <Link
                           to={`/detail/${product.category_id}/${product.product_id}`}
                         >
-                          <img src={product6} className="img-fluid" />
+                          <img
+                            src={
+                              product?.product_image?.length > 0
+                                ? product.product_image[0]
+                                : "https://moa-upload-files.s3.ap-northeast-2.amazonaws.com/products/noImage.png"
+                            }
+                            className="img-fluid"
+                          />
                         </Link>
                         <ul className="list-unstyled shop-icons">
                           <li>

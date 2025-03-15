@@ -21,7 +21,7 @@ public class CategoryData {
 		
 		for(String name : cn) {
 			Category category = new Category();
-			category.setCategory_name(name);
+			category.setCategoryName(name);
 			cr.save(category);
 		}
 		

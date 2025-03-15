@@ -14,20 +14,13 @@ import bg1 from "../assets/images/shop/bg1.jpg";
 import fea1 from "../assets/images/shop/fea1.jpg";
 import fea2 from "../assets/images/shop/fea2.jpg";
 import fea3 from "../assets/images/shop/fea3.jpg";
-
-import product5 from "../assets/images/shop/product/s5.jpg";
-
 import fashion from "../assets/images/shop/categories/fashion.jpg";
 import sports from "../assets/images/shop/categories/sports.jpg";
 import music from "../assets/images/shop/categories/music.jpg";
 import furniture from "../assets/images/shop/categories/furniture.jpg";
 import electronics from "../assets/images/shop/categories/electronics.jpg";
 import mobile from "../assets/images/shop/categories/mobile.jpg";
-
 import ctaImg from "../assets/images/shop/cta.jpg";
-
-import product15 from "../assets/images/shop/product/s15.jpg";
-import product16 from "../assets/images/shop/product/s16.jpg";
 
 const Main = ({ user }) => {
   const items = [
@@ -231,25 +224,9 @@ const Main = ({ user }) => {
                     <li>
                       <Link
                         to="#"
-                        className="badge badge-link rounded-pill bg-primary"
-                      >
-                        New
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
                         className="badge badge-link rounded-pill bg-success"
                       >
                         Pop
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="#"
-                        className="badge badge-link rounded-pill bg-warning"
-                      >
-                        Sale
                       </Link>
                     </li>
                   </ul>
@@ -258,28 +235,31 @@ const Main = ({ user }) => {
                       to={`/detail/${product.category_id}/${product.product_id}`}
                     >
                       <img
-                        src={product5}
+                        src={
+                          product?.product_image?.length > 0
+                            ? product.product_image[0]
+                            : "https://moa-upload-files.s3.ap-northeast-2.amazonaws.com/products/noImage.png"
+                        }
                         className="img-fluid"
-                        alt={product.product_name}
                       />
                     </Link>
-                    <ul className="list-unstyled shop-icons">
-                      <li>
-                        <Link
-                          to="#"
-                          className="btn btn-icon btn-pills btn-soft-danger"
-                        >
-                          {user ? (
+                    {user ? (
+                      <ul className="list-unstyled shop-icons">
+                        <li>
+                          <Link
+                            to="#"
+                            className="btn btn-icon btn-pills btn-soft-danger"
+                          >
                             <Heart
                               className="icons"
                               onClick={() =>
                                 wishConfirm(user.email, product.product_id)
                               }
                             />
-                          ) : null}
-                        </Link>
-                      </li>
-                    </ul>
+                          </Link>
+                        </li>
+                      </ul>
+                    ) : null}
                   </div>
 
                   <CardBody className="content pt-4 p-2">
@@ -293,23 +273,6 @@ const Main = ({ user }) => {
                       <h6 className="text-muted small fst-italic mb-0 mt-1">
                         {product.product_price.toLocaleString()}원
                       </h6>
-                      <ul className="list-unstyled text-warning mb-0">
-                        <li className="list-inline-item">
-                          <i className="mdi mdi-star me-1"></i>
-                        </li>
-                        <li className="list-inline-item">
-                          <i className="mdi mdi-star me-1"></i>
-                        </li>
-                        <li className="list-inline-item">
-                          <i className="mdi mdi-star me-1"></i>
-                        </li>
-                        <li className="list-inline-item">
-                          <i className="mdi mdi-star me-1"></i>
-                        </li>
-                        <li className="list-inline-item">
-                          <i className="mdi mdi-star"></i>
-                        </li>
-                      </ul>
                     </div>
                   </CardBody>
                 </Card>
@@ -344,28 +307,31 @@ const Main = ({ user }) => {
                       to={`/detail/${product.category_id}/${product.product_id}`}
                     >
                       <img
-                        src={product15}
+                        src={
+                          product?.product_image?.length > 0
+                            ? product.product_image[0]
+                            : "https://moa-upload-files.s3.ap-northeast-2.amazonaws.com/products/noImage.png"
+                        }
                         className="img-fluid"
-                        alt={product.product_name}
                       />
                     </Link>
-                    <ul className="list-unstyled shop-icons">
-                      <li>
-                        <Link
-                          to="#"
-                          className="btn btn-icon btn-pills btn-soft-danger"
-                        >
-                          {user ? (
+                    {user ? (
+                      <ul className="list-unstyled shop-icons">
+                        <li>
+                          <Link
+                            to="#"
+                            className="btn btn-icon btn-pills btn-soft-danger"
+                          >
                             <Heart
                               className="icons"
                               onClick={() =>
                                 wishConfirm(user.email, product.product_id)
                               }
                             />
-                          ) : null}
-                        </Link>
-                      </li>
-                    </ul>
+                          </Link>
+                        </li>
+                      </ul>
+                    ) : null}
                   </div>
                   <CardBody className="content pt-4 p-2">
                     <Link
@@ -378,23 +344,6 @@ const Main = ({ user }) => {
                       <h6 className="text-muted small fst-italic mb-0 mt-1">
                         {product.product_price.toLocaleString()}원
                       </h6>
-                      <ul className="list-unstyled text-warning mb-0">
-                        <li className="list-inline-item">
-                          <i className="mdi mdi-star me-1"></i>
-                        </li>
-                        <li className="list-inline-item">
-                          <i className="mdi mdi-star me-1"></i>
-                        </li>
-                        <li className="list-inline-item">
-                          <i className="mdi mdi-star me-1"></i>
-                        </li>
-                        <li className="list-inline-item">
-                          <i className="mdi mdi-star me-1"></i>
-                        </li>
-                        <li className="list-inline-item">
-                          <i className="mdi mdi-star"></i>
-                        </li>
-                      </ul>
                     </div>
                   </CardBody>
                 </Card>
@@ -453,29 +402,31 @@ const Main = ({ user }) => {
                       to={`/detail/${product.category_id}/${product.product_id}`}
                     >
                       <img
-                        src={product16}
+                        src={
+                          product?.product_image?.length > 0
+                            ? product.product_image[0]
+                            : "https://moa-upload-files.s3.ap-northeast-2.amazonaws.com/products/noImage.png"
+                        }
                         className="img-fluid"
-                        alt={product.product_name}
                       />
                     </Link>
-
-                    <ul className="list-unstyled shop-icons">
-                      <li>
-                        <Link
-                          to="#"
-                          className="btn btn-icon btn-pills btn-soft-danger"
-                        >
-                          {user ? (
+                    {user ? (
+                      <ul className="list-unstyled shop-icons">
+                        <li>
+                          <Link
+                            to="#"
+                            className="btn btn-icon btn-pills btn-soft-danger"
+                          >
                             <Heart
                               className="icons"
                               onClick={() =>
                                 wishConfirm(user.email, product.product_id)
                               }
                             />
-                          ) : null}
-                        </Link>
-                      </li>
-                    </ul>
+                          </Link>
+                        </li>
+                      </ul>
+                    ) : null}
                   </div>
                   <CardBody className="content pt-4 p-2">
                     <Link

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -40,7 +41,10 @@ public class Product {
 	private int product_price;
 	private String product_name;
 	private String product_status;
-	private String product_image;
+	
+	@ElementCollection
+	private List<String> product_image;
+	
 	private String product_description;
 	private int product_view;
 	private int product_like_Count;

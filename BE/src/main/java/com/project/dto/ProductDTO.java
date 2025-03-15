@@ -1,6 +1,7 @@
 package com.project.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.project.entity.Product;
 
@@ -16,7 +17,7 @@ import lombok.Setter;
 public class ProductDTO {
 	
     private Long product_id;
-    private String product_image;
+    private List<String> product_image;
     private String product_description;
     private String product_name;
     private int product_price;

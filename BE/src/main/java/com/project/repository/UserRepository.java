@@ -10,12 +10,10 @@ import org.springframework.data.repository.query.Param;
 import com.project.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-
-//	@Query(value = "SELECT * FROM user WHERE user_email = :user_email", nativeQuery = true)
-//	Optional<User> findByUserEmail(@Param("user_email") String email);
 	
 	// 이메일로 user 찾기
 	Optional<User> findByUserEmail(String email);
+
 	
 
 

@@ -1,6 +1,7 @@
 package com.project.data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -38,7 +39,7 @@ public class ProductData {
 	                product.setProduct_name("테스트 상품 "+i);
 	                product.setProduct_price(10000 + (i * 500));
 	                product.setProduct_status("거래가능");
-	                product.setProduct_image("image" + i + ".jpg");
+	                product.setProduct_image(null);
 	                product.setProduct_description(i+"번째의 상품 설명입니다.");
 	                product.setProduct_view(i);
 	                product.setProduct_time(LocalDateTime.now());
@@ -58,7 +59,7 @@ public class ProductData {
 	                product.setProduct_name("테스트 상품 "+i);
 	                product.setProduct_price(10000 + (i * 500));
 	                product.setProduct_status("거래가능");
-	                product.setProduct_image("image" + i + ".jpg");
+	                product.setProduct_image(null);
 	                product.setProduct_description(i+"번째의 상품 설명입니다.");
 	                product.setProduct_view(i);
 	                product.setProduct_time(LocalDateTime.now());

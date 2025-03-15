@@ -2,6 +2,9 @@ package com.project.service;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.project.dto.ProductDTO;
 import com.project.entity.Product;
 
@@ -24,5 +27,9 @@ public interface ProductService {
 	
 	// 해당 제품 상세보기
 	List<ProductDTO> productDetail(int productId);
+
+	// 판매물품 등록
+	String registProduct(String productName, int productPrice, String productCategory,
+			String productSize, String productDescription, String email, List<MultipartFile> productImages);
 
 }
