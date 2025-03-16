@@ -66,8 +66,10 @@ const AccountTab = ({ userInfo, setUserInfo, reviewGrade }) => {
       );
       alert("정보가 수정되었습니다.");
     } catch (error) {
-      console.error("수정 실패:", error);
-      console.log(userInfo);
+      if (error.response && error.response.data) {
+        alert(error.response.data);
+        return;
+      }
       alert("서버오류");
     }
   };
@@ -111,6 +113,7 @@ const AccountTab = ({ userInfo, setUserInfo, reviewGrade }) => {
 
         if (response.status === 200) {
           alert(response.data);
+          fetchReviewList(reviewPage);
         } else {
           alert("관리자 수정 요청 실패");
         }

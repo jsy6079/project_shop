@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,7 +52,13 @@ public class ReviewController {
 	
 	// 리뷰 등록
 	@PostMapping("/regist")
-	public ResponseEntity<String> registReviewProducts(@Valid @RequestBody ReviewDTO reviewDTO){
+	public ResponseEntity<String> registReviewProducts(@Valid @RequestBody ReviewDTO reviewDTO, BindingResult bindingResult){
+		
+		if(bindingResult.hasErrors()) {
+			String response = bindingResult.getAllErrors().get(0).getDefaultMessage();
+			return ResponseEntity.badRequest().body(response);
+		}
+		
 		String response = rs.registReview(reviewDTO);
 		
 		return ResponseEntity.ok(response); 

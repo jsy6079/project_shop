@@ -3,6 +3,8 @@ package com.project.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -77,8 +79,22 @@ public class ProductController {
 	     @RequestParam("productSize") String productSize,
 	     @RequestParam("productDescription") String productDescription,
 	     @RequestParam("email") String email,
-	     @RequestParam("productImage[]") List<MultipartFile> productImages
+	     @RequestParam(value = "productImage[]", required = false) List<MultipartFile> productImages
+
 	 ) {
+		 
+		// 필수 값 체크
+	    if (productName == null || productName.trim().isEmpty() ||
+	        productPrice <= 0 ||
+	        productCategory == null || productCategory.trim().isEmpty() ||
+	        productSize == null || productSize.trim().isEmpty() ||
+	        productImages == null || productImages.isEmpty() ||
+	        productDescription.length() > 100) {
+	        
+	        return ResponseEntity.badRequest().body("필수 입력값을 확인해주세요.");
+	    }
+		 	
+		 
 	     // 서비스 호출 및 로직
 	     String response = ps.registProduct(productName, productPrice, productCategory, productSize, productDescription, email, productImages);
 	

@@ -176,8 +176,11 @@ const ProductDetail = ({ user }) => {
         alert("리뷰 작성 실패");
       }
     } catch (error) {
-      console.log("리뷰 작성 실패", error);
-      alert("서버 오류");
+      if (error.response && error.response.data) {
+        alert(error.response.data);
+        return;
+      }
+      alert("알 수 없는 오류가 발생했습니다.");
     }
   };
 
@@ -221,17 +224,51 @@ const ProductDetail = ({ user }) => {
             <Row key={key} className="align-items-center">
               <Col md={5}>
                 {products2[0]?.product_image?.length > 0 ? (
-                  <Slider {...settings}>
-                    {products2[0].product_image.map((image, idx) => (
-                      <div key={idx}>
-                        <img src={image} className="img-fluid rounded" />
-                      </div>
-                    ))}
-                  </Slider>
+                  products2[0].product_image.length === 1 ? (
+                    // 👉 이미지가 1장일 때
+                    <img
+                      src={products2[0].product_image[0]}
+                      className="img-fluid rounded"
+                      style={{
+                        objectFit: "cover",
+                        width: "100%",
+                        height: "auto",
+                        maxHeight: "400px",
+                      }} // 스타일 조절
+                      alt="상품 이미지"
+                    />
+                  ) : (
+                    // 👉 이미지가 2장 이상일 때 슬라이더 사용
+                    <Slider {...settings}>
+                      {products2[0].product_image.map((image, idx) => (
+                        <div key={idx}>
+                          <img
+                            src={image}
+                            className="img-fluid rounded"
+                            style={{
+                              objectFit: "cover",
+                              width: "100%",
+                              height: "auto",
+                              maxHeight: "400px",
+                            }} // 슬라이더 안 이미지도 동일 스타일
+                            alt={`상품 이미지 ${idx + 1}`}
+                          />
+                        </div>
+                      ))}
+                    </Slider>
+                  )
                 ) : (
+                  // 👉 이미지가 아예 없을 때
                   <img
                     src="https://moa-upload-files.s3.ap-northeast-2.amazonaws.com/products/noImage.png"
                     className="img-fluid rounded"
+                    style={{
+                      objectFit: "cover",
+                      width: "100%",
+                      height: "auto",
+                      maxHeight: "400px",
+                    }}
+                    alt="등록된 이미지 없음"
                   />
                 )}
               </Col>
@@ -247,13 +284,7 @@ const ProductDetail = ({ user }) => {
                     {product.user_name}님의 제품입니다.
                   </h6>
                   <ul className="list-unstyled text-warning h5 mb-0">
-                    {Array(5)
-                      .fill()
-                      .map((_, i) => (
-                        <li key={i} className="list-inline-item">
-                          <i className="mdi mdi-star"></i>
-                        </li>
-                      ))}
+                    여기에 등급표 추가
                   </ul>
 
                   <h5 className="mt-4 py-2">상품 상세설명 :</h5>
@@ -580,23 +611,6 @@ const ProductDetail = ({ user }) => {
                           <h6 className="text-muted small fst-italic mb-0 mt-1">
                             {product.product_price.toLocaleString()}원
                           </h6>
-                          <ul className="list-unstyled text-warning mb-0">
-                            <li className="list-inline-item me-1">
-                              <i className="mdi mdi-star"></i>
-                            </li>
-                            <li className="list-inline-item me-1">
-                              <i className="mdi mdi-star"></i>
-                            </li>
-                            <li className="list-inline-item me-1">
-                              <i className="mdi mdi-star"></i>
-                            </li>
-                            <li className="list-inline-item me-1">
-                              <i className="mdi mdi-star"></i>
-                            </li>
-                            <li className="list-inline-item me-1">
-                              <i className="mdi mdi-star"></i>
-                            </li>
-                          </ul>
                         </div>
                       </CardBody>
                     </Card>

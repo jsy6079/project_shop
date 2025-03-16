@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.project.entity.Review;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,10 +20,12 @@ public class ReviewDTO {
 	
 	private Long review_id;
 	private LocalDateTime review_time;
+	
+	@NotNull(message = "필수 사항 또는 유효성을 확인해주세요.")
 	private Long review_score;
 	
-	@Size(max = 100)
-	@NotBlank(message = "리뷰 내용 입력해주세요.")
+	@Size(max = 100 , message = "필수 사항 또는 유효성을 확인해주세요.")
+	@NotBlank(message = "필수 사항 또는 유효성을 확인해주세요.")
 	private String review_text;
 	
 	private String buyer_name;

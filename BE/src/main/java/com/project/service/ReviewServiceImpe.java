@@ -69,6 +69,11 @@ public class ReviewServiceImpe implements ReviewService {
 			return "이미 작성한 리뷰가 존재합니다.";
 		}
 		
+		// 로그인 한 유저가 판매 물품을 올린 판매자와 같으면 리뷰 등록 불가능
+		if(reviewDTO.getBuyer_email().equals(reviewDTO.getSeller_email())) {
+			return "본인이 등록한 상품은 리뷰 작성이 불가합니다.";
+		}
+		
 		Review review = new Review();
 		review.setReviewTime(LocalDateTime.now());
 		review.setReview_score(reviewDTO.getReview_score());

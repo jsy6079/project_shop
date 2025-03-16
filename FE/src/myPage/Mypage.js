@@ -100,7 +100,12 @@ const AccountManagement = ({ user }) => {
                 )}
                 {activeTab === "2" && <WishlistTab userInfo={userInfo} />}
                 {activeTab === "3" && <MileageTab userInfo={userInfo} />}
-                {activeTab === "4" && <RegistProductTab userInfo={userInfo} />}
+                {activeTab === "4" && (
+                  <RegistProductTab
+                    userInfo={userInfo}
+                    setActiveTab={setActiveTab}
+                  />
+                )}
                 {activeTab === "5" && (
                   <TransactionProductTab userInfo={userInfo} />
                 )}

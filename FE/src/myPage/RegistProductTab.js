@@ -13,7 +13,7 @@ import {
 } from "reactstrap";
 import { MessageCircle, ShoppingCart, CreditCard } from "react-feather";
 
-const RegistProductTab = ({ userInfo }) => {
+const RegistProductTab = ({ userInfo, setActiveTab }) => {
   const [imagePreviews, setImagePreviews] = useState([]); // 미리보기 이미지 저장
   const maxImages = 3; // 최대 업로드 수 제한
   const [selectedCategory, setSelectedCategory] = useState(""); // 폼 처리 (상품 카테고리)
@@ -22,7 +22,7 @@ const RegistProductTab = ({ userInfo }) => {
   const [productPrice, setProductPrice] = useState(""); // 폼 처리 (상품 금액)
   const [productSize, setProductSize] = useState(""); // 폼 처리 (상품 사이즈)
   const [productDescription, setProductDescription] = useState(""); // 폼 처리 (상세설명)
-  const [productImage, setProductImage] = useState([]); // 폼 처리 (상품 사진진)
+  const [productImage, setProductImage] = useState([]); // 폼 처리 (상품 사진)
 
   // 파일 선택 처리 ~~
   const handleFileChange = (e) => {
@@ -85,7 +85,6 @@ const RegistProductTab = ({ userInfo }) => {
 
   const handleCategoryList = (e) => {
     const selected = e.target.value;
-    console.log(selected + "????????");
     setSelectedCategory(selected); // 선택한 카테고리 저장
     setSizeOption(sizeList[selected] || []); // 사이즈 옵션 업데이트
   };
@@ -129,18 +128,16 @@ const RegistProductTab = ({ userInfo }) => {
         setProductDescription("");
         setImagePreviews([]);
         setProductImage([]);
+        setActiveTab("6"); // 구매/판매 등록 으로 이동
       } else {
         alert("판매 등록 실패");
       }
     } catch (error) {
-      console.log("판매 등록 실패", error);
-      formData.forEach((value, key) => {
-        if (value instanceof File) {
-          console.log("파일:", key, value.name);
-        } else {
-          console.log("값:", key, value);
-        }
-      });
+      if (error.response && error.response.status === 400) {
+        alert(error.response.data); // 정확하게 메세지 찍힘
+
+        return;
+      }
       alert("서버 오류");
     }
   };
@@ -198,8 +195,14 @@ const RegistProductTab = ({ userInfo }) => {
                           className="form-control ps-5"
                           placeholder="금액을 입력해주세요."
                           value={productPrice}
-                          onChange={(e) => setProductPrice(e.target.value)}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (value === "" || Number(value) >= 0) {
+                              setProductPrice(value);
+                            }
+                          }}
                           required
+                          min={0}
                         />
                       </div>
                     </Col>
@@ -228,6 +231,7 @@ const RegistProductTab = ({ userInfo }) => {
                   <Col md="6">
                     <div className="mb-3">
                       <Label className="form-label">사이즈</Label>{" "}
+                      <span className="text-danger">*</span>
                       <span className="text-danger"></span>
                       <select
                         className="form-control custom-select"
@@ -265,6 +269,7 @@ const RegistProductTab = ({ userInfo }) => {
                         placeholder="해당 상품에 대해 설명해주세요."
                         value={productDescription}
                         onChange={(e) => setProductDescription(e.target.value)}
+                        maxLength={100}
                       ></textarea>
                     </div>
                   </Col>

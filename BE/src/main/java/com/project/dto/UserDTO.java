@@ -15,12 +15,12 @@ public class UserDTO {
 	
 	private String email;
 	
-	@Size(max = 13)
-	@NotBlank(message = "전화번호를 입력해주세요.")
+	@Size(max = 13, message = "필수 사항 또는 유효성을 확인해주세요.")
+	@NotBlank(message = "필수 사항 또는 유효성을 확인해주세요.")
 	private String phone;
 	
-	@Size(max = 100)
-	@NotBlank(message = "주소를 입력해주세요.")
+	@Size(max = 100, message = "필수 사항 또는 유효성을 확인해주세요.")
+	@NotBlank(message = "필수 사항 또는 유효성을 확인해주세요.")
 	private String address;
 	
 
