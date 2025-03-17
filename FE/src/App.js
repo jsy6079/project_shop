@@ -15,7 +15,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null); // JWT 토큰 내 정보
   const [loading, setLoading] = useState(true);
 
   const fetchUserInfo = () => {

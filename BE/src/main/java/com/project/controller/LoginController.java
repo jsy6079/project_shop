@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.project.entity.User;
 import com.project.jwt.JwtUtil;
+import com.project.repository.UserRepository;
 import com.project.service.LoginService;
 
 import jakarta.servlet.http.Cookie;
@@ -35,6 +37,7 @@ public class LoginController {
 	
 	private final JwtUtil ju;
 	private final LoginService us;
+	private final UserRepository ur;
 	
 
 	// 카카오 로그인 + JWT
@@ -72,26 +75,31 @@ public class LoginController {
     }
     
     
-    // 로그인 후 사용자 정보 가져오기
     @GetMapping("/userinfo")
     public ResponseEntity<?> getUserInfo(HttpServletRequest request) {
         String token = getTokenFromCookies(request);
 
         if (token == null) {
-        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("JWT 토큰이 존재하지 않습니다.");
-           
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("JWT 토큰이 존재하지 않습니다.");
         }
 
         String email = ju.extractEmail(token);
         String username = ju.extractUsername(token);
         String imgUrl = ju.extractImgUrl(token);
-        String phone = ju.extractPhone(token);
-        String address = ju.extractAddress(token);
-        Long money = ju.extractMoney(token);
-        Long score = ju.extractScore(token);
-        
 
-        return ResponseEntity.ok(Map.of("email", email, "username", username, "imgUrl", imgUrl, "phone", phone, "address", address, "money", money, "score", score));
+        // DB 조회 추가
+        User user = ur.findByUserEmail(email)
+                      .orElseThrow(() -> new IllegalArgumentException("사용자 정보 없음"));
+
+        return ResponseEntity.ok(Map.of(
+            "email", email,
+            "username", username,
+            "imgUrl", imgUrl,
+            "money", user.getUser_money(),
+            "score", user.getUser_reviewScore(),
+            "address", user.getUser_address(),
+            "phone", user.getUser_phone()
+        ));
     }
 
     // HttpOnly 쿠키에서 JWT 토큰 읽기

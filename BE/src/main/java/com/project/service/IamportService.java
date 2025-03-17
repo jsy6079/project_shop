@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Service
 public class IamportService {
 	
@@ -21,7 +23,6 @@ public class IamportService {
 	@Value("${iamport.api.secret}")
 	private String apiSecret;
 	
-	
     private final RestTemplate restTemplate;
 
     public IamportService(RestTemplateBuilder restTemplateBuilder) {
@@ -29,7 +30,6 @@ public class IamportService {
     }
 	
     
-	
 	// 토큰 발급
     public String getToken() {
         String url = "https://api.iamport.kr/users/getToken";
@@ -38,23 +38,25 @@ public class IamportService {
             "imp_key", apiKey,
             "imp_secret", apiSecret
         );
-        
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<Map<String, String>> entity = new HttpEntity<>(request, headers);
+        // 직접 JSON 문자열로 변환
+        String jsonBody;
+        try {
+            jsonBody = new ObjectMapper().writeValueAsString(request);
+        } catch (Exception e) {
+            throw new RuntimeException("JSON 직렬화 실패: " + e.getMessage(), e);
+        }
+
+        HttpEntity<String> entity = new HttpEntity<>(jsonBody, headers);
+
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
 
         Map<String, Object> body = (Map<String, Object>) response.getBody().get("response");
-        
-        System.out.println("imp_key2" + apiKey);
-        System.out.println("imp_secret2" + apiSecret);
-        
-    	
+
         return (String) body.get("access_token");
-        
-        
     }
 
     // 결제 검증

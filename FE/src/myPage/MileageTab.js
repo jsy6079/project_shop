@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Table, TabPane } from "reactstrap";
+import {
+  Table,
+  TabPane,
+  Pagination,
+  PaginationItem,
+  PaginationLink,
+} from "reactstrap";
 
-const MileageTab = ({ userInfo }) => {
-  const [selectMoney, setSelectMoney] = useState(100); // 기본 100원원
+const MileageTab = ({ userInfo, setUserInfo }) => {
+  const [selectMoney, setSelectMoney] = useState(100); // 기본 100원
+  const [moneyProducts, setMoneyProducts] = useState([]); // 마일리지
+  const [moneyPage, setMoneyPage] = useState(0); // 마일리지 목록 페이지
+  const [moneyTotalPages, setMoneyTotalPages] = useState(1); // 마일리지 전체 페이지 수
 
   // 아임포트 충전
   const handlePayment = () => {
@@ -28,7 +37,11 @@ const MileageTab = ({ userInfo }) => {
         axios
           .post(
             "http://localhost:8080/api/verify",
-            { imp_uid: response.imp_uid, username: userInfo.username }, // 요청 데이터
+            {
+              imp_uid: response.imp_uid,
+              paid_amount: response.paid_amount,
+              buyer_email: response.buyer_email,
+            },
             {
               headers: {
                 "Content-Type": "application/json",
@@ -38,8 +51,19 @@ const MileageTab = ({ userInfo }) => {
           )
           .then((res) => {
             const result = res.data;
-            if (result === "결제가 성공적으로 검증되었습니다.") {
+            if (result === "결제 검증 완료") {
               alert("결제가 완료되었습니다!");
+
+              axios
+                .get("http://localhost:8080/auth/login/userinfo", {
+                  withCredentials: true,
+                })
+                .then((userRes) => {
+                  setUserInfo(userRes.data);
+                })
+                .catch((err) => {
+                  console.error("유저 정보 재요청 실패", err);
+                });
             } else {
               alert("결제 검증 실패: " + result);
             }
@@ -55,25 +79,84 @@ const MileageTab = ({ userInfo }) => {
     });
   };
 
+  // 마일리지 페이징
+  const moneyPageGroupSize = 5;
+  const moneyCurrentGroup = Math.floor(moneyPage / moneyPageGroupSize);
+  const moneyStartPage = moneyCurrentGroup * moneyPageGroupSize;
+  const moneyEndPage = Math.min(
+    moneyStartPage + moneyPageGroupSize,
+    moneyTotalPages
+  );
+
+  // 마일리지 목록 조회
+  const fetchReviewList = async (pageNumber) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/user/money/${userInfo.email}?page=${pageNumber}&size=5`
+      );
+      setMoneyProducts(response.data.content);
+      setMoneyTotalPages(response.data.totalPages);
+    } catch (error) {
+      console.error("리뷰 목록을 가져오는 중 오류 발생:", error);
+    }
+  };
+
+  // 시간 데이터 조정
+  const formatDate = (dateTimeStr) => {
+    const date = new Date(dateTimeStr);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${year}.${month}.${day} ${hours}:${minutes}`;
+  };
+
+  useEffect(() => {
+    if (userInfo && userInfo.email) {
+      fetchReviewList(moneyPage);
+    }
+  }, [moneyPage, userInfo]);
+
   return (
     <>
       <TabPane className="fade bg-white show p-4" tabId="3">
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <h6 className="text-dark mb-0">
+          <h5 className="text-dark mb-0">
             내 마일리지: <span className="text-primary">{userInfo.money}</span>
             <span className="text-dark"> 원</span>
-          </h6>
+          </h5>
         </div>
         <div>
-          <button onClick={() => setSelectMoney(100)}>100원</button>
-          <button onClick={() => setSelectMoney(200)}>200원</button>
-          <button onClick={() => setSelectMoney(300)}>300원</button>
-          <button onClick={() => setSelectMoney(400)}>400원</button>
-          <button onClick={() => setSelectMoney(500)}>500원</button>
-          <button onClick={() => setSelectMoney(600)}>600원</button>
+          <button
+            className="btn btn-warning btn-sm me-2"
+            onClick={() => setSelectMoney(100)}
+          >
+            10,000원
+          </button>
+          <button
+            className="btn btn-warning btn-sm me-2"
+            onClick={() => setSelectMoney(300)}
+          >
+            30,000원
+          </button>
+          <button
+            className="btn btn-warning btn-sm me-2"
+            onClick={() => setSelectMoney(400)}
+          >
+            50,000원
+          </button>
+          <button
+            className="btn btn-warning btn-sm me-2"
+            onClick={() => setSelectMoney(500)}
+          >
+            100,000원
+          </button>
           <p className="text-dark">
             예상 충전 금액 (수수료 5% 차감):{" "}
-            {(selectMoney * 0.95).toLocaleString()} 원
+            <span className="text-danger fw-bold">
+              {(selectMoney * 0.95).toLocaleString()} 원
+            </span>
           </p>
           <button className="btn btn-primary btn-sm" onClick={handlePayment}>
             충전하기
@@ -99,17 +182,72 @@ const MileageTab = ({ userInfo }) => {
                 </th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <th scope="row">2025.01.01</th>
-                <td className="text-success">입금</td>
-                <td>+ 15,000</td>
-                <td>
-                  마일리지 충전 <span className="text-muted">(상품명)</span>
-                </td>
-              </tr>
-            </tbody>
+            {moneyProducts.map((money, key) => (
+              <tbody key={key}>
+                <tr>
+                  <th scope="row">{formatDate(money.moneyTime)}</th>
+                  <td className="text-success">{money.moneyType}</td>
+                  <td>
+                    {money.moneyType === "입금"
+                      ? `+ ${money.moneyAmount.toLocaleString()}원`
+                      : `- ${money.moneyAmount.toLocaleString()}원`}
+                  </td>
+                  <td>
+                    {money.moneyComment}{" "}
+                    <span className="text-muted">(상품명)</span>
+                  </td>
+                </tr>
+              </tbody>
+            ))}
           </Table>
+        </div>
+        <div className="text-center mt-3">
+          <Pagination className="d-inline-flex justify-content-center">
+            <PaginationItem disabled={moneyCurrentGroup === 0}>
+              <PaginationLink
+                href="#"
+                previous
+                onClick={(e) => {
+                  e.preventDefault();
+                  setMoneyPage((moneyCurrentGroup - 1) * moneyPageGroupSize);
+                }}
+              >
+                이전
+              </PaginationLink>
+            </PaginationItem>
+
+            {[...Array(moneyEndPage - moneyStartPage)].map((_, index) => (
+              <PaginationItem
+                key={moneyStartPage + index}
+                active={moneyStartPage + index === moneyPage}
+              >
+                <PaginationLink
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setMoneyPage(moneyStartPage + index);
+                  }}
+                >
+                  {moneyStartPage + index + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+
+            <PaginationItem disabled={moneyEndPage >= moneyTotalPages}>
+              <PaginationLink
+                href="#"
+                next
+                onClick={(e) => {
+                  e.preventDefault();
+                  setMoneyPage(
+                    moneyCurrentGroup * moneyPageGroupSize + moneyPageGroupSize
+                  );
+                }}
+              >
+                다음
+              </PaginationLink>
+            </PaginationItem>
+          </Pagination>
         </div>
       </TabPane>
     </>

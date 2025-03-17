@@ -64,6 +64,19 @@ const ProductDetail = ({ user }) => {
     }
   }, [productId]);
 
+  // 점수에 따른 거래 등급 부여
+  function reviewGrade(score) {
+    if (score >= 0 && score <= 20) {
+      return "Silver";
+    } else if (score >= 21 && score <= 40) {
+      return "Gold";
+    } else if (score >= 41 && score <= 60) {
+      return "Platinum";
+    } else if (score >= 61 && score <= 80) {
+      return "VIP";
+    }
+  }
+
   // 리뷰 페이징
   const reviewPageGroupSize = 5;
   const reviewCurrentGroup = Math.floor(reviewPage / reviewPageGroupSize);
@@ -281,11 +294,11 @@ const ProductDetail = ({ user }) => {
                     {product.product_price.toLocaleString()}원
                   </h5>
                   <h6 className="text-muted">
-                    {product.user_name}님의 제품입니다.
+                    <span className="list-unstyled text-info h6 mb-0">
+                      [{reviewGrade(user.score)}]
+                    </span>
+                    {product.user_name}님 의 상품입니다.{" "}
                   </h6>
-                  <ul className="list-unstyled text-warning h5 mb-0">
-                    여기에 등급표 추가
-                  </ul>
 
                   <h5 className="mt-4 py-2">상품 상세설명 :</h5>
                   <p className="text-muted">{product.product_description}</p>

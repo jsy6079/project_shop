@@ -24,11 +24,11 @@ const AccountTab = ({ userInfo, setUserInfo, reviewGrade }) => {
   // 점수에 따른 거래 등급 부여
   function reviewGrade(score) {
     if (score >= 0 && score <= 20) {
-      return "실버";
+      return "Silver";
     } else if (score >= 21 && score <= 40) {
-      return "골드";
+      return "Gold";
     } else if (score >= 41 && score <= 60) {
-      return "플래티넘";
+      return "Platinum";
     } else if (score >= 61 && score <= 80) {
       return "VIP";
     }
@@ -134,7 +134,7 @@ const AccountTab = ({ userInfo, setUserInfo, reviewGrade }) => {
     <>
       <TabPane className="fade bg-white show p-4" tabId="1">
         <h6 className="text-dark">
-          {userInfo.username} 회원님의 등급은{" "}
+          {userInfo.username} 회원님은{" "}
           <span className="text-info">{reviewGrade(userInfo.score)}</span>
           <span className="text-dark"> 등급 입니다.</span>
           <p className="text-secondary">리뷰 점수 : {userInfo.score}점</p>

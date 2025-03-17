@@ -6,21 +6,7 @@ import MileageTab from "./MileageTab";
 import RegistProductTab from "./RegistProductTab";
 import TransactionProductTab from "./TransactionProductTab";
 import HistoryTab from "./HistoryTab";
-import {
-  Container,
-  Row,
-  Col,
-  Table,
-  NavItem,
-  NavLink,
-  TabContent,
-  TabPane,
-  Form,
-  Label,
-  Pagination,
-  PaginationItem,
-  PaginationLink,
-} from "reactstrap";
+import { Container, Row, Col, TabContent } from "reactstrap";
 
 const AccountManagement = ({ user }) => {
   const [activeTab, setActiveTab] = useState("1");
@@ -99,7 +85,9 @@ const AccountManagement = ({ user }) => {
                   />
                 )}
                 {activeTab === "2" && <WishlistTab userInfo={userInfo} />}
-                {activeTab === "3" && <MileageTab userInfo={userInfo} />}
+                {activeTab === "3" && (
+                  <MileageTab userInfo={userInfo} setUserInfo={setUserInfo} />
+                )}
                 {activeTab === "4" && (
                   <RegistProductTab
                     userInfo={userInfo}
