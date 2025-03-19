@@ -16,6 +16,9 @@ public class JwtUtil {
 
     @Value("${spring.jwt.expiration}") 
     private long expirationTime;
+    
+    private long expirationRefreshTime = 120000; // 1시간 
+
 
     
     // Secret Key를 HMAC SHA-256 키로 변환
@@ -40,9 +43,46 @@ public class JwtUtil {
                 .signWith(getSigningKey()) 
                 .compact();
     }
+    
+    // 리프레시를 통한 엑세스 토큰 생성 (사용자 이메일을 기반으로 생성)
+    public String generateRefreshToken(String email, String username, String imgUrl, String phone, String address, Long money, Long score) {
+        return Jwts.builder()
+        		.claim("name", username)
+        		.claim("imgUrl", imgUrl)
+        		.claim("phone", phone)
+        		.claim("address", address)
+        		.claim("money", money)
+        		.claim("score", score)
+                .subject(email) 
+                .issuedAt(new Date()) 
+                .expiration(new Date(System.currentTimeMillis() + expirationRefreshTime))
+                .signWith(getSigningKey()) 
+                .compact();
+    }
+
 
     
     // JWT 검증 및 사용자 정보 반환
+//    public String validateToken(String token) {
+//        try {
+//            return Jwts.parser() 
+//                    .verifyWith(getSigningKey()) 
+//                    .build()
+//                    .parseSignedClaims(token) 
+//                    .getPayload()
+//                    .getSubject(); 
+//        } catch (ExpiredJwtException e) {
+//            System.out.println("토큰이 만료되었습니다.");
+//            throw new ExpiredJwtException(e.getHeader(), e.getClaims(), "TOKEN_EXPIRED");
+//        } catch (JwtException e) {
+//            System.out.println("유효하지 않은 토큰입니다.");
+//            throw new JwtException("INVALID_TOKEN");
+//        }
+//
+//       
+//    }
+    
+ // JWT 검증 및 사용자 정보 반환
     public String validateToken(String token) {
         try {
             return Jwts.parser() 
@@ -53,20 +93,33 @@ public class JwtUtil {
                     .getSubject(); 
         } catch (ExpiredJwtException e) {
             System.out.println("토큰이 만료되었습니다.");
+            return null;  
         } catch (JwtException e) {
             System.out.println("유효하지 않은 토큰입니다.");
+            return null;  
         }
-        return null;
     }
 
+
     // 토큰 추출
-    private Claims extractAllClaims(String token) {
+    public Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
 
+    }
+    
+    // 리프레시 토큰 발급 메서드 (1시간)
+    public String getRefreshToken(String email) {
+        return Jwts.builder()
+                .subject(email)
+                .issuedAt(new Date())
+//                .expiration(new Date(System.currentTimeMillis() + (60 * 60 * 1000))) // 1시간
+                .expiration(new Date(System.currentTimeMillis() + (3 * 60 * 1000))) // 3분
+                .signWith(getSigningKey())
+                .compact();
     }
 
     // 이메일 값
@@ -109,4 +162,6 @@ public class JwtUtil {
 	public Long extractScore(String token) {
 		return extractAllClaims(token).get("score", Long.class);
 	}
+
+
 }

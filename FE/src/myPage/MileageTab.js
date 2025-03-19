@@ -54,16 +54,18 @@ const MileageTab = ({ userInfo, setUserInfo }) => {
             if (result === "결제 검증 완료") {
               alert("결제가 완료되었습니다!");
 
-              axios
-                .get("http://localhost:8080/auth/login/userinfo", {
-                  withCredentials: true,
-                })
-                .then((userRes) => {
-                  setUserInfo(userRes.data);
-                })
-                .catch((err) => {
-                  console.error("유저 정보 재요청 실패", err);
-                });
+              setTimeout(() => {
+                axios
+                  .get("http://localhost:8080/auth/login/userinfo", {
+                    withCredentials: true,
+                  })
+                  .then((userRes) => {
+                    setUserInfo(userRes.data);
+                  })
+                  .catch((err) => {
+                    console.error("유저 정보 재요청 실패", err);
+                  });
+              }, 1000);
             } else {
               alert("결제 검증 실패: " + result);
             }

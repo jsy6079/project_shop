@@ -295,7 +295,7 @@ const ProductDetail = ({ user }) => {
                   </h5>
                   <h6 className="text-muted">
                     <span className="list-unstyled text-info h6 mb-0">
-                      [{reviewGrade(user.score)}]
+                      [{reviewGrade(user?.score ?? 0)}]
                     </span>
                     {product.user_name}님 의 상품입니다.{" "}
                   </h6>

@@ -39,7 +39,7 @@ function App() {
   useEffect(() => {
     fetchUserInfo(); // 초기 실행
 
-    const interval = setInterval(fetchUserInfo, 3600000); // 1시간 -> 현재 만료 시간 및 쿠키 삭제 시간 1시간
+    const interval = setInterval(fetchUserInfo, 120000); // 1시간 -> 현재 만료 시간 및 쿠키 삭제 시간 1시간
 
     return () => clearInterval(interval);
   }, []);

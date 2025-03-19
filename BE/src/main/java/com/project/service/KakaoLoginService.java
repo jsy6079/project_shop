@@ -9,7 +9,7 @@ import com.project.entity.User;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-public interface LoginService {
+public interface KakaoLoginService {
 	
 	// 사용자 저장 또는 업데이트
 	User saveOrUpdateUser(String email, String nickname, String profileImage, String phone, String address, Long money, Long score);
@@ -17,8 +17,10 @@ public interface LoginService {
 	// 카카오 로그인 + JWT
 	ResponseEntity<Map<String, String>> kakaoLogin(OAuth2AuthenticationToken authenticationToken);
 	
-	// 카카오 로그아웃 + JWT
-	ResponseEntity<Map<String, String>> kakaoLogout(String accessToken);
+//	// 카카오 로그아웃 + JWT
+//	ResponseEntity<Map<String, String>> kakaoLogout(String accessToken);
+
+//	void logoutProcess(User user);
 
 
 
