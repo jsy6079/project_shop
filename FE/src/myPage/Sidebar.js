@@ -1,8 +1,10 @@
 import React from "react";
 import { NavItem, NavLink } from "reactstrap";
 import classnames from "classnames";
+import { useUser } from "../userContext";
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
+  const { userInfo, setUserInfo, fetchUserInfo } = useUser(); // 전역 상태 사용
   const menus = [
     { id: "1", icon: "uil-user", label: "계정 관리" },
     { id: "2", icon: "uil-heart", label: "찜 목록" },

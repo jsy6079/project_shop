@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtLoginServiceImpe implements JwtLoginService {
 	
+	// 만료 된 후 리프레시 토큰으로 발급된 엑세스 토큰 쿠키 시간 값 (쿠키)(보류)
+    @Value("${spring.jwt.refresh-issued-access-cookie-expiration}")
+    private int expiration;
+
+    
 	private final JwtUtil ju;
 	private final UserRepository ur;
 
@@ -42,7 +49,7 @@ public class JwtLoginServiceImpe implements JwtLoginService {
 	        String refreshToken = getRefreshTokenFromCookies(request);
 	        if (refreshToken == null) {
 	            logoutUser(response);
-	            System.out.println("리프레쉬 종료");
+	            System.out.println("리프레쉬 종료로 로그아웃");
 	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("TOKEN_EXPIRED");
 	        }
 
@@ -57,8 +64,8 @@ public class JwtLoginServiceImpe implements JwtLoginService {
 	            user.getUser_phone(), user.getUser_address(), user.getUser_money(), user.getUser_reviewScore()
 	        );
 
-	        // 새로운 액세스 토큰을 쿠키에 저장 (쿠키시간)
-	        addCookie("token", token, 60, response);
+	        // 새로운 액세스 토큰을 쿠키에 저장 (쿠키시간) -> 굳이 필요할까 고민중
+	        addCookie("token", token, expiration, response);
 
 	        System.out.println("새로운 액세스 토큰 발급 완료" + token);
 	    } else {
@@ -77,8 +84,7 @@ public class JwtLoginServiceImpe implements JwtLoginService {
 	        "money", user.getUser_money(),
 	        "score", user.getUser_reviewScore(),
 	        "address", user.getUser_address(),
-	        "phone", user.getUser_phone(),
-	        "accessToken", token 
+	        "phone", user.getUser_phone()
 	    ));
 	}
 
@@ -104,7 +110,7 @@ public class JwtLoginServiceImpe implements JwtLoginService {
 	// 액세스 토큰이 만료되었는지 확인하는 메서드 (true = 만료됨, false = 유효함)
 	private boolean checkTokenExpired(String token) {
 	    if (token == null || token.trim().isEmpty()) {
-	        System.out.println("액세스 토큰 만료 → 만료로 처리");
+	        System.out.println("액세스 토큰 만료 -> 만료로 처리");
 	        return true;
 	    }
 
@@ -154,7 +160,6 @@ public class JwtLoginServiceImpe implements JwtLoginService {
     
     // 자동 로그아웃 메서드 (쿠키 삭제)
     private void logoutUser(HttpServletResponse response) {
-        System.out.println("자동 로그아웃 실행 -> 모든 쿠키 삭제");
         deleteCookie("token", response);
         deleteCookie("refreshToken", response);
     }

@@ -4,6 +4,7 @@ package com.project.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.oauth2.client.*;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -21,11 +22,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class KakaoLoginServiceImpe implements KakaoLoginService {
-
+		
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final OAuth2AuthorizedClientService authorizedClientRepository;
-//    private final RefreshTokenRepository refreshTokenRepository;
    
     // 카카오 로그인 처리
     @Override
@@ -59,9 +59,6 @@ public class KakaoLoginServiceImpe implements KakaoLoginService {
         	    user.getUser_reviewScore());
         String refreshToken = jwtUtil.getRefreshToken(user.getUserEmail());
 
-        // DB에 저장
-//        RefreshToken tokenEntity = new RefreshToken(user, refreshToken, LocalDateTime.now(), LocalDateTime.now().plusHours(1));
-//        refreshTokenRepository.save(tokenEntity);
 
         // 응답 생성
         Map<String, String> response = new HashMap<>();

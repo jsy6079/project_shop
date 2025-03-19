@@ -21,8 +21,10 @@ import Slider from "react-slick";
 import { Heart, MessageCircle } from "react-feather";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useUser } from "../userContext";
 
-const ProductDetail = ({ user }) => {
+const ProductDetail = ({}) => {
+  const { userInfo, setUserInfo } = useUser(); // 전역 상태 사용
   const { categoryId } = useParams();
   const { productId } = useParams();
   const [products, setProducts] = useState([]);
@@ -72,7 +74,7 @@ const ProductDetail = ({ user }) => {
       return "Gold";
     } else if (score >= 41 && score <= 60) {
       return "Platinum";
-    } else if (score >= 61 && score <= 80) {
+    } else if (score >= 61) {
       return "VIP";
     }
   }
@@ -295,7 +297,7 @@ const ProductDetail = ({ user }) => {
                   </h5>
                   <h6 className="text-muted">
                     <span className="list-unstyled text-info h6 mb-0">
-                      [{reviewGrade(user?.score ?? 0)}]
+                      [{reviewGrade(product.user_reviewScore)}]
                     </span>
                     {product.user_name}님 의 상품입니다.{" "}
                   </h6>
@@ -323,7 +325,7 @@ const ProductDetail = ({ user }) => {
                       to="#"
                       className="btn btn-primary"
                       onClick={() => {
-                        if (!user) {
+                        if (!userInfo) {
                           alert("로그인 후 이용 가능합니다.");
                         } else {
                           console.log("DB 연결 준비");
@@ -336,11 +338,11 @@ const ProductDetail = ({ user }) => {
                       to="#"
                       className="btn btn-soft-danger ms-2"
                       onClick={() => {
-                        if (!user) {
+                        if (!userInfo) {
                           alert("로그인 후 이용 가능합니다.");
                         } else {
                           {
-                            wishConfirm(user.email, product.product_id);
+                            wishConfirm(userInfo.email, product.product_id);
                           }
                         }
                       }}
@@ -536,12 +538,12 @@ const ProductDetail = ({ user }) => {
                                   type="button"
                                   className="btn btn-primary"
                                   onClick={() => {
-                                    if (!user) {
+                                    if (!userInfo) {
                                       alert("로그인 후 이용 가능합니다.");
                                     } else {
                                       {
                                         reviewConfirm(
-                                          user.email,
+                                          userInfo.email,
                                           product.product_id,
                                           product.user_email,
                                           reviewContent,
@@ -590,7 +592,7 @@ const ProductDetail = ({ user }) => {
                             className="img-fluid rounded"
                           />
                         </Link>
-                        {user ? (
+                        {userInfo ? (
                           <ul className="list-unstyled shop-icons">
                             <li>
                               <Link
@@ -602,7 +604,7 @@ const ProductDetail = ({ user }) => {
                                     className="icons"
                                     onClick={() =>
                                       wishConfirm(
-                                        user.email,
+                                        userInfo.email,
                                         product.product_id
                                       )
                                     }

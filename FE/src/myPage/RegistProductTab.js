@@ -12,8 +12,10 @@ import {
   TabPane,
 } from "reactstrap";
 import { MessageCircle, ShoppingCart, CreditCard } from "react-feather";
+import { useUser } from "../userContext";
 
-const RegistProductTab = ({ userInfo, setActiveTab }) => {
+const RegistProductTab = ({ setActiveTab }) => {
+  const { userInfo, setUserInfo, fetchUserInfo } = useUser(); // 전역 상태 사용
   const [imagePreviews, setImagePreviews] = useState([]); // 미리보기 이미지 저장
   const maxImages = 3; // 최대 업로드 수 제한
   const [selectedCategory, setSelectedCategory] = useState(""); // 폼 처리 (상품 카테고리)

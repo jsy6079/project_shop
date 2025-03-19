@@ -11,13 +11,21 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
+	// JWT 시크릿 값
     @Value("${spring.jwt.secret}")
     private String secretKey;
 
+    // 첫 발급 엑세스 토큰 만료 시간
     @Value("${spring.jwt.expiration}") 
     private long expirationTime;
     
-    private long expirationRefreshTime = 120000; // 1시간 
+    // 첫 발급 리프레시 토큰 만료 시간
+    @Value("${spring.jwt.refresh-expiration}") 
+    private long refreshExpirationTime;
+    
+    // 리프레시를 통한 엑세스 토큰 만료 시간
+    @Value("${spring.jwt.refresh-issued-expiration}")
+    private long expiration = 30000; 
 
 
     
@@ -55,7 +63,7 @@ public class JwtUtil {
         		.claim("score", score)
                 .subject(email) 
                 .issuedAt(new Date()) 
-                .expiration(new Date(System.currentTimeMillis() + expirationRefreshTime))
+                .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey()) 
                 .compact();
     }
@@ -111,13 +119,13 @@ public class JwtUtil {
 
     }
     
-    // 리프레시 토큰 발급 메서드 (1시간)
+    // 리프레시 토큰 발급 메서드
     public String getRefreshToken(String email) {
+    	
         return Jwts.builder()
                 .subject(email)
                 .issuedAt(new Date())
-//                .expiration(new Date(System.currentTimeMillis() + (60 * 60 * 1000))) // 1시간
-                .expiration(new Date(System.currentTimeMillis() + (3 * 60 * 1000))) // 3분
+                .expiration(new Date(System.currentTimeMillis() + refreshExpirationTime))
                 .signWith(getSigningKey())
                 .compact();
     }

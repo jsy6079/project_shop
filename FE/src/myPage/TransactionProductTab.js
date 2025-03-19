@@ -17,8 +17,10 @@ import {
   PaginationLink,
 } from "reactstrap";
 import { Mail, Phone, MapPin } from "react-feather";
+import { useUser } from "../userContext";
 
-const TransactionProductTab = ({ userInfo }) => {
+const TransactionProductTab = ({}) => {
+  const { userInfo, setUserInfo, fetchUserInfo } = useUser(); // 전역 상태 사용
   return (
     <TabPane className="show fade bg-white shadow rounded p-4" tabId="5">
       <div className="table-responsive bg-white shadow rounded">

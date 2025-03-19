@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Container, Row, Col, Card, CardBody } from "reactstrap";
 import Slider from "react-slick";
 import { Heart } from "react-feather";
+import { useUser } from "../userContext";
 
 // Slick Slider CSS
 import "slick-carousel/slick/slick.css";
@@ -22,7 +23,7 @@ import electronics from "../assets/images/shop/categories/electronics.jpg";
 import mobile from "../assets/images/shop/categories/mobile.jpg";
 import ctaImg from "../assets/images/shop/cta.jpg";
 
-const Main = ({ user }) => {
+const Main = ({}) => {
   const items = [
     {
       image: bg1,
@@ -34,6 +35,7 @@ const Main = ({ user }) => {
     },
   ];
 
+  const { userInfo, setUserInfo } = useUser(); // 전역 상태 사용
   const [cardData] = useState([{ img: fea1 }, { img: fea2 }, { img: fea3 }]);
 
   // 1. Most Viewed Most Viewed Most Viewed Most Viewed Most Viewed Most Viewed Most Viewed Most Viewed Most Viewed Most Viewed Most Viewed Most Viewed
@@ -243,7 +245,7 @@ const Main = ({ user }) => {
                         className="img-fluid"
                       />
                     </Link>
-                    {user ? (
+                    {userInfo ? (
                       <ul className="list-unstyled shop-icons">
                         <li>
                           <Link
@@ -253,7 +255,7 @@ const Main = ({ user }) => {
                             <Heart
                               className="icons"
                               onClick={() =>
-                                wishConfirm(user.email, product.product_id)
+                                wishConfirm(userInfo.email, product.product_id)
                               }
                             />
                           </Link>
@@ -315,7 +317,7 @@ const Main = ({ user }) => {
                         className="img-fluid"
                       />
                     </Link>
-                    {user ? (
+                    {userInfo ? (
                       <ul className="list-unstyled shop-icons">
                         <li>
                           <Link
@@ -325,7 +327,7 @@ const Main = ({ user }) => {
                             <Heart
                               className="icons"
                               onClick={() =>
-                                wishConfirm(user.email, product.product_id)
+                                wishConfirm(userInfo.email, product.product_id)
                               }
                             />
                           </Link>
@@ -410,7 +412,7 @@ const Main = ({ user }) => {
                         className="img-fluid"
                       />
                     </Link>
-                    {user ? (
+                    {userInfo ? (
                       <ul className="list-unstyled shop-icons">
                         <li>
                           <Link
@@ -420,7 +422,7 @@ const Main = ({ user }) => {
                             <Heart
                               className="icons"
                               onClick={() =>
-                                wishConfirm(user.email, product.product_id)
+                                wishConfirm(userInfo.email, product.product_id)
                               }
                             />
                           </Link>

@@ -9,66 +9,36 @@ import "./Apps.scss";
 import CategoryList from "./mainSection/CategoryList";
 import ProductDetail from "./mainSection/ProductDetail";
 import Mypage from "./myPage/Mypage";
-import axios from "axios";
 import ProtectedRoute from "./ProtectedRoute";
-import Skeleton from "react-loading-skeleton";
+import ProductPayment from "./mainSection/ProductPayment";
 import "react-loading-skeleton/dist/skeleton.css";
+import { UserProvider } from "./userContext"; // 전역 상태 관리
 
 function App() {
-  const [user, setUser] = useState(null); // JWT 토큰 내 정보
-  const [loading, setLoading] = useState(true);
-
-  const fetchUserInfo = () => {
-    axios
-      .get("http://localhost:8080/auth/login/userinfo", {
-        withCredentials: true, // HttpOnly 쿠키 포함
-      })
-      .then((response) => {
-        console.log("유저 정보:", response.data);
-        setUser(response.data);
-      })
-      .catch((error) => {
-        console.error("유저 정보를 가져오는 데 실패했습니다:", error);
-        setUser(null);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
-  useEffect(() => {
-    fetchUserInfo(); // 초기 실행
-
-    const interval = setInterval(fetchUserInfo, 120000); // 1시간 -> 현재 만료 시간 및 쿠키 삭제 시간 1시간
-
-    return () => clearInterval(interval);
-  }, []);
-
-  if (loading) {
-    return <Skeleton width={200} height={20} />;
-  }
-
   return (
     <Router>
       <ScrollToTop />
-      <NavBar user={user} />
-      <Routes>
-        <Route path="/" element={<Main user={user} />} />
-        <Route
-          path="/category/:categoryId"
-          element={<CategoryList user={user} />}
-        />
-        <Route
-          path="/detail/:categoryId/:productId"
-          element={<ProductDetail user={user} />}
-        />
-        {/* 로그인 해야 접근 가능 */}
-        <Route element={<ProtectedRoute user={user} />}>
-          <Route path="/user/myinfo" element={<Mypage user={user} />}></Route>/
-        </Route>
-        {/* */}
-      </Routes>
-      <Footer />
+      <UserProvider>
+        <NavBar />
+        <Routes>
+          <Route path="/" element={<Main />} />
+          <Route path="/category/:categoryId" element={<CategoryList />} />
+          <Route
+            path="/detail/:categoryId/:productId"
+            element={<ProductDetail />}
+          />
+          {/* 로그인 해야 접근 가능 */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/user/myinfo" element={<Mypage />}></Route>/
+          </Route>
+          {/* */}
+          <Route
+            path="/payment/:productId"
+            element={<ProductPayment />}
+          ></Route>
+        </Routes>
+        <Footer />
+      </UserProvider>
     </Router>
   );
 }

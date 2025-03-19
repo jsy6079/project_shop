@@ -7,10 +7,11 @@ import RegistProductTab from "./RegistProductTab";
 import TransactionProductTab from "./TransactionProductTab";
 import HistoryTab from "./HistoryTab";
 import { Container, Row, Col, TabContent } from "reactstrap";
+import { useUser } from "../userContext";
 
-const AccountManagement = ({ user }) => {
+const AccountManagement = ({}) => {
+  const { userInfo, setUserInfo } = useUser(); // 전역 상태 사용
   const [activeTab, setActiveTab] = useState("1");
-  const [userInfo, setUserInfo] = useState(user);
 
   const toggleTab = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);

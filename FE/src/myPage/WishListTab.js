@@ -16,8 +16,10 @@ import {
   PaginationItem,
   PaginationLink,
 } from "reactstrap";
+import { useUser } from "../userContext";
 
-const WishListTab = ({ userInfo }) => {
+const WishListTab = ({}) => {
+  const { userInfo, setUserInfo, fetchUserInfo } = useUser(); // 전역 상태 사용
   const [wishProducts, setWishProducts] = useState([]); // 찜
   const [wishPage, setWishPage] = useState(0); // 찜 목록 페이지
   const [wishTotalPages, setWishTotalPages] = useState(1); // 찜 전체 페이지 수

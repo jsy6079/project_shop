@@ -30,6 +30,7 @@ public class ProductDTO {
     private String user_name;
     private String size_value;
     private String user_email;
+    private Long user_reviewScore;
 
     // 엔티티를 DTO로 변환하는 메서드
     public static ProductDTO fromEntity(Product product) {
@@ -47,7 +48,8 @@ public class ProductDTO {
             product.getProduct_like_Count(),
             product.getUser().getUser_name(),
             product.getSize() != null ? product.getSize().getSize_value() : null,
-            product.getUser().getUserEmail()
+            product.getUser().getUserEmail(),
+            product.getUser().getUser_reviewScore()
         );
     }
 }

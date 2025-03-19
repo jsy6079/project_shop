@@ -15,8 +15,10 @@ import {
   Badge,
 } from "reactstrap";
 import { Mail, Phone, MapPin } from "react-feather";
+import { useUser } from "../userContext";
 
-const AccountTab = ({ userInfo, setUserInfo, reviewGrade }) => {
+const AccountTab = ({ reviewGrade }) => {
+  const { userInfo, setUserInfo, fetchUserInfo } = useUser(); // 전역 상태 사용
   const [viewProducts, setViewProducts] = useState([]); // 리뷰
   const [reviewPage, setReviewPage] = useState(0); // 리뷰 목록 페이지
   const [reviewTotalPages, setReviewTotalPages] = useState(1); // 리뷰 전체 페이지 수
@@ -65,6 +67,7 @@ const AccountTab = ({ userInfo, setUserInfo, reviewGrade }) => {
         }
       );
       alert("정보가 수정되었습니다.");
+      fetchUserInfo();
     } catch (error) {
       if (error.response && error.response.data) {
         alert(error.response.data);

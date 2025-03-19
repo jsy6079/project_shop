@@ -13,8 +13,10 @@ import { ShoppingCart, Heart, User, LogIn } from "react-feather";
 
 //import images
 import logoMoa from "../assets/images/logo-moa.png";
+import { useUser } from "../userContext";
 
-function NavBar({ type, user }) {
+function NavBar({ type }) {
+  const { userInfo, setUserInfo } = useUser(); // 전역 상태 사용
   const [dropdownOpenShop, setDropdownOpenShop] = useState(false);
   const [wishlistModal, setWishlistModal] = useState(false);
   const [loginModal, setLoginModal] = useState(false);
@@ -178,7 +180,7 @@ function NavBar({ type, user }) {
               </Link>
             </div>
           </div>
-          {user ? (
+          {userInfo ? (
             <ul className="buy-button list-inline mb-0">
               <li className="list-inline-item mb-0">
                 <Dropdown

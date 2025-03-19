@@ -3,7 +3,7 @@ package com.project.controller;
 import java.io.IOException;
 import java.util.Map;
 
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +21,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LoginController {
 	
+	// 로그인 후 엑세스 토큰 쿠키 시간 (쿠키)
+	@Value("${spring.jwt.access-cookie-expiration}")
+	private int accessExpiration;
+	
+	// 로그인 후 리프레시 토큰 쿠키 시간 (쿠키)
+	@Value("${spring.jwt.refresh-cookie-expiration}")
+	private int refreshExpiration;
+	
 	private final KakaoLoginService ks;
 	private final JwtLoginService js;
 	
@@ -34,8 +42,8 @@ public class LoginController {
     	String refreshToken = tokenResponse.getBody().get("refreshToken");
 
     	// 엑세스, 리프레시 쿠키로 저장 (쿠키시간)
-    	addCookie("token", jwtToken, 60, response);
-        addCookie("refreshToken", refreshToken, 180, response); // 1시간
+    	addCookie("token", jwtToken, accessExpiration, response);
+        addCookie("refreshToken", refreshToken, refreshExpiration, response); // 1시간
 
     	System.out.println("토큰 발급 완료");
     	response.sendRedirect("http://localhost:3000");

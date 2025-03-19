@@ -7,8 +7,10 @@ import {
   PaginationItem,
   PaginationLink,
 } from "reactstrap";
+import { useUser } from "../userContext";
 
-const MileageTab = ({ userInfo, setUserInfo }) => {
+const MileageTab = ({}) => {
+  const { userInfo, setUserInfo, fetchUserInfo } = useUser(); // 전역 상태 사용
   const [selectMoney, setSelectMoney] = useState(100); // 기본 100원
   const [moneyProducts, setMoneyProducts] = useState([]); // 마일리지
   const [moneyPage, setMoneyPage] = useState(0); // 마일리지 목록 페이지
@@ -53,19 +55,7 @@ const MileageTab = ({ userInfo, setUserInfo }) => {
             const result = res.data;
             if (result === "결제 검증 완료") {
               alert("결제가 완료되었습니다!");
-
-              setTimeout(() => {
-                axios
-                  .get("http://localhost:8080/auth/login/userinfo", {
-                    withCredentials: true,
-                  })
-                  .then((userRes) => {
-                    setUserInfo(userRes.data);
-                  })
-                  .catch((err) => {
-                    console.error("유저 정보 재요청 실패", err);
-                  });
-              }, 1000);
+              fetchUserInfo();
             } else {
               alert("결제 검증 실패: " + result);
             }
@@ -99,7 +89,7 @@ const MileageTab = ({ userInfo, setUserInfo }) => {
       setMoneyProducts(response.data.content);
       setMoneyTotalPages(response.data.totalPages);
     } catch (error) {
-      console.error("리뷰 목록을 가져오는 중 오류 발생:", error);
+      console.error("마일리지 목록을 가져오는 중 오류 발생:", error);
     }
   };
 

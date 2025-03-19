@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import { Container, Row, Col, Card, CardBody, Form, Input } from "reactstrap";
 import { Heart, Eye, ShoppingCart } from "react-feather";
+import { useUser } from "../userContext";
 
 const categories = [
   { id: 1, name: "의류" },
@@ -13,7 +14,8 @@ const categories = [
   { id: 6, name: "라이프 스타일" },
 ];
 
-const CategoryList = ({ user }) => {
+const CategoryList = ({}) => {
+  const { userInfo, setUserInfo } = useUser(); // 전역 상태 사용
   const { categoryId } = useParams();
   const [products, setProducts] = useState([]);
   const [products2, setProducts2] = useState([]);
@@ -325,11 +327,14 @@ const CategoryList = ({ user }) => {
                               to="#"
                               className="btn btn-icon btn-pills btn-soft-danger"
                             >
-                              {user ? (
+                              {userInfo ? (
                                 <Heart
                                   className="icons"
                                   onClick={() =>
-                                    wishConfirm(user.email, product.product_id)
+                                    wishConfirm(
+                                      userInfo.email,
+                                      product.product_id
+                                    )
                                   }
                                 />
                               ) : null}
