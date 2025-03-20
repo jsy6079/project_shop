@@ -35,8 +35,8 @@ export const UserProvider = ({ children }) => {
 
     if (!intervalRef.current) {
       // 기존 인터벌이 없을 때만 실행
-      intervalRef.current = setInterval(fetchUserInfo, 120000); // 2분마다 갱신
-      console.log("⏰ 2분마다 유저 정보 갱신");
+      intervalRef.current = setInterval(fetchUserInfo, 300000); // 5분마다 갱신
+      console.log("⏰ 5분마다 유저 정보 갱신");
     }
 
     return () => clearInterval(intervalRef.current); // 언마운트 시 인터벌 제거

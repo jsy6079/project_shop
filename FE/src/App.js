@@ -29,13 +29,13 @@ function App() {
           />
           {/* 로그인 해야 접근 가능 */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/user/myinfo" element={<Mypage />}></Route>/
+            <Route path="/user/myinfo" element={<Mypage />}></Route>
+            <Route
+              path="/payment/:productId"
+              element={<ProductPayment />}
+            ></Route>
           </Route>
           {/* */}
-          <Route
-            path="/payment/:productId"
-            element={<ProductPayment />}
-          ></Route>
         </Routes>
         <Footer />
       </UserProvider>

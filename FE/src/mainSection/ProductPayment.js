@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 import { useUser } from "../userContext";
 import {
   Container,
@@ -13,9 +14,79 @@ import {
   Button,
   FormFeedback,
 } from "reactstrap";
+import { User, Phone, MapPin } from "react-feather";
 
 const ProductPayment = ({}) => {
-  const { userInfo, setUserInfo } = useUser(); // 전역 상태 사용
+  const { userInfo, setUserInfo, fetchUserInfo } = useUser(); // 전역 상태 사용
+  const { productId } = useParams(); // URL에서 productId 가져오기
+  const [products, setProducts] = useState([]); // 상품
+
+  // 현재 금액과 마일리지 금액 비교
+  const product = products.length > 0 ? products[0] : null;
+  const productPrice = product?.product_price || 0;
+  const userMileage = userInfo?.money || 0;
+
+  const compare = userMileage < productPrice;
+
+  // 전화번호, 주소 변경
+  const handleChange = (e) => {
+    setUserInfo({
+      ...userInfo,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // 전화번호, 주소 수정
+  const handleProductSave = async () => {
+    if (!userInfo.phone.trim()) {
+      alert("전화번호를 입력해 주세요.");
+      return;
+    }
+
+    if (!userInfo.username.trim()) {
+      alert("수취인을 입력해 주세요.");
+      return;
+    }
+
+    if (!userInfo.address.trim()) {
+      alert("주소를 입력해 주세요.");
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        "http://localhost:8080/api/user/update",
+        userInfo,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      alert("구매 요청이 완료 되었습니다.");
+      fetchUserInfo();
+    } catch (error) {
+      if (error.response && error.response.data) {
+        alert(error.response.data);
+        return;
+      }
+      alert("서버오류");
+    }
+  };
+
+  // 상세보기 API + 리뷰 email 값 호출
+  useEffect(() => {
+    if (productId) {
+      axios
+        .get(`http://localhost:8080/api/product/detail/${productId}`)
+        .then((response) => {
+          setProducts(response.data);
+        })
+        .catch((error) => {
+          console.error("API 호출 중 에러 발생:", error);
+        });
+    }
+  }, [productId]);
 
   return (
     <>
@@ -47,336 +118,149 @@ const ProductPayment = ({}) => {
 
       <section className="section">
         <Container>
-          <Row>
-            <Col md={5} lg={4} className="order-md-last">
-              <Card className="rounded shadow p-4 border-0">
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <span className="h5 mb-0">Your cart</span>
-                  <Badge color="primary" className="rounded-pill">
-                    3
-                  </Badge>
-                </div>
-                <ul className="list-group mb-3 border">
-                  <li className="d-flex justify-content-between lh-sm p-3 border-bottom">
-                    <div>
-                      <h6 className="my-0">Product name</h6>
-                      <small className="text-muted">Brief description</small>
-                    </div>
-                    <span className="text-muted">$12</span>
-                  </li>
-                  <li className="d-flex justify-content-between lh-sm p-3 border-bottom">
-                    <div>
-                      <h6 className="my-0">Second product</h6>
-                      <small className="text-muted">Brief description</small>
-                    </div>
-                    <span className="text-muted">$8</span>
-                  </li>
-                  <li className="d-flex justify-content-between lh-sm p-3 border-bottom">
-                    <div>
-                      <h6 className="my-0">Third item</h6>
-                      <small className="text-muted">Brief description</small>
-                    </div>
-                    <span className="text-muted">$5</span>
-                  </li>
-                  <li className="d-flex justify-content-between bg-light p-3 border-bottom">
-                    <div className="text-success">
-                      <h6 className="my-0">Promo code</h6>
-                      <small>EXAMPLECODE</small>
-                    </div>
-                    <span className="text-success">−$5</span>
-                  </li>
-                  <li className="d-flex justify-content-between p-3">
-                    <span>Total (USD)</span>
-                    <strong>$20</strong>
-                  </li>
-                </ul>
+          <Col>
+            <Card className="rounded shadow p-4 border-0">
+              <h4 className="mb-3">배송 정보</h4>
 
-                <Form>
-                  <div className="input-group">
-                    <Input
-                      type="text"
-                      className="form-control"
-                      placeholder="Promo code"
-                    />
-                    <button type="submit" className="btn btn-secondary">
-                      Redeem
-                    </button>
-                  </div>
-                </Form>
-              </Card>
-            </Col>
-
-            <Col md={7} lg={8}>
-              <Card className="rounded shadow p-4 border-0">
-                <h4 className="mb-3">Billing address</h4>
-                <Form>
-                  <Row className="g-3">
-                    <Col sm={6}>
-                      <Label htmlFor="firstName" className="form-label">
-                        First name
-                      </Label>
-                      <Input
-                        type="text"
-                        className="form-control"
-                        id="firstName"
-                        placeholder="First Name"
-                        name="firstName"
-                      />
-                      <FormFeedback type="invalid"></FormFeedback>
-                    </Col>
-
-                    <Col sm={6}>
-                      <Label htmlFor="lastName" className="form-label">
-                        Last name
-                      </Label>
-                      <Input
-                        type="text"
-                        className="form-control"
-                        id="lastName"
-                        placeholder="Last Name"
-                        name="lastName"
-                      />
-
-                      <FormFeedback type="invalid"></FormFeedback>
-                    </Col>
-
-                    <Col className="col-12">
-                      <Label htmlFor="username" className="form-label">
-                        Username
-                      </Label>
-                      <div className="input-group has-validation">
-                        <span className="input-group-text bg-light text-muted border">
-                          @
-                        </span>
-                        <Input
-                          type="text"
-                          className="form-control"
-                          id="username"
-                          placeholder="Username"
-                          name="username"
-                        />
-
+              <Form>
+                {products.map((products, key) => (
+                  <div key={key}>
+                    <Row className="g-3">
+                      <Col sm={6}>
+                        <Label htmlFor="firstName" className="form-label">
+                          수취인<span className="text-danger"> *</span>
+                        </Label>
+                        <div className="form-icon position-relative">
+                          <User className="fea icon-sm icons" />
+                          <input
+                            name="username"
+                            id="username"
+                            type="text"
+                            className="form-control ps-5"
+                            value={userInfo.username}
+                            onChange={handleChange}
+                            maxLength={10}
+                            required
+                          />
+                        </div>
                         <FormFeedback type="invalid"></FormFeedback>
+                      </Col>
+
+                      <Col sm={6}>
+                        <Label htmlFor="lastName" className="form-label">
+                          전화 번호<span className="text-danger"> *</span>
+                        </Label>
+                        <div className="form-icon position-relative">
+                          <Phone className="fea icon-sm icons" />
+                          <input
+                            name="phone"
+                            id="phone"
+                            type="text"
+                            className="form-control ps-5"
+                            value={userInfo.phone}
+                            onChange={handleChange}
+                            maxLength={13}
+                            required
+                          />
+                        </div>
+                        <FormFeedback type="invalid"></FormFeedback>
+                      </Col>
+
+                      <Col className="col-12">
+                        <Label htmlFor="address" className="form-label">
+                          주소<span className="text-danger"> *</span>
+                        </Label>
+                        <div className="form-icon position-relative">
+                          <MapPin className="fea icon-sm icons" />
+                          <input
+                            name="address"
+                            id="address"
+                            type="text"
+                            className="form-control ps-5"
+                            value={userInfo.address}
+                            onChange={handleChange}
+                            maxLength={100}
+                            required
+                          />
+                        </div>
+                      </Col>
+                    </Row>
+
+                    <div className="form-check mt-4 pt-4 border-top">
+                      <Label
+                        className="form-check-label"
+                        htmlFor="same-address"
+                      >
+                        📢 구매 요청 전 필독사항
+                      </Label>
+                    </div>
+
+                    <div className="form-check">
+                      <Label className="form-check-label" htmlFor="save-info">
+                        ✔️ 본 상품은 중개 거래 방식으로, 구매 요청 후 바로
+                        발송되지 않습니다.
+                      </Label>
+                    </div>
+                    <div className="form-check">
+                      <Label className="form-check-label" htmlFor="save-info">
+                        ✔️ 상품 검수 및 발송에는 최대 5일 정도 소요될 수
+                        있습니다.
+                      </Label>
+                    </div>
+                    <div className="form-check">
+                      <Label className="form-check-label" htmlFor="save-info">
+                        ✔️ 검수 과정에서 가품 판정이 되거나 상품 상태가 기준에
+                        미치지 못할 경우, 주문이 취소될 수 있으며 구매된
+                        마일리지는 환불됩니다.
+                      </Label>
+                    </div>
+                    <div className="form-check">
+                      <Label className="form-check-label" htmlFor="save-info">
+                        ✔️ 판매자가 상품을 검수 센터로 보내면 검수 및 배송
+                        절차가 시작되므로 취소가 불가능합니다.
+                      </Label>
+                    </div>
+
+                    <h4 className="mb-3 mt-4 pt-4 border-top">결제 정보</h4>
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <h5 className="text-dark mb-0">
+                        해당 상품 금액 :{" "}
+                        <span className="text-primary">
+                          {products.product_price.toLocaleString()}
+                        </span>
+                        <span className="text-dark"> 원</span>
+                      </h5>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <h5 className="text-dark mb-0">
+                        현재 보유 마일리지 :{" "}
+                        <span className="text-primary">
+                          {userInfo.money.toLocaleString()}
+                        </span>
+                        <span className="text-dark"> 원</span>
+                      </h5>
+                    </div>
+                    {compare && (
+                      <div className="d-flex justify-content-between align-items-center mb-3">
+                        <h6 className="text-danger mb-0">
+                          금액이 부족합니다. 내 정보 페이지에서 마일리지를
+                          충전해주세요.
+                        </h6>
                       </div>
-                    </Col>
-
-                    <Col className="col-12">
-                      <Label htmlFor="email" className="form-label">
-                        Email <span className="text-muted">(Optional)</span>
-                      </Label>
-                      <Input
-                        type="email"
-                        className="form-control"
-                        id="email"
-                        placeholder="you@example.com"
-                        name="email"
-                      />
-
-                      <FormFeedback type="invalid"></FormFeedback>
-                    </Col>
-
-                    <Col className="col-12">
-                      <Label htmlFor="address" className="form-label">
-                        Address
-                      </Label>
-                      <Input
-                        type="text"
-                        className="form-control"
-                        id="address"
-                        placeholder="1234 Main St"
-                        name="address"
-                      />
-
-                      <FormFeedback type="invalid"></FormFeedback>
-                    </Col>
-
-                    <Col className="col-12">
-                      <Label htmlFor="address2" className="form-label">
-                        Address 2 <span className="text-muted">(Optional)</span>
-                      </Label>
-                      <Input
-                        type="text"
-                        className="form-control"
-                        id="address2"
-                        placeholder="Apartment or suite"
-                        name="address2"
-                      />
-
-                      <FormFeedback type="invalid"></FormFeedback>
-                    </Col>
-
-                    <Col md={5}>
-                      <Label htmlFor="country" className="form-label">
-                        Country
-                      </Label>
-                      <select className="form-select form-control" id="country">
-                        <option value="">Choose...</option>
-                        <option>United States</option>
-                      </select>
-                    </Col>
-
-                    <Col md={4}>
-                      <Label htmlFor="state" className="form-label">
-                        State
-                      </Label>
-                      <select className="form-select form-control" id="state">
-                        <option value="">Choose...</option>
-                        <option>California</option>
-                      </select>
-                    </Col>
-
-                    <Col md={3}>
-                      <Label htmlFor="zip" className="form-label">
-                        Zip
-                      </Label>
-                      <Input
-                        type="text"
-                        className="form-control"
-                        id="zip"
-                        placeholder=""
-                        name="zip"
-                      />
-                    </Col>
-                  </Row>
-
-                  <div className="form-check mt-4 pt-4 border-top">
-                    <Input
-                      type="checkbox"
-                      className="form-check-input"
-                      id="same-address"
-                    />
-                    <Label className="form-check-label" htmlFor="same-address">
-                      Shipping address is the same as my billing address
-                    </Label>
+                    )}
+                    <Button
+                      color="primary"
+                      className="w-100 btn btn-primary"
+                      type="button"
+                      onClick={handleProductSave}
+                    >
+                      구매 요청하기
+                    </Button>
                   </div>
-
-                  <div className="form-check">
-                    <Input
-                      type="checkbox"
-                      className="form-check-input"
-                      id="save-info"
-                    />
-                    <Label className="form-check-label" htmlFor="save-info">
-                      Save this information for next time
-                    </Label>
-                  </div>
-
-                  <h4 className="mb-3 mt-4 pt-4 border-top">Payment</h4>
-
-                  <div className="my-3">
-                    <div className="form-check">
-                      <Input
-                        id="credit"
-                        name="paymentMethod"
-                        type="radio"
-                        className="form-check-input"
-                        defaultChecked
-                      />
-                      <Label className="form-check-label" htmlFor="credit">
-                        Credit card
-                      </Label>
-                    </div>
-                    <div className="form-check">
-                      <Input
-                        id="debit"
-                        name="paymentMethod"
-                        type="radio"
-                        className="form-check-input"
-                      />
-                      <Label className="form-check-label" htmlFor="debit">
-                        Debit card
-                      </Label>
-                    </div>
-                    <div className="form-check">
-                      <Input
-                        id="paypal"
-                        name="paymentMethod"
-                        type="radio"
-                        className="form-check-input"
-                      />
-                      <Label className="form-check-label" htmlFor="paypal">
-                        PayPal
-                      </Label>
-                    </div>
-                  </div>
-
-                  <Row className="gy-3">
-                    <Col md={6}>
-                      <Label htmlFor="cc-name" className="form-label">
-                        Name on card
-                      </Label>
-                      <Input
-                        type="text"
-                        className="form-control"
-                        id="cc-name"
-                        placeholder=""
-                        name="cc_name"
-                      />
-
-                      <FormFeedback type="invalid"></FormFeedback>
-
-                      <small className="text-muted">
-                        Full name as displayed on card
-                      </small>
-                    </Col>
-
-                    <Col md={6}>
-                      <Label htmlFor="cc-number" className="form-label">
-                        Credit card number
-                      </Label>
-                      <Input
-                        type="text"
-                        className="form-control"
-                        id="cc-number"
-                        placeholder=""
-                        name="cc_number"
-                      />
-
-                      <FormFeedback type="invalid"></FormFeedback>
-                    </Col>
-
-                    <Col md={3} className="mb-3">
-                      <Label htmlFor="cc-expiration" className="form-label">
-                        Expiration
-                      </Label>
-                      <Input
-                        type="text"
-                        className="form-control"
-                        id="cc-expiration"
-                        placeholder=""
-                        name="cc_expiration"
-                      />
-
-                      <FormFeedback type="invalid"></FormFeedback>
-                    </Col>
-
-                    <Col md={3} className="mb-3">
-                      <Label htmlFor="cc-cvv" className="form-label">
-                        CVV
-                      </Label>
-                      <Input
-                        type="text"
-                        className="form-control"
-                        id="cc-cvv"
-                        placeholder=""
-                        name="cc_cvv"
-                      />
-
-                      <FormFeedback type="invalid"></FormFeedback>
-                    </Col>
-                  </Row>
-
-                  <Button
-                    color="primary"
-                    className="w-100 btn btn-primary"
-                    type="submit"
-                  >
-                    Continue to checkout
-                  </Button>
-                </Form>
-              </Card>
-            </Col>
-          </Row>
+                ))}
+              </Form>
+            </Card>
+          </Col>
         </Container>
       </section>
     </>

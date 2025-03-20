@@ -322,13 +322,17 @@ const ProductDetail = ({}) => {
 
                   <div className="mt-4 pt-2">
                     <Link
-                      to="#"
+                      to={`/payment/${product.product_id}`}
+                      state={{ product }}
                       className="btn btn-primary"
-                      onClick={() => {
+                      onClick={(event) => {
                         if (!userInfo) {
                           alert("로그인 후 이용 가능합니다.");
-                        } else {
-                          console.log("DB 연결 준비");
+                          event.preventDefault();
+                        } else if (userInfo.email === product.user_email) {
+                          alert("해당 상품은 본인이 등록한 물품입니다.");
+                          event.preventDefault();
+                          return;
                         }
                       }}
                     >
