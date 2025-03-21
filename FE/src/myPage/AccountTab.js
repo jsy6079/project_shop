@@ -143,7 +143,11 @@ const AccountTab = ({ reviewGrade }) => {
           <p className="text-secondary">리뷰 점수 : {userInfo.score}점</p>
         </h6>
         <h6 className="text-dark mb-0">
-          내 마일리지 :<span className="text-primary"> {userInfo.money}</span>
+          내 마일리지 :
+          <span className="text-primary">
+            {" "}
+            {userInfo.money.toLocaleString()}
+          </span>
           <span className="text-dark"> 원</span>
         </h6>
       </TabPane>

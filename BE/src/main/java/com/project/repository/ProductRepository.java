@@ -4,12 +4,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.project.dto.ProductDTO;
 import com.project.entity.Product;
+import com.project.entity.TransactionsList;
 import com.project.entity.User;
 import com.project.entity.Wish;
 
@@ -38,6 +41,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // 해당 제품 상세보기
     @Query(value = "SELECT * FROM product WHERE product_id = :productId", nativeQuery = true)
     List<Product> findProductsDetail(@Param("productId") int productId);
+
+    // 해당 유저의 진행중인 거래 목록 가져오기
+	Page<TransactionsList> findByUser(User user, Pageable pageable);
 
     
 }

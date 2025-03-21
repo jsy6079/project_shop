@@ -3,20 +3,30 @@ package com.project.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.project.dto.ProductDTO;
+import com.project.dto.PurchaseRequestDTO;
 import com.project.entity.Category;
+import com.project.entity.OrderHistory;
 import com.project.entity.Product;
 import com.project.entity.Review;
 import com.project.entity.Size;
 import com.project.entity.User;
+import com.project.entity.Wish;
+import com.project.entity.TransactionsList;
 import com.project.repository.CategoryRepository;
+import com.project.repository.OrderHistoryRepository;
 import com.project.repository.ProductRepository;
+import com.project.repository.TransactionsListRepository;
 import com.project.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -28,6 +38,8 @@ public class ProductServiceImpe implements ProductService {
 	private final ProductRepository pr;
 	private final UserRepository ur;
 	private final CategoryRepository cr;
+	private final TransactionsListRepository tr;
+	private final OrderHistoryRepository or;
 	private final S3Service s3s;
 
 	// 가장 높은 조회수 8개 조회
@@ -127,7 +139,83 @@ public class ProductServiceImpe implements ProductService {
 		
 	}
 	
+	// 단 거래상태가 이미 거래중으로 바뀌었거나, 본인이 등록한 상품은 등록 불가능
 
-}
+	// 구매 요청 (구매 이력 테이블 + 거래 테이블)
+	@Transactional
+	@Override
+	public String registPurchaserequest(PurchaseRequestDTO purchaseRequestDTO) {
+		
+		// 유저
+		User user = ur.findByUserEmail(purchaseRequestDTO.getBuyerEmail()).orElseThrow(()-> new IllegalArgumentException("해당 판매자의 이메일이 존재하지 않습니다."));
+		
+		// 상품
+		Product product = pr.findById(purchaseRequestDTO.getProductId()).orElseThrow(()-> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+
+		if(purchaseRequestDTO.getProductStatus().equals("거래중") || purchaseRequestDTO.getProductStatus().equals("거래종료")) {
+		return "상품이 이미 거래중이거나 거래가 종료된 물품입니다.";
+	} 
+		if(purchaseRequestDTO.getBuyerEmail().equals(purchaseRequestDTO.getSellerEmail())) {
+		return "해당 상품은 본인이 등록한 물품입니다.";
+	}
+		if(purchaseRequestDTO.getProductPrice()>purchaseRequestDTO.getBuyerMoney()) {
+		return "금액이 부족합니다. 마일리지 충전 후 이용해주세요.";
+	}
+
+		// 판매 테이블 -> 거래 상태 변화 추가
+		product.setProduct_status("거래중");
+		
+		pr.save(product);
+		
+		// 유저 테이블 -> 금액 깎기
+		user.setUser_money((long) (purchaseRequestDTO.getBuyerMoney()-purchaseRequestDTO.getProductPrice()));
+		
+		ur.save(user);
+		
+		
+			// 거래 테이블
+			TransactionsList transcation = new TransactionsList();
+			
+			transcation.setTransactionTime(LocalDateTime.now());
+			transcation.setTransactionName(purchaseRequestDTO.getTransactionName());
+			transcation.setTransactionPhone(purchaseRequestDTO.getTransactionPhone());
+			transcation.setTransactionAddress(purchaseRequestDTO.getTransactionAddress());
+			transcation.setTransactionStatus("거래대기");
+			transcation.setProduct(product);
+			transcation.setUser(user);
+			
+			tr.save(transcation);
+			
+			
+			// 구매 이력 테이블
+			OrderHistory orderHistory = new OrderHistory();
+			
+			orderHistory.setOrderHistoryTime(LocalDateTime.now());
+			orderHistory.setProduct(product);
+			orderHistory.setUser(user);
+
+			or.save(orderHistory);
+			
+			return "구매 요청이 완료되었습니다.";
+		}
+
+	// 진행중인 거래 조회
+	@Override
+	public Page<PurchaseRequestDTO> getTransactionProducts(String email, Pageable pageable) {
+		
+		// email로 User 찾기 (user_id 포함)
+		User user = ur.findByUserEmail(email)
+				.orElseThrow(()-> new IllegalArgumentException("해당 이메일이 존재하지 않습니다."));
+		
+		// 해당 user(user_id) 를 가진 Wish 가져오기
+		 Page<TransactionsList> transactionListPage = pr.findByUser(user, pageable);
+		 
+//		 return wishPage.map(wish -> ProductDTO.fromEntity(wish.getProduct()));
+	}
+	
+
+	}
+	
+
 
 

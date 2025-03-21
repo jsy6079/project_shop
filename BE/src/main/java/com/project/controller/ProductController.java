@@ -2,6 +2,10 @@ package com.project.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.project.dto.ProductDTO;
+import com.project.dto.PurchaseRequestDTO;
 import com.project.dto.WishDTO;
 import com.project.entity.Product;
 import com.project.service.ProductService;
@@ -100,5 +105,23 @@ public class ProductController {
 	
 	     return ResponseEntity.ok(response);
 	 } 
+	 
+	 // 구매 요청 (구매 이력 테이블 + 거래 테이블)
+	 @PostMapping("/payment")
+	 public ResponseEntity<String> registPurchaserequest(@RequestBody PurchaseRequestDTO purchaseRequestDTO){
+		 String response = ps.registPurchaserequest(purchaseRequestDTO);
+		 
+		 return ResponseEntity.ok(response);
+	 }
+	 
+	// 진행중인 거래 조회
+	@GetMapping("/view/{email}")
+	public ResponseEntity<Page<PurchaseRequestDTO>> getTransactionProducts(@PathVariable (name = "email") String email, @RequestParam(name = "page",defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "5") int size){
+
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "transactionTime"));
+
+		Page<PurchaseRequestDTO> response = ps.getTransactionProducts(email,pageable);
+		return ResponseEntity.ok(response);
+	}
 	
 }

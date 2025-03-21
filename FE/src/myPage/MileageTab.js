@@ -115,7 +115,10 @@ const MileageTab = ({}) => {
       <TabPane className="fade bg-white show p-4" tabId="3">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h5 className="text-dark mb-0">
-            내 마일리지: <span className="text-primary">{userInfo.money}</span>
+            내 마일리지:{" "}
+            <span className="text-primary">
+              {userInfo.money.toLocaleString()}
+            </span>
             <span className="text-dark"> 원</span>
           </h5>
         </div>

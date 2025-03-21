@@ -281,39 +281,6 @@ function NavBar({ type }) {
           </div>
         </div>
       </header>
-      {/* 찜 모달창 */}
-      {/* <Modal
-        isOpen={wishlistModal}
-        tabIndex="-1"
-        centered
-        contentClassName="rounded shadow-lg border-0 overflow-hidden"
-        toggle={toggleWishlistModal}
-      >
-        <ModalBody className="py-5">
-          <div className="text-center">
-            <div
-              className="icon d-flex align-items-center justify-content-center bg-soft-danger rounded-circle mx-auto"
-              style={{ height: "95px", width: "95px" }}
-            >
-              <h1 className="mb-0">
-                <i className="uil uil-heart-break align-middle"></i>
-              </h1>
-            </div>
-            <div className="mt-4">
-              <h4>Your wishlist is empty.</h4>
-              <p className="text-muted">
-                Create your first wishlist request...
-              </p>
-              <div className="mt-4">
-                <Link to="#" className="btn btn-outline-primary">
-                  + Create new wishlist
-                </Link>
-              </div>
-            </div>
-          </div>
-        </ModalBody>
-      </Modal> */}
-      {/* 로그인 모달창 */}
       <Modal
         isOpen={loginModal}
         tabIndex="-1"

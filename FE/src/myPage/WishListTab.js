@@ -30,7 +30,7 @@ const WishListTab = ({}) => {
       case "거래가능":
         return "primary";
 
-      case "거래불가":
+      case "거래중":
         return "danger";
 
       case "거래종료":

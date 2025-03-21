@@ -291,7 +291,17 @@ const ProductDetail = ({}) => {
               <Col md={7} className="mt-4 mt-sm-0 pt-2 pt-sm-0">
                 <div className="section-title ms-md-4">
                   <h4 className="title">{product.product_name}</h4>
-                  <Badge color="primary"> {product.product_status} </Badge>
+                  <Badge
+                    color={
+                      product.product_status === "거래중"
+                        ? "danger"
+                        : product.product_status === "거래종료"
+                        ? "secondary"
+                        : "primary"
+                    }
+                  >
+                    {product.product_status}
+                  </Badge>
                   <h5 className="text-muted">
                     {product.product_price.toLocaleString()}원
                   </h5>

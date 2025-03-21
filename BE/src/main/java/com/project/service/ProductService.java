@@ -2,10 +2,13 @@ package com.project.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.project.dto.ProductDTO;
+import com.project.dto.PurchaseRequestDTO;
 import com.project.entity.Product;
 
 public interface ProductService {
@@ -31,5 +34,11 @@ public interface ProductService {
 	// 판매물품 등록
 	String registProduct(String productName, int productPrice, String productCategory,
 			String productSize, String productDescription, String email, List<MultipartFile> productImages);
+
+	// 구매 요청 (구매 이력 테이블 + 거래 테이블)
+	String registPurchaserequest(PurchaseRequestDTO purchaseRequestDTO);
+
+	// 진행중인 거래 조회
+	Page<PurchaseRequestDTO> getTransactionProducts(String email, Pageable pageable);
 
 }

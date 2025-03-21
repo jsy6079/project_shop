@@ -53,24 +53,36 @@ const ProductPayment = ({}) => {
       return;
     }
 
+    const formData = {
+      productId: product.product_id,
+      productStatus: product.product_status,
+      buyerEmail: userInfo.email,
+      transactionName: userInfo.username,
+      transactionPhone: userInfo.phone,
+      transactionAddress: userInfo.address,
+      sellerEmail: product.user_email,
+      buyerMoney: userInfo.money,
+      productPrice: product.product_price,
+    };
+
     try {
-      const response = await axios.put(
-        "http://localhost:8080/api/user/update",
-        userInfo,
+      const response = await axios.post(
+        "http://localhost:8080/api/product/payment",
+        formData,
         {
           headers: {
             "Content-Type": "application/json",
           },
         }
       );
-      alert("구매 요청이 완료 되었습니다.");
+      alert(response.data);
       fetchUserInfo();
     } catch (error) {
       if (error.response && error.response.data) {
-        alert(error.response.data);
+        alert("알 수 없는 요청입니다.");
         return;
       }
-      alert("서버오류");
+      alert("알 수 없는 요청입니다.");
     }
   };
 
