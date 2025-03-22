@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,8 +49,11 @@ public class UserController {
 	}
 	
 	// 마일리지 이력 조회
-	@GetMapping("/money/{email}")
-		public ResponseEntity<Page<MoneyDTO>> getMoneyList(@PathVariable (name = "email") String email, @RequestParam(name = "page",defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "5") int size){
+	@GetMapping("/money")
+		public ResponseEntity<Page<MoneyDTO>> getMoneyList(@RequestParam(name = "page",defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "5") int size){
+		
+			String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		
 			Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "moneyTime"));
 			Page<MoneyDTO> response = ms.moneyList(email,pageable);
 			return ResponseEntity.ok(response);

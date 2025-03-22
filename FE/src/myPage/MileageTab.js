@@ -6,6 +6,7 @@ import {
   Pagination,
   PaginationItem,
   PaginationLink,
+  Badge,
 } from "reactstrap";
 import { useUser } from "../userContext";
 
@@ -84,7 +85,10 @@ const MileageTab = ({}) => {
   const fetchReviewList = async (pageNumber) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/user/money/${userInfo.email}?page=${pageNumber}&size=5`
+        `http://localhost:8080/api/user/money?page=${pageNumber}&size=5`,
+        {
+          withCredentials: true, // ✅ 이게 꼭 있어야 쿠키가 전송됨!
+        }
       );
       setMoneyProducts(response.data.content);
       setMoneyTotalPages(response.data.totalPages);
@@ -181,16 +185,26 @@ const MileageTab = ({}) => {
               <tbody key={key}>
                 <tr>
                   <th scope="row">{formatDate(money.moneyTime)}</th>
-                  <td className="text-success">{money.moneyType}</td>
+
+                  <td>
+                    <Badge
+                      color={
+                        money.moneyType === "입금"
+                          ? "primary"
+                          : money.moneyType === "출금"
+                          ? "danger"
+                          : "primary"
+                      }
+                    >
+                      {money.moneyType}
+                    </Badge>
+                  </td>
                   <td>
                     {money.moneyType === "입금"
                       ? `+ ${money.moneyAmount.toLocaleString()}원`
                       : `- ${money.moneyAmount.toLocaleString()}원`}
                   </td>
-                  <td>
-                    {money.moneyComment}{" "}
-                    <span className="text-muted">(상품명)</span>
-                  </td>
+                  <td>{money.moneyComment} </td>
                 </tr>
               </tbody>
             ))}

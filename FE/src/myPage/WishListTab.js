@@ -51,7 +51,10 @@ const WishListTab = ({}) => {
   const fetchWishList = async (pageNumber) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/wishlist/view/${userInfo.email}?page=${pageNumber}&size=5`
+        `http://localhost:8080/api/wishlist/view?page=${pageNumber}&size=5`,
+        {
+          withCredentials: true,
+        }
       );
       setWishProducts(response.data.content);
       setWishTotalPages(response.data.totalPages); // 찜의 totalPages 따로 관리
@@ -73,8 +76,9 @@ const WishListTab = ({}) => {
     if (isCofirm) {
       try {
         const response = await axios.delete(
-          `http://localhost:8080/api/wishlist/delete/${email}/${product_id}`,
+          `http://localhost:8080/api/wishlist/delete/${product_id}`,
           {
+            withCredentials: true,
             email,
             product_id,
           }

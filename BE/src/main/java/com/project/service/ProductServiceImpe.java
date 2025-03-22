@@ -13,19 +13,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.project.dto.OrderHistoryDTO;
 import com.project.dto.ProductDTO;
 import com.project.dto.PurchaseRequestDTO;
+import com.project.dto.SalesHistoryDTO;
+import com.project.dto.TransactionsListDTO;
 import com.project.entity.Category;
+import com.project.entity.Money;
 import com.project.entity.OrderHistory;
 import com.project.entity.Product;
 import com.project.entity.Review;
+import com.project.entity.SalesHistory;
 import com.project.entity.Size;
 import com.project.entity.User;
 import com.project.entity.Wish;
 import com.project.entity.TransactionsList;
 import com.project.repository.CategoryRepository;
+import com.project.repository.MoneyRepository;
 import com.project.repository.OrderHistoryRepository;
 import com.project.repository.ProductRepository;
+import com.project.repository.SalesHistoryRepository;
 import com.project.repository.TransactionsListRepository;
 import com.project.repository.UserRepository;
 
@@ -40,6 +47,8 @@ public class ProductServiceImpe implements ProductService {
 	private final CategoryRepository cr;
 	private final TransactionsListRepository tr;
 	private final OrderHistoryRepository or;
+	private final SalesHistoryRepository sr;
+	private final MoneyRepository mr;
 	private final S3Service s3s;
 
 	// 가장 높은 조회수 8개 조회
@@ -96,7 +105,7 @@ public class ProductServiceImpe implements ProductService {
 				.collect(Collectors.toList());
 	}
 
-	// 판매물품 등록
+	// 판매물품 등록 (상품 테이블, 판매 이력 테이블)
 	@Override
 	public String registProduct(String productName, int productPrice, String productCategory,
 			String productSize, String productDescription, String email, List<MultipartFile> productImages) {
@@ -133,6 +142,15 @@ public class ProductServiceImpe implements ProductService {
  	    product.setSize(size);    // product에 size 연결
  	    
  	    pr.save(product);
+ 	    
+ 	    // 판매 이력 테이블 등록
+ 	    SalesHistory salesHistory = new SalesHistory();
+ 	    salesHistory.setSalesHistoryTime(LocalDateTime.now());
+ 	    salesHistory.setProduct(product);
+ 	    salesHistory.setUser(user);
+ 	    salesHistory.setTransactionsList(null);
+ 	    
+ 	    sr.save(salesHistory);
  		
  		
  		return "물품이 등록되었습니다.";
@@ -151,7 +169,7 @@ public class ProductServiceImpe implements ProductService {
 		
 		// 상품
 		Product product = pr.findById(purchaseRequestDTO.getProductId()).orElseThrow(()-> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
-
+		
 		if(purchaseRequestDTO.getProductStatus().equals("거래중") || purchaseRequestDTO.getProductStatus().equals("거래종료")) {
 		return "상품이 이미 거래중이거나 거래가 종료된 물품입니다.";
 	} 
@@ -172,45 +190,90 @@ public class ProductServiceImpe implements ProductService {
 		
 		ur.save(user);
 		
+		// 마일리지 이력 테이블
+		Money money = new Money();
 		
-			// 거래 테이블
-			TransactionsList transcation = new TransactionsList();
-			
-			transcation.setTransactionTime(LocalDateTime.now());
-			transcation.setTransactionName(purchaseRequestDTO.getTransactionName());
-			transcation.setTransactionPhone(purchaseRequestDTO.getTransactionPhone());
-			transcation.setTransactionAddress(purchaseRequestDTO.getTransactionAddress());
-			transcation.setTransactionStatus("거래대기");
-			transcation.setProduct(product);
-			transcation.setUser(user);
-			
-			tr.save(transcation);
-			
-			
-			// 구매 이력 테이블
-			OrderHistory orderHistory = new OrderHistory();
-			
-			orderHistory.setOrderHistoryTime(LocalDateTime.now());
-			orderHistory.setProduct(product);
-			orderHistory.setUser(user);
+		money.setMoneyAmount(purchaseRequestDTO.getProductPrice());
+		money.setMoneyComment("상품 구매"+" ("+purchaseRequestDTO.getProductName()+") ");
+		money.setMoneyTime(LocalDateTime.now());
+		money.setMoneyType("출금");
+		money.setUser(user);
+		
+		mr.save(money);
+		
+		
+		// 거래 테이블
+		TransactionsList transcation = new TransactionsList();
+		
+		transcation.setTransactionTime(LocalDateTime.now());
+		transcation.setTransactionName(purchaseRequestDTO.getTransactionName());
+		transcation.setTransactionPhone(purchaseRequestDTO.getTransactionPhone());
+		transcation.setTransactionAddress(purchaseRequestDTO.getTransactionAddress());
+		transcation.setTransactionStatusBuyer("거래대기");
+		transcation.setTransactionStatusSeller("거래요청 확인");
+		transcation.setProduct(product);
+		transcation.setUser(user);
+				
+		tr.save(transcation);
+					
+		// 구매 이력 테이블
+		OrderHistory orderHistory = new OrderHistory();
+		
+		orderHistory.setOrderHistoryTime(LocalDateTime.now());
+		orderHistory.setProduct(product);
+		orderHistory.setUser(user);
+		orderHistory.setTransactionsList(transcation);
 
-			or.save(orderHistory);
-			
-			return "구매 요청이 완료되었습니다.";
-		}
+		or.save(orderHistory);
+		
+		// 판매 이력 테이블
+		SalesHistory saleshistory = sr.findByProduct(product).orElseThrow(() -> new IllegalArgumentException("해당 상품에 대한 판매 이력이 존재하지 않습니다."));
+		
+		saleshistory.setTransactionsList(transcation);
+		
+		sr.save(saleshistory); // 업데이트
+		
+		return "구매 요청이 완료되었습니다.";
+	}
 
 	// 진행중인 거래 조회
 	@Override
-	public Page<PurchaseRequestDTO> getTransactionProducts(String email, Pageable pageable) {
+	public Page<TransactionsListDTO> getTransactionProducts(String email, Pageable pageable) {
 		
 		// email로 User 찾기 (user_id 포함)
 		User user = ur.findByUserEmail(email)
 				.orElseThrow(()-> new IllegalArgumentException("해당 이메일이 존재하지 않습니다."));
 		
 		// 해당 user(user_id) 를 가진 Wish 가져오기
-		 Page<TransactionsList> transactionListPage = pr.findByUser(user, pageable);
+		 Page<TransactionsList> transactionListPage = tr.findByUser(user, pageable);
 		 
-//		 return wishPage.map(wish -> ProductDTO.fromEntity(wish.getProduct()));
+		 return transactionListPage.map(transcation -> TransactionsListDTO.fromEntity(transcation));
+	}
+
+	// 구매 이력 조회
+	@Override
+	public Page<OrderHistoryDTO> getOrderHistoryProducts(String email, Pageable pageable) {
+		// email로 User 찾기 (user_id 포함)
+		User user = ur.findByUserEmail(email)
+				.orElseThrow(()-> new IllegalArgumentException("해당 이메일이 존재하지 않습니다."));
+		
+		// 해당 user(user_id) 를 가진 Wish 가져오기
+		 Page<OrderHistory> orderHistoryListPage = or.findByUser(user, pageable);
+		 
+		 return orderHistoryListPage.map(orderhistory -> OrderHistoryDTO.fromEntity(orderhistory));
+	}
+
+	// 판매 이력 조회
+	@Override
+	public Page<SalesHistoryDTO> getSalesHistoryProducts(String email, Pageable pageable) {
+		// email로 User 찾기 (user_id 포함)
+		User user = ur.findByUserEmail(email)
+				.orElseThrow(()-> new IllegalArgumentException("해당 이메일이 존재하지 않습니다."));
+		
+		// 해당 user(user_id) 를 가진 Wish 가져오기
+		 Page<SalesHistory> salesHistoryListPage = sr.findByUser(user, pageable);
+		 
+		 return salesHistoryListPage.map(saleshistory -> SalesHistoryDTO.fromEntity(saleshistory));
 	}
 	
 

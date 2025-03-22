@@ -29,6 +29,8 @@ public class PurchaseRequestDTO {
 	private String productStatus;
 	// 구매자 이메일 (이건 유저 테이블에서 필요하겠지)
 	private String buyerEmail;
+	
+	private String productName;
 
 	
 	// 거래 테이블
@@ -48,29 +50,7 @@ public class PurchaseRequestDTO {
 	private String sellerEmail;
 	// 상품 ID (이건 상품 테이블에서 필요)
 	// 구매자 이메일(이건 유저 테이블에서 필요)
-	private int buyerMoney;
-	private int productPrice;
-	
-	
-	
-	// 구매 이력 테이블
-//	public static PurchaseRequestDTO fromPurchaseEntity(TransactionsList transactionsList) {
-//		return new PurchaseRequestDTO(
-//				null,
-//				null,
-//				transactionsList.getProduct().getProduct_id(),
-//				null,
-//				transactionsList.getUser().getUserEmail(),
-//				transactionsList.getTransactionId(),
-//				transactionsList.getTransactionTime(),
-//				transactionsList.getTransactionName(),
-//				transactionsList.getTransactionPhone(),
-//				transactionsList.getTransactionAddress(),
-//				transactionsList.getTransactionStatus(),
-//				transactionsList.getProduct().getUser().getUserEmail(),
-//				transactionsList.getUser().getUser_money(),
-//				transactionsList.getProduct().getProduct_price()
-//				
-//		);
+	private Long  buyerMoney;
+	private int productPrice;	
 
 }

@@ -3,6 +3,7 @@ package com.project.entity;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -15,19 +16,13 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class TransactionsList {
-
+public class SalesHistory {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long transactionId;
+	private Long salesHistoryId;
 	
-	private LocalDateTime transactionTime;
-	
-	private String transactionName;
-	private String transactionPhone;
-	private String transactionAddress;
-	private String transactionStatusBuyer;
-	private String transactionStatusSeller;
+	private LocalDateTime salesHistoryTime;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
@@ -36,4 +31,9 @@ public class TransactionsList {
 	@OneToOne
 	@JoinColumn(name = "product_id", nullable = false)
 	private Product product;
+	
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "transactionId", nullable = true)
+	private TransactionsList transactionsList;
+
 }

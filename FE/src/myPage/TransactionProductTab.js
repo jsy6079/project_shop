@@ -21,41 +21,52 @@ import { useUser } from "../userContext";
 
 const TransactionProductTab = ({}) => {
   const { userInfo, setUserInfo, fetchUserInfo } = useUser(); // 전역 상태 사용
-  const [wishProducts, setWishProducts] = useState([]); // 찜
-  const [wishPage, setWishPage] = useState(0); // 찜 목록 페이지
-  const [wishTotalPages, setWishTotalPages] = useState(1); // 찜 전체 페이지 수
+  const [transactionProducts, setTransactionProducts] = useState([]); // 찜
+  const [transactionPage, setTransactionPage] = useState(0); // 찜 목록 페이지
+  const [transactionTotalPages, setTransactionTotalPages] = useState(1); // 찜 전체 페이지 수
 
-  // 거래 상태 별 뱃지 스타일 적용 -> 수정해야함
-  function getBadgeColor(product_status) {
-    switch (product_status) {
+  function getBadgeColor(status) {
+    switch (status) {
       case "거래가능":
         return "primary";
-
       case "거래대기":
-        return "danger";
-
+        return "warning";
+      case "검수대기":
+        return "info";
+      case "검수완료":
+        return "success";
+      case "배송중":
+        return "dark";
       case "거래종료":
         return "secondary";
+      default:
+        return "light";
     }
   }
 
-  // 찜 페이징
-  const wishPageGroupSize = 5;
-  const wishCurrentGroup = Math.floor(wishPage / wishPageGroupSize);
-  const wishStartPage = wishCurrentGroup * wishPageGroupSize;
-  const wishEndPage = Math.min(
-    wishStartPage + wishPageGroupSize,
-    wishTotalPages
+  // 진행중인 거래 페이징
+  const transactionPageGroupSize = 5;
+  const transactionCurrentGroup = Math.floor(
+    transactionPage / transactionPageGroupSize
+  );
+  const transactionStartPage =
+    transactionCurrentGroup * transactionPageGroupSize;
+  const transactionEndPage = Math.min(
+    transactionStartPage + transactionPageGroupSize,
+    transactionTotalPages
   );
 
-  // 찜 목록 조회
-  const fetchWishList = async (pageNumber) => {
+  // 진행중인 거래 목록 조회
+  const fetchTransactionList = async (pageNumber) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/wishlist/view/${userInfo.email}?page=${pageNumber}&size=5`
+        `http://localhost:8080/api/product/view?page=${pageNumber}&size=5`,
+        {
+          withCredentials: true,
+        }
       );
-      setWishProducts(response.data.content);
-      setWishTotalPages(response.data.totalPages); // 찜의 totalPages 따로 관리
+      setTransactionProducts(response.data.content);
+      setTransactionTotalPages(response.data.totalPages); // 진행중인 거래의 totalPages 따로 관리
     } catch (error) {
       console.error("찜 목록을 가져오는 중 오류 발생:", error);
     }
@@ -63,9 +74,20 @@ const TransactionProductTab = ({}) => {
 
   useEffect(() => {
     if (userInfo?.email) {
-      fetchWishList(wishPage); // 찜 목록 페이지 변화 감지
+      fetchTransactionList(transactionPage); // 진행중인 거래 목록 페이지 변화 감지
     }
-  }, [userInfo?.email, wishPage]);
+  }, [userInfo?.email, transactionPage]);
+
+  // 시간 데이터 조정
+  const formatDate = (dateTimeStr) => {
+    const date = new Date(dateTimeStr);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${year}.${month}.${day} ${hours}:${minutes}`;
+  };
 
   return (
     <TabPane className="show fade bg-white shadow rounded p-4" tabId="5">
@@ -90,72 +112,90 @@ const TransactionProductTab = ({}) => {
               </th>
             </tr>
           </thead>
-          {wishProducts.map((product, key) => (
+          {transactionProducts.map((product, key) => (
             <tbody key={key}>
               <tr>
-                <th scope="row">7107</th>
-                <td className="text-success">Delivered</td>
+                <th scope="row">{product.productName}</th>
                 <td>
-                  <Link to="#" className="text-primary">
+                  <span
+                    className={`badge bg-${getBadgeColor(
+                      product.transactionStatusBuyer
+                    )}`}
+                  >
+                    {product.transactionStatusBuyer}
+                  </span>
+                </td>
+                <td>
+                  <Link
+                    to={`/detail/${product.categoryId}/${product.productId}`}
+                    className="text-primary"
+                  >
                     View <i className="uil uil-arrow-right"></i>
                   </Link>
                 </td>
-                <td>1st November 2020</td>
+                <td>{formatDate(product.transactionTime)}</td>
                 <td>
-                  $ 320 <span className="text-muted">for 2items</span>
+                  <button class="btn btn-danger btn-sm"> 구매취소 </button>
                 </td>
               </tr>
             </tbody>
           ))}
         </Table>
-        <div className="text-center mt-3">
-          <Pagination className="d-inline-flex justify-content-center">
-            <PaginationItem disabled={wishCurrentGroup === 0}>
-              <PaginationLink
-                href="#"
-                previous
-                onClick={(e) => {
-                  e.preventDefault();
-                  setWishPage((wishCurrentGroup - 1) * wishPageGroupSize);
-                }}
-              >
-                이전
-              </PaginationLink>
-            </PaginationItem>
+      </div>
+      <div className="text-center mt-3">
+        <Pagination className="d-inline-flex justify-content-center">
+          <PaginationItem disabled={transactionCurrentGroup === 0}>
+            <PaginationLink
+              href="#"
+              previous
+              onClick={(e) => {
+                e.preventDefault();
+                setTransactionPage(
+                  (transactionCurrentGroup - 1) * transactionPageGroupSize
+                );
+              }}
+            >
+              이전
+            </PaginationLink>
+          </PaginationItem>
 
-            {[...Array(wishEndPage - wishStartPage)].map((_, index) => (
+          {[...Array(transactionEndPage - transactionStartPage)].map(
+            (_, index) => (
               <PaginationItem
-                key={wishStartPage + index}
-                active={wishStartPage + index === wishPage}
+                key={transactionStartPage + index}
+                active={transactionStartPage + index === transactionPage}
               >
                 <PaginationLink
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    setWishPage(wishStartPage + index);
+                    setTransactionPage(transactionStartPage + index);
                   }}
                 >
-                  {wishStartPage + index + 1}
+                  {transactionStartPage + index + 1}
                 </PaginationLink>
               </PaginationItem>
-            ))}
+            )
+          )}
 
-            <PaginationItem disabled={wishEndPage >= wishTotalPages}>
-              <PaginationLink
-                href="#"
-                next
-                onClick={(e) => {
-                  e.preventDefault();
-                  setWishPage(
-                    wishCurrentGroup * wishPageGroupSize + wishPageGroupSize
-                  );
-                }}
-              >
-                다음
-              </PaginationLink>
-            </PaginationItem>
-          </Pagination>
-        </div>
+          <PaginationItem
+            disabled={transactionEndPage >= transactionTotalPages}
+          >
+            <PaginationLink
+              href="#"
+              next
+              onClick={(e) => {
+                e.preventDefault();
+                setTransactionPage(
+                  transactionCurrentGroup * transactionPageGroupSize +
+                    transactionPageGroupSize
+                );
+              }}
+            >
+              다음
+            </PaginationLink>
+          </PaginationItem>
+        </Pagination>
       </div>
     </TabPane>
   );

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,9 +37,11 @@ public class WishController {
 	}
 	
 	// 찜 목록 조회
-	@GetMapping("/view/{email}")
-	public ResponseEntity<Page<ProductDTO>> getWishProducts(@PathVariable (name = "email") String email, @RequestParam(name = "page",defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "5") int size){
-
+	@GetMapping("/view")
+	public ResponseEntity<Page<ProductDTO>> getWishProducts(@RequestParam(name = "page",defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "5") int size){
+		
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "wishTime"));
 
 		Page<ProductDTO> response = ws.wishProducts(email,pageable);
@@ -46,8 +49,11 @@ public class WishController {
 	}
 	
 	// 찜 목록 삭제
-	@DeleteMapping("/delete/{email}/{product_id}")
-	public ResponseEntity<String> deleteWishProducts(@PathVariable (name = "email") String email, @PathVariable (name = "product_id") Long product_id){
+	@DeleteMapping("/delete/{product_id}")
+	public ResponseEntity<String> deleteWishProducts(@PathVariable (name = "product_id") Long product_id){
+		
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		
 		ws.deleteWish(email, product_id);
 		
 		return ResponseEntity.ok("해당 찜이 삭제되었습니다.");

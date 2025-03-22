@@ -7,8 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.project.dto.OrderHistoryDTO;
 import com.project.dto.ProductDTO;
 import com.project.dto.PurchaseRequestDTO;
+import com.project.dto.SalesHistoryDTO;
+import com.project.dto.TransactionsListDTO;
 import com.project.entity.Product;
 
 public interface ProductService {
@@ -39,6 +42,12 @@ public interface ProductService {
 	String registPurchaserequest(PurchaseRequestDTO purchaseRequestDTO);
 
 	// 진행중인 거래 조회
-	Page<PurchaseRequestDTO> getTransactionProducts(String email, Pageable pageable);
+	Page<TransactionsListDTO> getTransactionProducts(String email, Pageable pageable);
+
+	// 구매 이력 조회
+	Page<OrderHistoryDTO> getOrderHistoryProducts(String email, Pageable pageable);
+
+	// 판매 이력 조회
+	Page<SalesHistoryDTO> getSalesHistoryProducts(String email, Pageable pageable);
 
 }

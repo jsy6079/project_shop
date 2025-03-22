@@ -31,6 +31,10 @@ public class OrderHistory {
 	@OneToOne
 	@JoinColumn(name = "product_id", nullable = false)
 	private Product product;
+	
+	@OneToOne
+	@JoinColumn(name = "transactionId", nullable = false)
+	private TransactionsList transactionsList;
 
 
 

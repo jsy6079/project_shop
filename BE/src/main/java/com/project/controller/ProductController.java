@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +19,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.project.dto.OrderHistoryDTO;
 import com.project.dto.ProductDTO;
 import com.project.dto.PurchaseRequestDTO;
+import com.project.dto.SalesHistoryDTO;
+import com.project.dto.TransactionsListDTO;
 import com.project.dto.WishDTO;
 import com.project.entity.Product;
 import com.project.service.ProductService;
@@ -115,13 +119,41 @@ public class ProductController {
 	 }
 	 
 	// 진행중인 거래 조회
-	@GetMapping("/view/{email}")
-	public ResponseEntity<Page<PurchaseRequestDTO>> getTransactionProducts(@PathVariable (name = "email") String email, @RequestParam(name = "page",defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "5") int size){
+	@GetMapping("/view")
+	public ResponseEntity<Page<TransactionsListDTO>> getTransactionProducts(@RequestParam(name = "page",defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "5") int size){
 
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "transactionTime"));
 
-		Page<PurchaseRequestDTO> response = ps.getTransactionProducts(email,pageable);
+		Page<TransactionsListDTO> response = ps.getTransactionProducts(email,pageable);
 		return ResponseEntity.ok(response);
 	}
+	
+	// 구매 이력 조회
+	@GetMapping("/orderhistory")
+	public ResponseEntity<Page<OrderHistoryDTO>> getOrderHistoryProducts(@RequestParam(name = "page",defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "5") int size){
+
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "orderHistoryTime"));
+
+		Page<OrderHistoryDTO> response = ps.getOrderHistoryProducts(email,pageable);
+		return ResponseEntity.ok(response);
+	}
+	
+	// 판매 이력 조회
+	@GetMapping("/saleshistory")
+	public ResponseEntity<Page<SalesHistoryDTO>> getSalesHistoryProducts(@RequestParam(name = "page",defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "5") int size){
+		
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "salesHistoryTime"));
+
+		Page<SalesHistoryDTO> response = ps.getSalesHistoryProducts(email,pageable);
+		return ResponseEntity.ok(response);
+		
+	}
+	
 	
 }

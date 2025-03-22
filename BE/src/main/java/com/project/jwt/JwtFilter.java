@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
+import jakarta.servlet.http.Cookie;
 
 import java.io.IOException;
 
@@ -21,22 +22,34 @@ public class JwtFilter extends GenericFilterBean {
     private JwtUtil jwtUtil;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        String token = httpRequest.getHeader("Authorization");
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
 
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-            String email = jwtUtil.validateToken(token);
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String token = null;
+
+        // 쿠키에서 토큰 찾기
+        if (httpRequest.getCookies() != null) {
+            for (Cookie cookie : httpRequest.getCookies()) {
+                if ("token".equals(cookie.getName())) { // 쿠키 이름
+                    token = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        // 토큰 유효성 검사 및 시큐리티 컨텍스트에 등록
+        if (token != null) {
+            String email = jwtUtil.validateToken(token); 
 
             if (email != null) {
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(email, null, null);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
-
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
+
         chain.doFilter(request, response);
     }
 }

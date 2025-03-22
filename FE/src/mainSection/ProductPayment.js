@@ -55,6 +55,7 @@ const ProductPayment = ({}) => {
 
     const formData = {
       productId: product.product_id,
+      productName: product.product_name,
       productStatus: product.product_status,
       buyerEmail: userInfo.email,
       transactionName: userInfo.username,

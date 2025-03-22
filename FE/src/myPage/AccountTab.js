@@ -90,7 +90,10 @@ const AccountTab = ({ reviewGrade }) => {
   const fetchReviewList = async (pageNumber) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/review/view/${userInfo.email}?page=${pageNumber}&size=5`
+        `http://localhost:8080/api/review/view?page=${pageNumber}&size=5`,
+        {
+          withCredentials: true,
+        }
       );
       setViewProducts(response.data.content);
       setReviewTotalPages(response.data.totalPages);

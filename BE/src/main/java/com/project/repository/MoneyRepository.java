@@ -13,5 +13,7 @@ public interface MoneyRepository extends JpaRepository<Money, Long> {
 
 	Page<Money> findByUser(User user, Pageable pageable);
 
+	
+
 
 }
