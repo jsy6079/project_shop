@@ -39,7 +39,7 @@ public class TransactionsListDTO {
 	private int productPrice;
 	private String productName;
 	private Long categoryId;
-
+	
 	// 거래 이력 테이블
 	public static TransactionsListDTO fromEntity(TransactionsList transactionsList) {
 		return new TransactionsListDTO(
@@ -51,10 +51,10 @@ public class TransactionsListDTO {
 			    transactionsList.getTransactionAddress(), 
 			    transactionsList.getTransactionStatusBuyer(), 
 			    transactionsList.getTransactionStatusSeller(),
-			    transactionsList.getProduct().getUser().getUserEmail(), 
+			    transactionsList.getSeller().getUserEmail(),   
 			    transactionsList.getProduct().getProduct_id(), 
-			    transactionsList.getUser().getUserEmail(), 
-			    transactionsList.getUser().getUser_money(), 
+			    transactionsList.getBuyer().getUserEmail(),  
+			    transactionsList.getBuyer().getUser_money(), 
 			    transactionsList.getProduct().getProduct_price(), 
 			    transactionsList.getProduct().getProduct_name(),
 			    transactionsList.getProduct().getCategory().getCategory_id()

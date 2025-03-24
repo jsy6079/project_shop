@@ -118,15 +118,27 @@ public class ProductController {
 		 return ResponseEntity.ok(response);
 	 }
 	 
-	// 진행중인 거래 조회
-	@GetMapping("/view")
-	public ResponseEntity<Page<TransactionsListDTO>> getTransactionProducts(@RequestParam(name = "page",defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "5") int size){
+	// 진행중인 거래 조회 (구매자)
+	@GetMapping("/buyer/view")
+	public ResponseEntity<Page<TransactionsListDTO>> getBuyerTransactionProducts(@RequestParam(name = "page",defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "5") int size){
 
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "transactionTime"));
 
-		Page<TransactionsListDTO> response = ps.getTransactionProducts(email,pageable);
+		Page<TransactionsListDTO> response = ps.getBuyerTransactionProducts(email,pageable);
+		return ResponseEntity.ok(response);
+	}
+	
+	// 진행중인 거래 조회 (판매자)
+	@GetMapping("/seller/view")
+	public ResponseEntity<Page<TransactionsListDTO>> getSellerTransactionProducts(@RequestParam(name = "page",defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "5") int size){
+
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "transactionTime"));
+
+		Page<TransactionsListDTO> response = ps.getSellerTransactionProducts(email,pageable);
 		return ResponseEntity.ok(response);
 	}
 	

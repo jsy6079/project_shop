@@ -37,6 +37,8 @@ const HistoryTab = ({}) => {
         return "primary";
       case "거래대기":
         return "warning";
+      case "요청확인":
+        return "info";
       case "검수대기":
         return "info";
       case "검수완료":
@@ -45,8 +47,10 @@ const HistoryTab = ({}) => {
         return "dark";
       case "거래종료":
         return "secondary";
+      case "거래취소":
+        return "secondary";
       default:
-        return "light";
+        return "secondary";
     }
   }
 
@@ -54,7 +58,7 @@ const HistoryTab = ({}) => {
     switch (status) {
       case "판매중":
         return "primary";
-      case "거래요청 확인":
+      case "거래요청":
         return "warning";
       case "발송대기":
         return "info";
@@ -68,8 +72,10 @@ const HistoryTab = ({}) => {
         return "secondary";
       case "거래종료":
         return "secondary";
+      case "거래취소":
+        return "secondary";
       default:
-        return "light";
+        return "secondary";
     }
   }
 
@@ -171,6 +177,9 @@ const HistoryTab = ({}) => {
                     거래상태
                   </th>
                   <th scope="col" className="border-bottom">
+                    비고
+                  </th>
+                  <th scope="col" className="border-bottom">
                     요청 날짜
                   </th>
                   <th scope="col" className="border-bottom">
@@ -192,6 +201,7 @@ const HistoryTab = ({}) => {
                         {product.transactionStatusBuyer}
                       </span>
                     </td>
+                    <td> </td>
                     <td>{formatDate(product.orderHistoryTime)}</td>
                     <td>
                       {" "}
@@ -277,6 +287,9 @@ const HistoryTab = ({}) => {
                     거래상태
                   </th>
                   <th scope="col" className="border-bottom">
+                    비고
+                  </th>
+                  <th scope="col" className="border-bottom">
                     등록 날짜
                   </th>
                   <th scope="col" className="border-bottom">
@@ -298,6 +311,7 @@ const HistoryTab = ({}) => {
                         {product.transactionStatusSeller}
                       </span>
                     </td>
+                    <td> </td>
                     <td>{formatDate(product.salesHistoryTime)}</td>
                     <td>
                       {" "}

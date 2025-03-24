@@ -43,7 +43,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findProductsDetail(@Param("productId") Long productId);
 
     // 해당 유저의 진행중인 거래 목록 가져오기
-	Page<TransactionsList> findByUser(User user, Pageable pageable);
+//	Page<TransactionsList> findByUser(User user, Pageable pageable);
+
+
 
     
 }

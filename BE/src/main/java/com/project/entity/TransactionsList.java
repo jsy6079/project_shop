@@ -29,11 +29,17 @@ public class TransactionsList {
 	private String transactionStatusBuyer;
 	private String transactionStatusSeller;
 	
+
 	@ManyToOne
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+	@JoinColumn(name = "buyer_id", nullable = false)
+	private User buyer;
+
+	@ManyToOne
+	@JoinColumn(name = "seller_id", nullable = false)
+	private User seller;
+
 	
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "product_id", nullable = false)
 	private Product product;
 }

@@ -88,7 +88,7 @@ const AccountTab = ({ reviewGrade }) => {
   const fetchReviewList = async (pageNumber) => {
     try {
       const response = await axios.get(
-        ApiUrl + `/api/review/view?page=${pageNumber}&size=5`,
+        ApiUrl + `/api/review/mypage/view?page=${pageNumber}&size=5`,
         {
           withCredentials: true,
         }

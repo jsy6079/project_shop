@@ -23,16 +23,18 @@ public class SalesHistory {
 	private Long salesHistoryId;
 	
 	private LocalDateTime salesHistoryTime;
+
+	private String salesHistoryComment;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 	
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "product_id", nullable = false)
 	private Product product;
 	
-	@OneToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "transactionId", nullable = true)
 	private TransactionsList transactionsList;
 

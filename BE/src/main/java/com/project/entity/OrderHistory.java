@@ -24,15 +24,17 @@ public class OrderHistory {
 	
 	private LocalDateTime orderHistoryTime;
 	
+	private String orderHistoryComment;
+	
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 	
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "product_id", nullable = false)
 	private Product product;
 	
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "transactionId", nullable = false)
 	private TransactionsList transactionsList;
 

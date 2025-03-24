@@ -172,10 +172,12 @@ public class ProductServiceImpe implements ProductService {
 	public String registPurchaserequest(PurchaseRequestDTO purchaseRequestDTO) {
 		
 		// 유저
-		User user = ur.findByUserEmail(purchaseRequestDTO.getBuyerEmail()).orElseThrow(()-> new IllegalArgumentException("해당 판매자의 이메일이 존재하지 않습니다."));
+		User buyer = ur.findByUserEmail(purchaseRequestDTO.getBuyerEmail()).orElseThrow(()-> new IllegalArgumentException("해당 판매자의 이메일이 존재하지 않습니다."));
 		
 		// 상품
 		Product product = pr.findById(purchaseRequestDTO.getProductId()).orElseThrow(()-> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+		
+		User seller = product.getUser();
 		
 		if(purchaseRequestDTO.getProductStatus().equals("거래중") || purchaseRequestDTO.getProductStatus().equals("거래종료")) {
 		return "상품이 이미 거래중이거나 거래가 종료된 물품입니다.";
@@ -193,9 +195,9 @@ public class ProductServiceImpe implements ProductService {
 		pr.save(product);
 		
 		// 유저 테이블 -> 금액 깎기
-		user.setUser_money((long) (purchaseRequestDTO.getBuyerMoney()-purchaseRequestDTO.getProductPrice()));
+		buyer.setUser_money((long) (purchaseRequestDTO.getBuyerMoney()-purchaseRequestDTO.getProductPrice()));
 		
-		ur.save(user);
+		ur.save(buyer);
 		
 		// 마일리지 이력 테이블
 		Money money = new Money();
@@ -204,7 +206,7 @@ public class ProductServiceImpe implements ProductService {
 		money.setMoneyComment("상품 구매"+" ("+purchaseRequestDTO.getProductName()+") ");
 		money.setMoneyTime(LocalDateTime.now());
 		money.setMoneyType("출금");
-		money.setUser(user);
+		money.setUser(buyer);
 		
 		mr.save(money);
 		
@@ -217,9 +219,10 @@ public class ProductServiceImpe implements ProductService {
 		transcation.setTransactionPhone(purchaseRequestDTO.getTransactionPhone());
 		transcation.setTransactionAddress(purchaseRequestDTO.getTransactionAddress());
 		transcation.setTransactionStatusBuyer("거래대기");
-		transcation.setTransactionStatusSeller("거래요청 확인");
+		transcation.setTransactionStatusSeller("거래요청");
 		transcation.setProduct(product);
-		transcation.setUser(user);
+		transcation.setBuyer(buyer);
+		transcation.setSeller(seller);
 				
 		tr.save(transcation);
 					
@@ -228,7 +231,7 @@ public class ProductServiceImpe implements ProductService {
 		
 		orderHistory.setOrderHistoryTime(LocalDateTime.now());
 		orderHistory.setProduct(product);
-		orderHistory.setUser(user);
+		orderHistory.setUser(buyer);
 		orderHistory.setTransactionsList(transcation);
 
 		or.save(orderHistory);
@@ -243,18 +246,35 @@ public class ProductServiceImpe implements ProductService {
 		return "구매 요청이 완료되었습니다.";
 	}
 
-	// 진행중인 거래 조회
+	// 진행중인 거래 조회 (구매자)
 	@Override
-	public Page<TransactionsListDTO> getTransactionProducts(String email, Pageable pageable) {
+	public Page<TransactionsListDTO> getBuyerTransactionProducts(String email, Pageable pageable) {
 		
 		// email로 User 찾기 (user_id 포함)
 		User user = ur.findByUserEmail(email)
 				.orElseThrow(()-> new IllegalArgumentException("해당 이메일이 존재하지 않습니다."));
 		
-		// 해당 user(user_id) 를 가진 Wish 가져오기
-		 Page<TransactionsList> transactionListPage = tr.findByUser(user, pageable);
+		// 해당 user(user_id) 를 가진 TransactionsList 가져오기
+		 List<String> excludeStatus = List.of("거래취소", "거래종료");
+		 Page<TransactionsList> transactionListPage = tr.findByBuyerAndTransactionStatusBuyerNotIn(user, excludeStatus, pageable);
+
 		 
 		 return transactionListPage.map(transcation -> TransactionsListDTO.fromEntity(transcation));
+	}
+	
+	// 진행중인 거래 조회 (판매자)
+	@Override
+	public Page<TransactionsListDTO> getSellerTransactionProducts(String email, Pageable pageable) {
+		// email로 User 찾기 (user_id 포함)
+		User user = ur.findByUserEmail(email)
+				.orElseThrow(()-> new IllegalArgumentException("해당 이메일이 존재하지 않습니다."));
+				
+		// 해당 Product(user_id) 를 가진 TransactionsList 가져오기
+		 List<String> excludeStatus = List.of("거래취소", "거래종료","판매중");
+		 Page<TransactionsList> transactionListPage = tr.findBySellerAndTransactionStatusSellerNotIn(user, excludeStatus, pageable);
+		 
+		 return transactionListPage.map(transcation -> TransactionsListDTO.fromEntity(transcation));
+
 	}
 
 	// 구매 이력 조회
@@ -282,6 +302,8 @@ public class ProductServiceImpe implements ProductService {
 		 
 		 return salesHistoryListPage.map(saleshistory -> SalesHistoryDTO.fromEntity(saleshistory));
 	}
+
+
 	
 
 	}

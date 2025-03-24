@@ -41,6 +41,18 @@ public class ReviewController {
 		return ResponseEntity.ok(response);
 	}
 	
+	// 리뷰 조회
+	@GetMapping("/mypage/view")
+	public ResponseEntity<Page<ReviewDTO>> getMypageReviewList(@RequestParam(name = "page",defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "5") int size){
+		
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "reviewTime"));
+
+		Page<ReviewDTO> response = rs.reviewList(email,pageable);
+		return ResponseEntity.ok(response);
+	}
+	
 	// 관리자에게 리뷰 삭제 요청 : 요청 값 변경 (false -> true)
 	@PutMapping("/request/{review_id}")
 	public ResponseEntity<String> putReviewRequestDelete(@PathVariable (name = "review_id") Long review_id) {

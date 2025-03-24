@@ -1,5 +1,6 @@
 package com.project.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -14,9 +15,9 @@ import com.project.entity.User;
 
 public interface TransactionsListRepository extends JpaRepository<TransactionsList, Long> {
 
-	Page<TransactionsList> findByUser(User user, Pageable pageable);
+	Page<TransactionsList> findByBuyerAndTransactionStatusBuyerNotIn(User user, List<String> excludeStatus, Pageable pageable);
 
-
+	Page<TransactionsList> findBySellerAndTransactionStatusSellerNotIn(User user, List<String> excludeStatus, Pageable pageable);
 
 
 }

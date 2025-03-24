@@ -50,8 +50,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true); 
-//      config.setAllowedOrigins(List.of("http://localhost:3000")); 
-        config.setAllowedOrigins(List.of("http://43.200.254.17")); 
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://43.200.254.17"));
+//      config.setAllowedOrigins(List.of("http://43.200.254.17")); 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*")); 
         config.setExposedHeaders(List.of("Authorization", "Set-Cookie")); 

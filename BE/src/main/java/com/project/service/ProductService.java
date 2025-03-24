@@ -41,13 +41,18 @@ public interface ProductService {
 	// 구매 요청 (구매 이력 테이블 + 거래 테이블)
 	String registPurchaserequest(PurchaseRequestDTO purchaseRequestDTO);
 
-	// 진행중인 거래 조회
-	Page<TransactionsListDTO> getTransactionProducts(String email, Pageable pageable);
+	// 진행중인 거래 조회 (구매자)
+	Page<TransactionsListDTO> getBuyerTransactionProducts(String email, Pageable pageable);
+	
+	// 진행중인 거래 조회 (판매자)
+	Page<TransactionsListDTO> getSellerTransactionProducts(String email, Pageable pageable);
 
 	// 구매 이력 조회
 	Page<OrderHistoryDTO> getOrderHistoryProducts(String email, Pageable pageable);
 
 	// 판매 이력 조회
 	Page<SalesHistoryDTO> getSalesHistoryProducts(String email, Pageable pageable);
+
+
 
 }
