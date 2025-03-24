@@ -98,7 +98,14 @@ public class ProductServiceImpe implements ProductService {
 	
 	// 해당 제품 상세보기
 	@Override
-	public List<ProductDTO> productDetail(int productId) {
+	public List<ProductDTO> productDetail(Long productId) {
+		
+		Product product = pr.findById(productId).orElseThrow(()-> new IllegalArgumentException("상품이 존재하지 않습니다."));
+		
+		product.setProduct_view(product.getProduct_view()+1);
+		
+		pr.save(product);
+	
 		return pr.findProductsDetail(productId)
 				.stream()
 				.map(ProductDTO::fromEntity)

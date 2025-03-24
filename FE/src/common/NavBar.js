@@ -15,6 +15,8 @@ import { ShoppingCart, Heart, User, LogIn } from "react-feather";
 import logoMoa from "../assets/images/logo-moa.png";
 import { useUser } from "../userContext";
 
+const ApiUrl = process.env.REACT_APP_API_BASE_URL;
+
 function NavBar({ type }) {
   const { userInfo, setUserInfo } = useUser(); // 전역 상태 사용
   const [dropdownOpenShop, setDropdownOpenShop] = useState(false);
@@ -138,13 +140,13 @@ function NavBar({ type }) {
 
   // 카카오 로그인
   const handleKakaoLogin = () => {
-    const KAKAO_AUTH_URL = "http://localhost:8080/oauth2/authorization/kakao";
+    const KAKAO_AUTH_URL = ApiUrl + "/oauth2/authorization/kakao";
     window.location.href = KAKAO_AUTH_URL;
   };
 
   const logout = () => {
     axios
-      .post("http://localhost:8080/auth/login/logout", null, {
+      .post(ApiUrl + "/auth/login/logout", null, {
         withCredentials: true, // 쿠키 포함 요청
       })
       .then(() => {

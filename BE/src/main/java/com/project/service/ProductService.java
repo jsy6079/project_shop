@@ -32,7 +32,7 @@ public interface ProductService {
 	List<ProductDTO> productByKeword(int categoryId, String keyword);
 	
 	// 해당 제품 상세보기
-	List<ProductDTO> productDetail(int productId);
+	List<ProductDTO> productDetail(Long productId);
 
 	// 판매물품 등록
 	String registProduct(String productName, int productPrice, String productCategory,

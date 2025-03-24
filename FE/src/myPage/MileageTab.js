@@ -10,6 +10,8 @@ import {
 } from "reactstrap";
 import { useUser } from "../userContext";
 
+const ApiUrl = process.env.REACT_APP_API_BASE_URL;
+
 const MileageTab = ({}) => {
   const { userInfo, setUserInfo, fetchUserInfo } = useUser(); // 전역 상태 사용
   const [selectMoney, setSelectMoney] = useState(100); // 기본 100원
@@ -39,7 +41,7 @@ const MileageTab = ({}) => {
         // 결제 성공 시 서버로 검증 요청
         axios
           .post(
-            "http://localhost:8080/api/verify",
+            ApiUrl + "/api/verify",
             {
               imp_uid: response.imp_uid,
               paid_amount: response.paid_amount,
@@ -85,7 +87,7 @@ const MileageTab = ({}) => {
   const fetchReviewList = async (pageNumber) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/user/money?page=${pageNumber}&size=5`,
+        ApiUrl + `/api/user/money?page=${pageNumber}&size=5`,
         {
           withCredentials: true, // ✅ 이게 꼭 있어야 쿠키가 전송됨!
         }

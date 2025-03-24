@@ -14,7 +14,7 @@ public class DataInsert implements CommandLineRunner {
 	// 개발 환경에서 더미데이터 삽입 코드
 	
 	private final CategoryData cd;
-	private final UserData ud;
+//	private final UserData ud;
 	private final ProductData pd;
 	private final SizeData sd;
 	private final WishData wd;
@@ -23,7 +23,7 @@ public class DataInsert implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		cd.insertDate();
-		ud.insertDate();
+//		ud.insertDate();
 		pd.insertDate();
 		sd.insertDate();
 		wd.insertDate();

@@ -29,7 +29,7 @@ public class ReviewData {
 			User user1 = ur.findById(1L).orElseThrow(() -> new RuntimeException("유저 없음"));
 			User user2 = ur.findById(2L).orElseThrow(() -> new RuntimeException("유저 없음"));
 			Product product1 = pr.findById(1L).orElseThrow(() -> new RuntimeException("상품 없음"));
-			Product product121 = pr.findById(121L).orElseThrow(() -> new RuntimeException("상품 없음"));
+			Product product36 = pr.findById(36L).orElseThrow(() -> new RuntimeException("상품 없음"));
 
 			// 첫번째 리뷰 데이터 
 		    Review review1 = new Review();
@@ -49,7 +49,7 @@ public class ReviewData {
 		    review2.setReview_score(3L);
 		    review2.setBuyer(user1);
 		    review2.setSeller(user2);
-		    review2.setProduct(product121); 
+		    review2.setProduct(product36); 
 		    review2.setReviewTime(LocalDateTime.now());
 
 		    rr.save(review2);

@@ -14,6 +14,8 @@ import {
 import { MessageCircle, ShoppingCart, CreditCard } from "react-feather";
 import { useUser } from "../userContext";
 
+const ApiUrl = process.env.REACT_APP_API_BASE_URL;
+
 const RegistProductTab = ({ setActiveTab }) => {
   const { userInfo, setUserInfo, fetchUserInfo } = useUser(); // 전역 상태 사용
   const [imagePreviews, setImagePreviews] = useState([]); // 미리보기 이미지 저장
@@ -111,7 +113,7 @@ const RegistProductTab = ({ setActiveTab }) => {
     // DTO 에 맞춰 꼭 명칭 변경해주기!
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/product/regist",
+        ApiUrl + "/api/product/regist",
         formData,
 
         {

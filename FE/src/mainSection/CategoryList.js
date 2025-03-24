@@ -14,6 +14,8 @@ const categories = [
   { id: 6, name: "라이프 스타일" },
 ];
 
+const ApiUrl = process.env.REACT_APP_API_BASE_URL;
+
 const CategoryList = ({}) => {
   const { userInfo, setUserInfo } = useUser(); // 전역 상태 사용
   const { categoryId } = useParams();
@@ -27,7 +29,7 @@ const CategoryList = ({}) => {
   useEffect(() => {
     if (categoryId) {
       axios
-        .get(`http://localhost:8080/api/product/category/${categoryId}`)
+        .get(ApiUrl + `/api/product/category/${categoryId}`)
         .then((response) => {
           setProducts(response.data);
           setOriginalProducts(response.data); // 초기 데이터를 저장
@@ -45,7 +47,7 @@ const CategoryList = ({}) => {
   // 인기순 API
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/product/likeview")
+      .get(ApiUrl + "/api/product/likeview")
       .then((response) => {
         setProducts2(response.data);
       })
@@ -105,7 +107,7 @@ const CategoryList = ({}) => {
 
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/product/category/${categoryId}/${keyword}`
+        ApiUrl + `/api/product/category/${categoryId}/${keyword}`
       );
       setProducts(response.data);
     } catch (error) {
@@ -119,13 +121,10 @@ const CategoryList = ({}) => {
 
     if (isCofirm) {
       try {
-        const response = await axios.post(
-          "http://localhost:8080/api/wishlist/regist",
-          {
-            email,
-            product_id,
-          }
-        );
+        const response = await axios.post(ApiUrl + "/api/wishlist/regist", {
+          email,
+          product_id,
+        });
 
         if (response.status === 200) {
           alert(response.data);
@@ -209,28 +208,22 @@ const CategoryList = ({}) => {
                     <h5 className="widget-title">카테고리</h5>
                     <ul className="list-unstyled mt-4 mb-0 blog-categories">
                       <li>
-                        <Link to="http://localhost:3000/category/1">의류</Link>
+                        <Link to="/category/1">의류</Link>
                       </li>
                       <li>
-                        <Link to="http://localhost:3000/category/2">신발</Link>
+                        <Link to="/category/2">신발</Link>
                       </li>
                       <li>
-                        <Link to="http://localhost:3000/category/3">가방</Link>
+                        <Link to="/category/3">가방</Link>
                       </li>
                       <li>
-                        <Link to="http://localhost:3000/category/4">
-                          액세서리
-                        </Link>
+                        <Link to="/category/4">액세서리</Link>
                       </li>
                       <li>
-                        <Link to="http://localhost:3000/category/5">
-                          패션잡화
-                        </Link>
+                        <Link to="/category/5">패션잡화</Link>
                       </li>
                       <li>
-                        <Link to="http://localhost:3000/category/6">
-                          라이프 스타일
-                        </Link>
+                        <Link to="/category/6">라이프 스타일</Link>
                       </li>
                     </ul>
                   </div>

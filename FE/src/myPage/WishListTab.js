@@ -18,6 +18,8 @@ import {
 } from "reactstrap";
 import { useUser } from "../userContext";
 
+const ApiUrl = process.env.REACT_APP_API_BASE_URL;
+
 const WishListTab = ({}) => {
   const { userInfo, setUserInfo, fetchUserInfo } = useUser(); // 전역 상태 사용
   const [wishProducts, setWishProducts] = useState([]); // 찜
@@ -51,7 +53,7 @@ const WishListTab = ({}) => {
   const fetchWishList = async (pageNumber) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/wishlist/view?page=${pageNumber}&size=5`,
+        ApiUrl + `/api/wishlist/view?page=${pageNumber}&size=5`,
         {
           withCredentials: true,
         }
@@ -76,7 +78,7 @@ const WishListTab = ({}) => {
     if (isCofirm) {
       try {
         const response = await axios.delete(
-          `http://localhost:8080/api/wishlist/delete/${product_id}`,
+          ApiUrl + `/api/wishlist/delete/${product_id}`,
           {
             withCredentials: true,
             email,

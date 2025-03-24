@@ -16,6 +16,8 @@ import {
 } from "reactstrap";
 import { User, Phone, MapPin } from "react-feather";
 
+const ApiUrl = process.env.REACT_APP_API_BASE_URL;
+
 const ProductPayment = ({}) => {
   const { userInfo, setUserInfo, fetchUserInfo } = useUser(); // 전역 상태 사용
   const { productId } = useParams(); // URL에서 productId 가져오기
@@ -68,7 +70,7 @@ const ProductPayment = ({}) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/product/payment",
+        ApiUrl + "/api/product/payment",
         formData,
         {
           headers: {
@@ -91,7 +93,7 @@ const ProductPayment = ({}) => {
   useEffect(() => {
     if (productId) {
       axios
-        .get(`http://localhost:8080/api/product/detail/${productId}`)
+        .get(ApiUrl + `/api/product/detail/${productId}`)
         .then((response) => {
           setProducts(response.data);
         })

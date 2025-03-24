@@ -24,7 +24,7 @@ public interface WishRepository extends JpaRepository<Wish, Long> {
 	// 삭제
 	@Modifying
 	@Transactional
-	@Query(value = "DELETE FROM WISH WHERE product_id = :product_id AND user_id = :userId", nativeQuery = true)
+	@Query(value = "DELETE FROM Wish WHERE product_id = :product_id AND user_id = :userId", nativeQuery = true)
 	void deleteWish(@Param("userId") Long userId, @Param("product_id") Long product_id);
 
 }

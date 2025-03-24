@@ -17,6 +17,8 @@ import {
 import { Mail, Phone, MapPin } from "react-feather";
 import { useUser } from "../userContext";
 
+const ApiUrl = process.env.REACT_APP_API_BASE_URL;
+
 const AccountTab = ({ reviewGrade }) => {
   const { userInfo, setUserInfo, fetchUserInfo } = useUser(); // 전역 상태 사용
   const [viewProducts, setViewProducts] = useState([]); // 리뷰
@@ -57,15 +59,11 @@ const AccountTab = ({ reviewGrade }) => {
     }
 
     try {
-      const response = await axios.put(
-        "http://localhost:8080/api/user/update",
-        userInfo,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.put(ApiUrl + "/api/user/update", userInfo, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       alert("정보가 수정되었습니다.");
       fetchUserInfo();
     } catch (error) {
@@ -90,7 +88,7 @@ const AccountTab = ({ reviewGrade }) => {
   const fetchReviewList = async (pageNumber) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/review/view?page=${pageNumber}&size=5`,
+        ApiUrl + `/api/review/view?page=${pageNumber}&size=5`,
         {
           withCredentials: true,
         }
@@ -111,7 +109,7 @@ const AccountTab = ({ reviewGrade }) => {
     if (isCofirm) {
       try {
         const response = await axios.put(
-          `http://localhost:8080/api/review/request/${review_id}`,
+          ApiUrl + `/api/review/request/${review_id}`,
           {
             review_id,
           }

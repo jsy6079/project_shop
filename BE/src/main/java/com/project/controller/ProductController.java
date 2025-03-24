@@ -74,7 +74,7 @@ public class ProductController {
 	 
 	// 해당 제품 상세보기
 	 @GetMapping("/detail/{productId}")
-	 public ResponseEntity<List<ProductDTO>> getProductDetail(@PathVariable(name = "productId") int productId){
+	 public ResponseEntity<List<ProductDTO>> getProductDetail(@PathVariable(name = "productId") Long productId){
 		 List<ProductDTO> products = ps.productDetail(productId);
 		 return ResponseEntity.ok(products);
 	 }

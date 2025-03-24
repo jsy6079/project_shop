@@ -3,6 +3,7 @@ import axios from "axios";
 
 // 1️⃣ Context 생성
 const UserContext = createContext();
+const ApiUrl = process.env.REACT_APP_API_BASE_URL;
 
 // 2️⃣ Provider 컴포넌트
 export const UserProvider = ({ children }) => {
@@ -13,7 +14,7 @@ export const UserProvider = ({ children }) => {
   // 3️⃣ 최신 유저 정보 가져오기
   const fetchUserInfo = () => {
     axios
-      .get("http://localhost:8080/auth/login/userinfo", {
+      .get(ApiUrl + "/auth/login/userinfo", {
         withCredentials: true,
       })
       .then((response) => {

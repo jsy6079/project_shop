@@ -32,10 +32,8 @@ public class ReviewController {
 	private final ReviewService rs;
 	
 	// 리뷰 조회
-	@GetMapping("/view")
-	public ResponseEntity<Page<ReviewDTO>> getReviewList(@RequestParam(name = "page",defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "5") int size){
-
-		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+	@GetMapping("/view/{email}")
+	public ResponseEntity<Page<ReviewDTO>> getReviewList(@PathVariable(name = "email") String email,@RequestParam(name = "page",defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "5") int size){
 		
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "reviewTime"));
 

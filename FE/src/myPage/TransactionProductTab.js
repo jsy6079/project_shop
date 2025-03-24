@@ -19,6 +19,8 @@ import {
 import { Mail, Phone, MapPin } from "react-feather";
 import { useUser } from "../userContext";
 
+const ApiUrl = process.env.REACT_APP_API_BASE_URL;
+
 const TransactionProductTab = ({}) => {
   const { userInfo, setUserInfo, fetchUserInfo } = useUser(); // 전역 상태 사용
   const [transactionProducts, setTransactionProducts] = useState([]); // 찜
@@ -60,7 +62,7 @@ const TransactionProductTab = ({}) => {
   const fetchTransactionList = async (pageNumber) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/product/view?page=${pageNumber}&size=5`,
+        ApiUrl + `/api/product/view?page=${pageNumber}&size=5`,
         {
           withCredentials: true,
         }

@@ -20,6 +20,8 @@ import { Tabs, Tab } from "react-bootstrap";
 import { Mail, Phone, MapPin } from "react-feather";
 import { useUser } from "../userContext";
 
+const ApiUrl = process.env.REACT_APP_API_BASE_URL;
+
 const HistoryTab = ({}) => {
   const { userInfo, setUserInfo, fetchUserInfo } = useUser(); // 전역 상태 사용
   const [orderhistoryProducts, setOrderhistoryProducts] = useState([]); // 구매 이력
@@ -99,7 +101,7 @@ const HistoryTab = ({}) => {
   const fetchOrderHistoryList = async (pageNumber) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/product/orderhistory?page=${pageNumber}&size=5`,
+        ApiUrl + `/api/product/orderhistory?page=${pageNumber}&size=5`,
         {
           withCredentials: true,
         }
@@ -115,7 +117,7 @@ const HistoryTab = ({}) => {
   const fetchSalesHistoryList = async (pageNumber) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/product/saleshistory?page=${pageNumber}&size=5`,
+        ApiUrl + `/api/product/saleshistory?page=${pageNumber}&size=5`,
         {
           withCredentials: true,
         }

@@ -23,6 +23,8 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useUser } from "../userContext";
 
+const ApiUrl = process.env.REACT_APP_API_BASE_URL;
+
 const ProductDetail = ({}) => {
   const { userInfo, setUserInfo } = useUser(); // 전역 상태 사용
   const { categoryId } = useParams();
@@ -40,7 +42,7 @@ const ProductDetail = ({}) => {
   useEffect(() => {
     if (categoryId) {
       axios
-        .get(`http://localhost:8080/api/product/category/${categoryId}`)
+        .get(ApiUrl + `/api/product/category/${categoryId}`)
         .then((response) => {
           setProducts(response.data);
         })
@@ -54,7 +56,7 @@ const ProductDetail = ({}) => {
   useEffect(() => {
     if (productId) {
       axios
-        .get(`http://localhost:8080/api/product/detail/${productId}`)
+        .get(ApiUrl + `/api/product/detail/${productId}`)
         .then((response) => {
           setProducts2(response.data);
           const productData = response.data[0]; // 배열에서 첫번째 상품
@@ -92,7 +94,7 @@ const ProductDetail = ({}) => {
   const fetchReviewList = async (user_email, pageNumber) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/review/view/${user_email}?page=${pageNumber}&size=5`
+        ApiUrl + `/api/review/view/${user_email}?page=${pageNumber}&size=5`
       );
       setViewProducts(response.data.content);
       setReviewTotalPages(response.data.totalPages);
@@ -136,13 +138,10 @@ const ProductDetail = ({}) => {
 
     if (isCofirm) {
       try {
-        const response = await axios.post(
-          "http://localhost:8080/api/wishlist/regist",
-          {
-            email,
-            product_id,
-          }
-        );
+        const response = await axios.post(ApiUrl + "/api/wishlist/regist", {
+          email,
+          product_id,
+        });
 
         if (response.status === 200) {
           alert(response.data);
@@ -170,16 +169,13 @@ const ProductDetail = ({}) => {
     }
     try {
       // DTO 에 맞춰 꼭 명칭 변경해주기!
-      const response = await axios.post(
-        "http://localhost:8080/api/review/regist",
-        {
-          buyer_email: email,
-          product_id: product_id,
-          seller_email: seller_email,
-          review_text: reviewContent,
-          review_score: reviewScore,
-        }
-      );
+      const response = await axios.post(ApiUrl + "/api/review/regist", {
+        buyer_email: email,
+        product_id: product_id,
+        seller_email: seller_email,
+        review_text: reviewContent,
+        review_score: reviewScore,
+      });
 
       if (response.status === 200) {
         alert(response.data);

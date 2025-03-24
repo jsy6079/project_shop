@@ -1,6 +1,7 @@
 package com.project.data;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.context.annotation.Profile;
@@ -34,12 +35,12 @@ public class ProductData {
 	        for (long categoryId = 1; categoryId <= 6; categoryId++) {
 	            Category category = cr.findById(categoryId).orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없습니다."));
 
-	            for (int i = 1; i <= 20; i++) {
+	            for (int i = 1; i <= 3; i++) {
 	                Product product = new Product();
 	                product.setProduct_name("테스트 상품 "+i);
 	                product.setProduct_price(10000 + (i * 500));
 	                product.setProduct_status("거래가능");
-	                product.setProduct_image(null);
+	                product.setProduct_image(Arrays.asList("https://moa-upload-files.s3.ap-northeast-2.amazonaws.com/products/812393c4-22eb-4181-90df-8d7484159029_03.png"));
 	                product.setProduct_description(i+"번째의 상품 설명입니다.");
 	                product.setProduct_view(i);
 	                product.setProduct_time(LocalDateTime.now());
@@ -50,16 +51,16 @@ public class ProductData {
 	            }
 	        }
 	        
-	        // 카테고리별 상품 20개 추가 (카테고리 1번부터 6번까지 유저 1번이 등록한것)
+	        // 카테고리별 상품 20개 추가 (카테고리 1번부터 6번까지 유저 2번이 등록한것)
 	        for (long categoryId = 1; categoryId <= 6; categoryId++) {
 	            Category category = cr.findById(categoryId).orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없습니다."));
 
-	            for (int i = 21; i <= 40; i++) {
+	            for (int i = 4; i <= 6; i++) {
 	                Product product = new Product();
 	                product.setProduct_name("테스트 상품 "+i);
 	                product.setProduct_price(10000 + (i * 500));
 	                product.setProduct_status("거래가능");
-	                product.setProduct_image(null);
+	                product.setProduct_image(Arrays.asList("https://moa-upload-files.s3.ap-northeast-2.amazonaws.com/products/812393c4-22eb-4181-90df-8d7484159029_03.png"));
 	                product.setProduct_description(i+"번째의 상품 설명입니다.");
 	                product.setProduct_view(i);
 	                product.setProduct_time(LocalDateTime.now());

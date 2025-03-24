@@ -23,6 +23,8 @@ import electronics from "../assets/images/shop/categories/electronics.jpg";
 import mobile from "../assets/images/shop/categories/mobile.jpg";
 import ctaImg from "../assets/images/shop/cta.jpg";
 
+const ApiUrl = process.env.REACT_APP_API_BASE_URL;
+
 const Main = ({}) => {
   const items = [
     {
@@ -44,7 +46,7 @@ const Main = ({}) => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/product/mostview")
+      .get(ApiUrl + "/api/product/mostview")
       .then((response) => {
         setProducts1(response.data);
       })
@@ -58,7 +60,7 @@ const Main = ({}) => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/product/likeview")
+      .get(ApiUrl + "/api/product/likeview")
       .then((response) => {
         setProducts2(response.data);
       })
@@ -72,7 +74,7 @@ const Main = ({}) => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/product/recent")
+      .get(ApiUrl + "/api/product/recent")
       .then((response) => {
         setProducts3(response.data);
       })
@@ -82,23 +84,23 @@ const Main = ({}) => {
   }, []);
 
   const [cateData] = useState([
-    { img: fashion, title: "의류", link: "http://localhost:3000/category/1" },
-    { img: sports, title: "신발", link: "http://localhost:3000/category/2" },
-    { img: music, title: "가방", link: "http://localhost:3000/category/3" },
+    { img: fashion, title: "의류", link: "/category/1" },
+    { img: sports, title: "신발", link: "/category/2" },
+    { img: music, title: "가방", link: "/category/3" },
     {
       img: furniture,
       title: "액세서리",
-      link: "http://localhost:3000/category/4",
+      link: "/category/4",
     },
     {
       img: electronics,
       title: "패션 잡화",
-      link: "http://localhost:3000/category/5",
+      link: "/category/5",
     },
     {
       img: mobile,
       title: "라이프 스타일",
-      link: "http://localhost:3000/category/6",
+      link: "/category/6",
     },
   ]);
 
@@ -126,13 +128,10 @@ const Main = ({}) => {
 
     if (isCofirm) {
       try {
-        const response = await axios.post(
-          "http://localhost:8080/api/wishlist/regist",
-          {
-            email,
-            product_id,
-          }
-        );
+        const response = await axios.post(ApiUrl + "/api/wishlist/regist", {
+          email,
+          product_id,
+        });
 
         if (response.status === 200) {
           alert(response.data);
