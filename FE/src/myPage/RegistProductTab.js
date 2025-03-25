@@ -16,7 +16,7 @@ import { useUser } from "../userContext";
 
 const ApiUrl = process.env.REACT_APP_API_BASE_URL;
 
-const RegistProductTab = ({ setActiveTab }) => {
+const RegistProductTab = ({ setActiveTab, setDefaultHistoryTab }) => {
   const { userInfo, setUserInfo, fetchUserInfo } = useUser(); // 전역 상태 사용
   const [imagePreviews, setImagePreviews] = useState([]); // 미리보기 이미지 저장
   const maxImages = 3; // 최대 업로드 수 제한
@@ -132,6 +132,7 @@ const RegistProductTab = ({ setActiveTab }) => {
         setProductDescription("");
         setImagePreviews([]);
         setProductImage([]);
+        setDefaultHistoryTab("profile"); // 판매 이력 탭
         setActiveTab("6"); // 구매/판매 등록 으로 이동
       } else {
         alert("판매 등록 실패");
@@ -175,6 +176,7 @@ const RegistProductTab = ({ setActiveTab }) => {
                           placeholder="상품명을 입력해주세요."
                           value={productName}
                           onChange={(e) => setProductName(e.target.value)}
+                          maxLength={20}
                           required
                         />
                       </div>

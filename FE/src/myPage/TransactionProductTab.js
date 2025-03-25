@@ -96,6 +96,8 @@ const TransactionProductTab = ({}) => {
         return "info";
       case "검수대기":
         return "info";
+      case "검수중":
+        return "danger";
       case "검수완료":
         return "success";
       case "배송중":
@@ -105,7 +107,7 @@ const TransactionProductTab = ({}) => {
       case "거래취소":
         return "secondary";
       default:
-        return "light";
+        return "secondary";
     }
   }
 
@@ -119,8 +121,10 @@ const TransactionProductTab = ({}) => {
         return "info";
       case "발송완료":
         return "success";
-      case "검수 중":
-        return "dark";
+      case "검수대기":
+        return "success";
+      case "검수중":
+        return "danger";
       case "검수완료":
         return "secondary";
       case "구매자 배송중":
@@ -130,7 +134,7 @@ const TransactionProductTab = ({}) => {
       case "거래취소":
         return "secondary";
       default:
-        return "light";
+        return "secondary";
     }
   }
 
@@ -170,7 +174,10 @@ const TransactionProductTab = ({}) => {
       setBuyerTransactionProducts(response.data.content);
       setBuyerTransactionTotalPages(response.data.totalPages); // 진행중인 거래(구매자)의 totalPages 따로 관리
     } catch (error) {
-      console.error("찜 목록을 가져오는 중 오류 발생:", error);
+      console.error(
+        "진행중인 거래 목록(구매자)을 가져오는 중 오류 발생:",
+        error
+      );
     }
   };
 
@@ -186,7 +193,10 @@ const TransactionProductTab = ({}) => {
       setSellerTransactionProducts(response.data.content);
       setSellerTransactionTotalPages(response.data.totalPages); // 진행중인 거래(판매자)의 totalPages 따로 관리
     } catch (error) {
-      console.error("찜 목록을 가져오는 중 오류 발생:", error);
+      console.error(
+        "진행중인 거래 목록(판매자)을 가져오는 중 오류 발생:",
+        error
+      );
     }
   };
 
@@ -242,39 +252,55 @@ const TransactionProductTab = ({}) => {
                   </th>
                 </tr>
               </thead>
-              {buyerTransactionProducts.map((product, key) => (
-                <tbody key={key}>
+              {buyerTransactionProducts.length === 0 ? (
+                <tbody>
                   <tr>
-                    <th scope="row">{product.productName}</th>
-                    <td>
-                      <span
-                        className={`badge bg-${getBadgeColor(
-                          product.transactionStatusBuyer
-                        )}`}
-                      >
-                        {product.transactionStatusBuyer}
-                      </span>
-                    </td>
-                    <td>
-                      <Link
-                        to={`/detail/${product.categoryId}/${product.productId}`}
-                        className="text-primary"
-                      >
-                        View <i className="uil uil-arrow-right"></i>
-                      </Link>
-                    </td>
-                    <td>{formatDate(product.transactionTime)}</td>
-                    <td>
-                      <button
-                        className="btn btn-danger btn-sm"
-                        onClick={() => cancelConfirm(product.transactionId)}
-                      >
-                        구매취소
-                      </button>
+                    <td colSpan="5" className="text-center py-4">
+                      구매 진행 중인 상품이 없습니다.
                     </td>
                   </tr>
                 </tbody>
-              ))}
+              ) : (
+                buyerTransactionProducts.map((product, key) => (
+                  <tbody key={key}>
+                    <tr>
+                      <th scope="row">
+                        {product.productName.length > 12
+                          ? product.productName.substring(0, 12) + "..."
+                          : product.productName}
+                      </th>
+                      <td>
+                        <span
+                          className={`badge bg-${getBadgeColor(
+                            product.transactionStatusBuyer
+                          )}`}
+                        >
+                          {product.transactionStatusBuyer}
+                        </span>
+                      </td>
+                      <td>
+                        <Link
+                          to={`/detail/${product.categoryId}/${product.productId}`}
+                          className="text-primary"
+                        >
+                          View <i className="uil uil-arrow-right"></i>
+                        </Link>
+                      </td>
+                      <td>{formatDate(product.transactionTime)}</td>
+                      <td>
+                        {product.transactionStatusBuyer == "거래대기" && (
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() => cancelConfirm(product.transactionId)}
+                          >
+                            구매취소
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                ))
+              )}
             </Table>
           </div>
           <div className="text-center mt-3">
@@ -361,39 +387,57 @@ const TransactionProductTab = ({}) => {
                   </th>
                 </tr>
               </thead>
-              {sellerTransactionProducts.map((product, key) => (
-                <tbody key={key}>
+              {sellerTransactionProducts.length === 0 ? (
+                <tbody>
                   <tr>
-                    <th scope="row">{product.productName}</th>
-                    <td>
-                      <span
-                        className={`badge bg-${getSellerBadgeColor(
-                          product.transactionStatusSeller
-                        )}`}
-                      >
-                        {product.transactionStatusSeller}
-                      </span>
-                    </td>
-                    <td>
-                      <Link
-                        to={`/detail/${product.categoryId}/${product.productId}`}
-                        className="text-primary"
-                      >
-                        View <i className="uil uil-arrow-right"></i>
-                      </Link>
-                    </td>
-                    <td>{formatDate(product.transactionTime)}</td>
-                    <td>
-                      <button
-                        className="btn btn-primary btn-sm"
-                        onClick={() => requestConfirm(product.transactionId)}
-                      >
-                        요청 확인
-                      </button>
+                    <td colSpan="5" className="text-center py-4">
+                      판매 진행 중인 상품이 없습니다.
                     </td>
                   </tr>
                 </tbody>
-              ))}
+              ) : (
+                sellerTransactionProducts.map((product, key) => (
+                  <tbody key={key}>
+                    <tr>
+                      <th scope="row">
+                        {product.productName.length > 12
+                          ? product.productName.substring(0, 12) + "..."
+                          : product.productName}
+                      </th>
+                      <td>
+                        <span
+                          className={`badge bg-${getSellerBadgeColor(
+                            product.transactionStatusSeller
+                          )}`}
+                        >
+                          {product.transactionStatusSeller}
+                        </span>
+                      </td>
+                      <td>
+                        <Link
+                          to={`/detail/${product.categoryId}/${product.productId}`}
+                          className="text-primary"
+                        >
+                          View <i className="uil uil-arrow-right"></i>
+                        </Link>
+                      </td>
+                      <td>{formatDate(product.transactionTime)}</td>
+                      <td>
+                        {product.transactionStatusSeller == "거래요청" && (
+                          <button
+                            className="btn btn-primary btn-sm"
+                            onClick={() =>
+                              requestConfirm(product.transactionId)
+                            }
+                          >
+                            요청 확인
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                ))
+              )}
             </Table>
           </div>
           <div className="text-center mt-3">

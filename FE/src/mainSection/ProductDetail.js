@@ -123,13 +123,32 @@ const ProductDetail = ({}) => {
     dots: false,
   };
 
-  const settings2 = {
+  // const settings2 = {
+  //   dots: false,
+  //   infinite: true,
+  //   autoplaySpeed: 2000,
+  //   autoplay: true,
+  //   slidesToShow: 4,
+  //   slidesToScroll: 1,
+  // };
+
+  // 관련 상품 더미 채우기
+  const filledProducts = [...products];
+  if (filledProducts.length > 0 && filledProducts.length < 5) {
+    const emptyCount = 4 - filledProducts.length;
+    for (let i = 0; i < emptyCount; i++) {
+      filledProducts.push({ isDummy: true, dummyId: `dummy-${i}` });
+    }
+  }
+
+  // 상품 개수에 따라 슬라이더 옵션 다르게 설정
+  const dynamicSettings2 = {
     dots: false,
-    infinite: true,
-    autoplaySpeed: 2000,
+    infinite: products.length > 4,
     autoplay: true,
+    autoplaySpeed: 2000,
     slidesToShow: 4,
-    slidesToScroll: 2,
+    slidesToScroll: 1,
   };
 
   // 찜 목록 등록
@@ -249,7 +268,7 @@ const ProductDetail = ({}) => {
                       alt="상품 이미지"
                     />
                   ) : (
-                    // 👉 이미지가 2장 이상일 때 슬라이더 사용
+                    // 이미지가 2장 이상일 때 슬라이더 사용
                     <Slider {...settings}>
                       {products2[0].product_image.map((image, idx) => (
                         <div key={idx}>
@@ -315,11 +334,9 @@ const ProductDetail = ({}) => {
                     <Col lg={6} xs={12}>
                       {product.size_value && (
                         <div className="d-flex align-items-center">
-                          <h6 className="mb-0">사이즈: </h6>
+                          <h6 className="mb-0">Size: </h6>
                           <ul className="list-unstyled mb-0 ms-3">
-                            <li className="btn btn-icon btn-soft-primary">
-                              {product.size_value}
-                            </li>
+                            <li>{product.size_value}</li>
                           </ul>
                         </div>
                       )}
@@ -585,62 +602,77 @@ const ProductDetail = ({}) => {
             </Col>
 
             <Col xs={12} className="mt-4">
-              <Slider {...settings2} className="owl-carousel owl-theme">
-                {products.map((product, key) => (
-                  <div key={key} style={{ marginLeft: 5, marginRight: 5 }}>
-                    <Card className="shop-list border-0 position-relative overflow-hidden m-2">
-                      <div className="shop-image position-relative overflow-hidden rounded shadow">
-                        <Link
-                          to={`/detail/${product.category_id}/${product.product_id}`}
-                        >
-                          <img
-                            src={
-                              product?.product_image?.length > 0
-                                ? product.product_image[0]
-                                : "https://moa-upload-files.s3.ap-northeast-2.amazonaws.com/products/noImage.png"
-                            }
-                            className="img-fluid rounded"
-                          />
-                        </Link>
-                        {userInfo ? (
-                          <ul className="list-unstyled shop-icons">
-                            <li>
-                              <Link
-                                to="#"
-                                className="btn btn-icon btn-pills btn-soft-danger"
-                              >
-                                <i>
-                                  <Heart
-                                    className="icons"
-                                    onClick={() =>
-                                      wishConfirm(
-                                        userInfo.email,
-                                        product.product_id
-                                      )
-                                    }
-                                  />
-                                </i>
-                              </Link>
-                            </li>
-                          </ul>
-                        ) : null}
-                      </div>
-                      <CardBody className="content pt-4 p-2">
-                        <Link
-                          to={`/detail/${product.category_id}/${product.product_id}`}
-                          className="text-dark product-name h6"
-                        >
-                          {product.product_name}
-                        </Link>
-                        <div className="d-flex justify-content-between mt-1">
-                          <h6 className="text-muted small fst-italic mb-0 mt-1">
-                            {product.product_price.toLocaleString()}원
-                          </h6>
+              <Slider {...dynamicSettings2} className="owl-carousel owl-theme">
+                {filledProducts.map((product, key) =>
+                  product.isDummy ? (
+                    <div
+                      key={product.dummyId}
+                      style={{ marginLeft: 5, marginRight: 5 }}
+                    >
+                      <Card
+                        className="shop-list border-0 position-relative overflow-hidden m-2"
+                        style={{ visibility: "hidden" }}
+                      >
+                        <CardBody style={{ height: "300px" }}></CardBody>{" "}
+                        {/* 공간 유지용 더미 */}
+                      </Card>
+                    </div>
+                  ) : (
+                    <div key={key} style={{ marginLeft: 5, marginRight: 5 }}>
+                      <Card className="shop-list border-0 position-relative overflow-hidden m-2">
+                        <div className="shop-image position-relative overflow-hidden rounded shadow">
+                          <Link
+                            to={`/detail/${product.category_id}/${product.product_id}`}
+                          >
+                            <img
+                              src={
+                                product?.product_image?.length > 0
+                                  ? product.product_image[0]
+                                  : "https://moa-upload-files.s3.ap-northeast-2.amazonaws.com/products/noImage.png"
+                              }
+                              className="img-fluid rounded"
+                            />
+                          </Link>
+                          {userInfo ? (
+                            <ul className="list-unstyled shop-icons">
+                              <li>
+                                <Link
+                                  to="#"
+                                  className="btn btn-icon btn-pills btn-soft-danger"
+                                >
+                                  <i>
+                                    <Heart
+                                      className="icons"
+                                      onClick={() =>
+                                        wishConfirm(
+                                          userInfo.email,
+                                          product.product_id
+                                        )
+                                      }
+                                    />
+                                  </i>
+                                </Link>
+                              </li>
+                            </ul>
+                          ) : null}
                         </div>
-                      </CardBody>
-                    </Card>
-                  </div>
-                ))}
+                        <CardBody className="content pt-4 p-2">
+                          <Link
+                            to={`/detail/${product.category_id}/${product.product_id}`}
+                            className="text-dark product-name h6"
+                          >
+                            {product.product_name}
+                          </Link>
+                          <div className="d-flex justify-content-between mt-1">
+                            <h6 className="text-muted small fst-italic mb-0 mt-1">
+                              {product.product_price.toLocaleString()}원
+                            </h6>
+                          </div>
+                        </CardBody>
+                      </Card>
+                    </div>
+                  )
+                )}
               </Slider>
             </Col>
           </Row>

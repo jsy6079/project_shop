@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -98,7 +99,8 @@ public class ProductController {
 	        productCategory == null || productCategory.trim().isEmpty() ||
 	        productSize == null || productSize.trim().isEmpty() ||
 	        productImages == null || productImages.isEmpty() ||
-	        productDescription.length() > 100) {
+	        productDescription.length() > 100 ||
+	        productName.length() > 20) {
 	        
 	        return ResponseEntity.badRequest().body("필수 입력값을 확인해주세요.");
 	    }
@@ -110,10 +112,29 @@ public class ProductController {
 	     return ResponseEntity.ok(response);
 	 } 
 	 
+	 // 판매 물품 삭제 요청
+	 @PutMapping("/delete/{productId}")
+	 public ResponseEntity<String> deleteProducts(@PathVariable(name = "productId") Long product_id){
+		 
+		 String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		 
+		 String response = ps.deleteProduct(email,product_id);
+		 
+		 return ResponseEntity.ok(response);
+	 }
+	 
 	 // 구매 요청 (구매 이력 테이블 + 거래 테이블)
 	 @PostMapping("/payment")
 	 public ResponseEntity<String> registPurchaserequest(@RequestBody PurchaseRequestDTO purchaseRequestDTO){
 		 String response = ps.registPurchaserequest(purchaseRequestDTO);
+		 
+		// 필수 값 체크
+	    if (purchaseRequestDTO.getTransactionAddress() == null || purchaseRequestDTO.getTransactionName() == null || purchaseRequestDTO.getTransactionPhone() == null ||
+	        purchaseRequestDTO.getTransactionAddress().length()>100 || purchaseRequestDTO.getTransactionName().length()>10 || purchaseRequestDTO.getTransactionPhone().length()>13
+	    	) {
+	        
+	        return ResponseEntity.badRequest().body("필수 입력값을 확인해주세요.");
+	    }
 		 
 		 return ResponseEntity.ok(response);
 	 }
@@ -166,6 +187,8 @@ public class ProductController {
 		return ResponseEntity.ok(response);
 		
 	}
+	
+	
 	
 	
 }

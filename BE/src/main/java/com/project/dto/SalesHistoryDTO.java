@@ -25,10 +25,22 @@ public class SalesHistoryDTO {
 	
 	// 판매 이력 테이블
 	public static SalesHistoryDTO fromEntity(SalesHistory salesHistory) {
-		
-	    String transactionStatusSeller = salesHistory.getTransactionsList() != null
-	            ? salesHistory.getTransactionsList().getTransactionStatusSeller()
-	            : "판매중"; // 거래요청 전이므로 판매중으로 간주
+	
+	  String transactionStatusSeller;
+
+	    if (salesHistory.getTransactionsList() != null) {
+	        // 거래가 있으면 거래 상태 그대로
+	        transactionStatusSeller = salesHistory.getTransactionsList().getTransactionStatusSeller();
+	    } else {
+	        // 거래가 없으면 product 상태 참고
+	        String productStatus = salesHistory.getProduct().getProduct_status();
+
+	        if ("판매자삭제".equals(productStatus)) {
+	            transactionStatusSeller = "판매자삭제";
+	        } else {
+	            transactionStatusSeller = "판매중";
+	        }
+	    }
 	    
 		return new SalesHistoryDTO(
 				salesHistory.getSalesHistoryId(),

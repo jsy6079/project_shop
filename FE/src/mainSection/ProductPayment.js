@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useUser } from "../userContext";
 import {
   Container,
@@ -22,6 +22,8 @@ const ProductPayment = ({}) => {
   const { userInfo, setUserInfo, fetchUserInfo } = useUser(); // 전역 상태 사용
   const { productId } = useParams(); // URL에서 productId 가져오기
   const [products, setProducts] = useState([]); // 상품
+
+  const navigate = useNavigate();
 
   // 현재 금액과 마일리지 금액 비교
   const product = products.length > 0 ? products[0] : null;
@@ -80,9 +82,15 @@ const ProductPayment = ({}) => {
       );
       alert(response.data);
       fetchUserInfo();
+      if (
+        response.data == "상품이 이미 거래중이거나 거래가 종료된 물품입니다."
+      ) {
+        return;
+      }
+      navigate("/user/myinfo?tab=5");
     } catch (error) {
       if (error.response && error.response.data) {
-        alert("알 수 없는 요청입니다.");
+        alert(error.response.data);
         return;
       }
       alert("알 수 없는 요청입니다.");

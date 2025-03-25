@@ -38,6 +38,9 @@ public interface ProductService {
 	String registProduct(String productName, int productPrice, String productCategory,
 			String productSize, String productDescription, String email, List<MultipartFile> productImages);
 
+	// 판매 물품 삭제 요청
+	String deleteProduct(String email, Long product_id);
+
 	// 구매 요청 (구매 이력 테이블 + 거래 테이블)
 	String registPurchaserequest(PurchaseRequestDTO purchaseRequestDTO);
 
@@ -52,6 +55,7 @@ public interface ProductService {
 
 	// 판매 이력 조회
 	Page<SalesHistoryDTO> getSalesHistoryProducts(String email, Pageable pageable);
+
 
 
 

@@ -203,19 +203,34 @@ function NavBar({ type }) {
                     className="dd-menu dropdown-menu-end bg-white shadow rounded border-0 mt-3 py-3"
                     style={{ width: "200px" }}
                   >
-                    <Link className="dropdown-item" to="/user/myinfo">
+                    <Link
+                      className="dropdown-item"
+                      to="/user/myinfo"
+                      onClick={() => setDropdownIsOpen(false)}
+                    >
                       <i className="uil uil-user align-middle me-1"></i> 내 정보
                     </Link>
 
-                    <Link className="dropdown-item" to="#">
+                    <Link
+                      className="dropdown-item"
+                      to="/user/myinfo?tab=5"
+                      onClick={() => setDropdownIsOpen(false)}
+                    >
                       <i className="uil uil-transaction align-middle me-1"></i>{" "}
-                      거래 현황
+                      진행중인 거래
                     </Link>
-                    <Link className="dropdown-item" to="#">
+                    <Link
+                      className="dropdown-item"
+                      to="/user/myinfo?tab=4"
+                      onClick={() => setDropdownIsOpen(false)}
+                    >
                       <i className="uil uil-store align-middle me-1"></i>{" "}
-                      판매물폼 등록
+                      판매물품 등록
                     </Link>
-                    <div className="dropdown-divider my-2 border-top"></div>
+                    <div
+                      className="dropdown-divider my-2 border-top"
+                      onClick={() => setDropdownIsOpen(false)}
+                    ></div>
                     <Link className="dropdown-item" onClick={logout}>
                       <i className="uil uil-sign-out-alt align-middle me-1"></i>{" "}
                       로그아웃

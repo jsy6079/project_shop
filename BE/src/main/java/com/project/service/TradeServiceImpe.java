@@ -36,8 +36,13 @@ public class TradeServiceImpe implements TradeService {
 		
 		TransactionsList transactionsList = tr.findById(transactionId).orElseThrow(()-> new IllegalArgumentException("해당 거래가 존재하지 않습니다."));
 		
-		transactionsList.setTransactionStatusBuyer("요청확인");
-		transactionsList.setTransactionStatusSeller("발송대기");
+		// 단 판매자가 요청발송을 하면 구매 취소 불가능
+		if(!transactionsList.getTransactionStatusSeller().equals("거래요청")){
+		return "이미 요청확인을 한 상태입니다.";
+	} 
+		
+		transactionsList.setTransactionStatusBuyer("검수중");  // 요청확인
+		transactionsList.setTransactionStatusSeller("검수중"); // 발송대기
 		
 		tr.save(transactionsList);
 
@@ -90,9 +95,9 @@ public class TradeServiceImpe implements TradeService {
 		pr.save(product);
 		
 		
-		// 3. 구매자에게는 "거래취소" , 판매자에게는 "거래취소"
+		// 3. 구매자에게는 "거래취소" , 판매자에게는 다시 "판매중"
 		transactionsList.setTransactionStatusBuyer("거래취소");
-		transactionsList.setTransactionStatusSeller("거래취소");
+		transactionsList.setTransactionStatusSeller("판매중");
 		
 	    tr.save(transactionsList);
 	    

@@ -165,9 +165,9 @@ const Main = ({}) => {
                       </h1>
                       <p className="para-desc text-black">{item.desc}</p>
                       <div className="mt-4">
-                        <Link to={item.link} className="btn btn-soft-primary">
+                        {/* <Link to={item.link} className="btn btn-soft-primary">
                           자세히보기
-                        </Link>
+                        </Link> */}
                       </div>
                     </div>
                   </Col>
@@ -268,7 +268,9 @@ const Main = ({}) => {
                       to={`/detail/${product.category_id}/${product.product_id}`}
                       className="text-dark product-name h6"
                     >
-                      {product.product_name}
+                      {product.product_name.length > 11
+                        ? product.product_name.substring(0, 11) + "..."
+                        : product.product_name}
                     </Link>
                     <div className="d-flex justify-content-between mt-1">
                       <h6 className="text-muted small fst-italic mb-0 mt-1">
@@ -339,7 +341,9 @@ const Main = ({}) => {
                       to={`/detail/${product.category_id}/${product.product_id}`}
                       className="text-dark product-name h6"
                     >
-                      {product.product_name}
+                      {product.product_name.length > 11
+                        ? product.product_name.substring(0, 11) + "..."
+                        : product.product_name}
                     </Link>
                     <div className="d-flex justify-content-between mt-1">
                       <h6 className="text-muted small fst-italic mb-0 mt-1">
@@ -434,7 +438,9 @@ const Main = ({}) => {
                       to={`/detail/${product.category_id}/${product.product_id}`}
                       className="text-dark product-name h6"
                     >
-                      {product.product_name}
+                      {product.product_name.length > 11
+                        ? product.product_name.substring(0, 11) + "..."
+                        : product.product_name}
                     </Link>
                     <div className="d-flex justify-content-between mt-1">
                       <h6 className="text-dark small fst-italic mb-0 mt-1">

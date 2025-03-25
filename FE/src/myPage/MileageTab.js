@@ -183,33 +183,43 @@ const MileageTab = ({}) => {
                 </th>
               </tr>
             </thead>
-            {moneyProducts.map((money, key) => (
-              <tbody key={key}>
+            {moneyProducts.length === 0 ? (
+              <tbody>
                 <tr>
-                  <th scope="row">{formatDate(money.moneyTime)}</th>
-
-                  <td>
-                    <Badge
-                      color={
-                        money.moneyType === "입금"
-                          ? "primary"
-                          : money.moneyType === "출금"
-                          ? "danger"
-                          : "primary"
-                      }
-                    >
-                      {money.moneyType}
-                    </Badge>
+                  <td colSpan="5" className="text-center py-4">
+                    마일리지 내역이 없습니다.
                   </td>
-                  <td>
-                    {money.moneyType === "입금"
-                      ? `+ ${money.moneyAmount.toLocaleString()}원`
-                      : `- ${money.moneyAmount.toLocaleString()}원`}
-                  </td>
-                  <td>{money.moneyComment} </td>
                 </tr>
               </tbody>
-            ))}
+            ) : (
+              moneyProducts.map((money, key) => (
+                <tbody key={key}>
+                  <tr>
+                    <th scope="row">{formatDate(money.moneyTime)}</th>
+
+                    <td>
+                      <Badge
+                        color={
+                          money.moneyType === "입금"
+                            ? "primary"
+                            : money.moneyType === "출금"
+                            ? "danger"
+                            : "primary"
+                        }
+                      >
+                        {money.moneyType}
+                      </Badge>
+                    </td>
+                    <td>
+                      {money.moneyType === "입금"
+                        ? `+ ${money.moneyAmount.toLocaleString()}원`
+                        : `- ${money.moneyAmount.toLocaleString()}원`}
+                    </td>
+                    <td>{money.moneyComment} </td>
+                  </tr>
+                </tbody>
+              ))
+            )}
           </Table>
         </div>
         <div className="text-center mt-3">

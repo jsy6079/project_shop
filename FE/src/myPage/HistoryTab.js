@@ -22,8 +22,9 @@ import { useUser } from "../userContext";
 
 const ApiUrl = process.env.REACT_APP_API_BASE_URL;
 
-const HistoryTab = ({}) => {
+const HistoryTab = ({ defaultInnerTab = "home" }) => {
   const { userInfo, setUserInfo, fetchUserInfo } = useUser(); // 전역 상태 사용
+  const [innerTab, setInnerTab] = useState(defaultInnerTab);
   const [orderhistoryProducts, setOrderhistoryProducts] = useState([]); // 구매 이력
   const [orderhistoryPage, setOrderhistoryPage] = useState(0); // 구매 이력 목록 페이지
   const [orderhistoryTotalPages, setOrderhistoryTotalPages] = useState(1); // 구매 이력 전체 페이지 수
@@ -135,6 +136,39 @@ const HistoryTab = ({}) => {
     }
   };
 
+  // 판매 물품 삭제 (DB X)
+  const deleteProduct = async (email, productId) => {
+    const isCofirm = window.confirm("등록된 상품을 삭제하시겠습니까?");
+
+    if (isCofirm) {
+      try {
+        const response = await axios.put(
+          ApiUrl + `/api/product/delete/${productId}`,
+          null,
+          {
+            withCredentials: true,
+          }
+        );
+
+        if (response.status === 200) {
+          alert(response.data);
+          setSaleshistoryProducts((prevSaleshistoryProducts) =>
+            prevSaleshistoryProducts.filter(
+              (item) => item.productId !== productId
+            )
+          );
+
+          fetchSalesHistoryList(saleshistoryPage);
+        } else {
+          alert("판매 목록 삭제 실패");
+        }
+      } catch (error) {
+        console.log("판매 목록 삭제 실패", error);
+        alert("알 수 없는 요청입니다.");
+      }
+    }
+  };
+
   useEffect(() => {
     if (userInfo?.email) {
       fetchOrderHistoryList(orderhistoryPage); // 구매 이력 목록 페이지 변화 감지
@@ -161,6 +195,8 @@ const HistoryTab = ({}) => {
   return (
     <TabPane className="show fade bg-white shadow rounded p-4" tabId="6">
       <Tabs
+        activeKey={innerTab}
+        onSelect={(k) => setInnerTab(k)}
         defaultActiveKey="home"
         id="uncontrolled-tab-example"
         className="mb-3"
@@ -187,36 +223,50 @@ const HistoryTab = ({}) => {
                   </th>
                 </tr>
               </thead>
-              {orderhistoryProducts.map((product, key) => (
-                <tbody key={key}>
+              {orderhistoryProducts.length === 0 ? (
+                <tbody>
                   <tr>
-                    <th scope="row">{product.productName}</th>
-                    <td>
-                      {" "}
-                      <span
-                        className={`badge bg-${getBuyerBadgeColor(
-                          product.transactionStatusBuyer
-                        )}`}
-                      >
-                        {product.transactionStatusBuyer}
-                      </span>
-                    </td>
-                    <td> </td>
-                    <td>{formatDate(product.orderHistoryTime)}</td>
-                    <td>
-                      {" "}
-                      <Link
-                        to={`/detail/${product.categoryId}/${product.productId}`}
-                        className="text-primary"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        View <i className="uil uil-arrow-right"></i>
-                      </Link>
+                    <td colSpan="5" className="text-center py-4">
+                      구매 이력이 없습니다.
                     </td>
                   </tr>
                 </tbody>
-              ))}
+              ) : (
+                orderhistoryProducts.map((product, key) => (
+                  <tbody key={key}>
+                    <tr>
+                      <th scope="row">
+                        {product.productName.length > 12
+                          ? product.productName.substring(0, 12) + "..."
+                          : product.productName}
+                      </th>
+                      <td>
+                        {" "}
+                        <span
+                          className={`badge bg-${getBuyerBadgeColor(
+                            product.transactionStatusBuyer
+                          )}`}
+                        >
+                          {product.transactionStatusBuyer}
+                        </span>
+                      </td>
+                      <td> </td>
+                      <td>{formatDate(product.orderHistoryTime)}</td>
+                      <td>
+                        {" "}
+                        <Link
+                          to={`/detail/${product.categoryId}/${product.productId}`}
+                          className="text-primary"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          View <i className="uil uil-arrow-right"></i>
+                        </Link>
+                      </td>
+                    </tr>
+                  </tbody>
+                ))
+              )}
             </Table>
           </div>
           <div className="text-center mt-3">
@@ -295,38 +345,71 @@ const HistoryTab = ({}) => {
                   <th scope="col" className="border-bottom">
                     상세 페이지
                   </th>
+                  <th scope="col" className="border-bottom"></th>
                 </tr>
               </thead>
-              {saleshistoryProducts.map((product, key) => (
-                <tbody key={key}>
+              {saleshistoryProducts.length === 0 ? (
+                <tbody>
                   <tr>
-                    <th scope="row">{product.productName}</th>
-                    <td>
-                      {" "}
-                      <span
-                        className={`badge bg-${getSellerBadgeColor(
-                          product.transactionStatusSeller
-                        )}`}
-                      >
-                        {product.transactionStatusSeller}
-                      </span>
-                    </td>
-                    <td> </td>
-                    <td>{formatDate(product.salesHistoryTime)}</td>
-                    <td>
-                      {" "}
-                      <Link
-                        to={`/detail/${product.categoryId}/${product.productId}`}
-                        className="text-primary"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        View <i className="uil uil-arrow-right"></i>
-                      </Link>
+                    <td colSpan="5" className="text-center py-4">
+                      판매 이력이 없습니다.
                     </td>
                   </tr>
                 </tbody>
-              ))}
+              ) : (
+                saleshistoryProducts.map((product, key) => (
+                  <tbody key={key}>
+                    <tr>
+                      <th scope="row">
+                        {product.productName.length > 12
+                          ? product.productName.substring(0, 12) + "..."
+                          : product.productName}
+                      </th>
+                      <td>
+                        {" "}
+                        <span
+                          className={`badge bg-${getSellerBadgeColor(
+                            product.transactionStatusSeller
+                          )}`}
+                        >
+                          {product.transactionStatusSeller}
+                        </span>
+                      </td>
+                      <td> </td>
+                      <td>{formatDate(product.salesHistoryTime)}</td>
+                      {product.transactionStatusSeller !== "판매자삭제" ? (
+                        <>
+                          <td>
+                            <Link
+                              to={`/detail/${product.categoryId}/${product.productId}`}
+                              className="text-primary"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              View <i className="uil uil-arrow-right"></i>
+                            </Link>
+                          </td>
+                          <td>
+                            <button
+                              className="dropdown-item"
+                              onClick={() =>
+                                deleteProduct(userInfo.email, product.productId)
+                              }
+                            >
+                              <i className="uil uil-multiply align-middle me-1"></i>
+                            </button>
+                          </td>
+                        </>
+                      ) : (
+                        <>
+                          <td></td>
+                          <td></td>
+                        </>
+                      )}
+                    </tr>
+                  </tbody>
+                ))
+              )}
             </Table>
           </div>
           <div className="text-center mt-3">

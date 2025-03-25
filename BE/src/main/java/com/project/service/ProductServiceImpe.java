@@ -164,6 +164,35 @@ public class ProductServiceImpe implements ProductService {
 		
 	}
 	
+	// 판매 물품 삭제 요청
+	@Override
+	public String deleteProduct(String email, Long product_id) {
+		
+		// 유저
+		User user = ur.findByUserEmail(email).orElseThrow(()-> new IllegalArgumentException("해당 판매자의 이메일이 존재하지 않습니다."));
+		
+		Product product = pr.findById(product_id).orElseThrow(()-> new IllegalArgumentException("해당 물품이 존재하지 않습니다."));
+		
+		TransactionsList transactionsList = tr.findByProductId(product_id);
+
+		if(transactionsList != null) {
+			return "구매자의 요청을 확인했기 때문에 판매물품 삭제가 불가능합니다.";
+		}
+		
+		if(product.getProduct_status().equals("판매자삭제")) {
+			return "이미 삭제한 물품입니다.";
+		}
+		
+		if(transactionsList == null) {
+			
+			product.setProduct_status("판매자삭제");
+			
+			pr.save(product);
+		}
+		
+		return "등록된 물품이 삭제되었습니다.";
+	}
+	
 	// 단 거래상태가 이미 거래중으로 바뀌었거나, 본인이 등록한 상품은 등록 불가능
 
 	// 구매 요청 (구매 이력 테이블 + 거래 테이블)
@@ -179,7 +208,10 @@ public class ProductServiceImpe implements ProductService {
 		
 		User seller = product.getUser();
 		
-		if(purchaseRequestDTO.getProductStatus().equals("거래중") || purchaseRequestDTO.getProductStatus().equals("거래종료")) {
+//		if(purchaseRequestDTO.getProductStatus().equals("거래중") || purchaseRequestDTO.getProductStatus().equals("거래종료")) {
+//		return "상품이 이미 거래중이거나 거래가 종료된 물품입니다.";
+//	} 	
+		if(!purchaseRequestDTO.getProductStatus().equals("거래가능")){
 		return "상품이 이미 거래중이거나 거래가 종료된 물품입니다.";
 	} 
 		if(purchaseRequestDTO.getBuyerEmail().equals(purchaseRequestDTO.getSellerEmail())) {
@@ -270,7 +302,7 @@ public class ProductServiceImpe implements ProductService {
 				.orElseThrow(()-> new IllegalArgumentException("해당 이메일이 존재하지 않습니다."));
 				
 		// 해당 Product(user_id) 를 가진 TransactionsList 가져오기
-		 List<String> excludeStatus = List.of("거래취소", "거래종료","판매중");
+		 List<String> excludeStatus = List.of("거래취소", "거래종료", "판매중");
 		 Page<TransactionsList> transactionListPage = tr.findBySellerAndTransactionStatusSellerNotIn(user, excludeStatus, pageable);
 		 
 		 return transactionListPage.map(transcation -> TransactionsListDTO.fromEntity(transcation));
@@ -302,6 +334,8 @@ public class ProductServiceImpe implements ProductService {
 		 
 		 return salesHistoryListPage.map(saleshistory -> SalesHistoryDTO.fromEntity(saleshistory));
 	}
+
+
 
 
 	

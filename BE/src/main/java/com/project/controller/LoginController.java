@@ -46,8 +46,8 @@ public class LoginController {
         addCookie("refreshToken", refreshToken, refreshExpiration, response); // 1시간
 
     	System.out.println("토큰 발급 완료");
-    	response.sendRedirect("http://localhost:3000");
-//    	response.sendRedirect("http://43.200.254.17"); // 배포 시 주소 변경 필수
+//    	response.sendRedirect("http://localhost:3000");
+    	response.sendRedirect("http://43.200.254.17"); // 배포 시 주소 변경 필수
     }
     
     // 사용자 정보 가져오기

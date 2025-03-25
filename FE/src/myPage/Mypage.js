@@ -8,10 +8,15 @@ import TransactionProductTab from "./TransactionProductTab";
 import HistoryTab from "./HistoryTab";
 import { Container, Row, Col, TabContent } from "reactstrap";
 import { useUser } from "../userContext";
+import { useSearchParams } from "react-router-dom";
 
 const AccountManagement = ({}) => {
   const { userInfo, setUserInfo } = useUser(); // 전역 상태 사용
-  const [activeTab, setActiveTab] = useState("1");
+  // const [activeTab, setActiveTab] = useState("1");
+  const [defaultHistoryTab, setDefaultHistoryTab] = useState("home"); // 기본 구매 탭
+  const [searchParams] = useSearchParams();
+  const tabParam = searchParams.get("tab") || "1";
+  const [activeTab, setActiveTab] = useState(tabParam);
 
   const toggleTab = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
@@ -23,6 +28,10 @@ const AccountManagement = ({}) => {
     if (score <= 60) return "플래티넘";
     return "VIP";
   };
+
+  useEffect(() => {
+    setActiveTab(tabParam);
+  }, [tabParam]);
 
   return (
     <>
@@ -93,12 +102,18 @@ const AccountManagement = ({}) => {
                   <RegistProductTab
                     userInfo={userInfo}
                     setActiveTab={setActiveTab}
+                    setDefaultHistoryTab={setDefaultHistoryTab}
                   />
                 )}
                 {activeTab === "5" && (
                   <TransactionProductTab userInfo={userInfo} />
                 )}
-                {activeTab === "6" && <HistoryTab userInfo={userInfo} />}
+                {activeTab === "6" && (
+                  <HistoryTab
+                    userInfo={userInfo}
+                    defaultInnerTab={defaultHistoryTab}
+                  />
+                )}
               </TabContent>
             </Col>
           </Row>

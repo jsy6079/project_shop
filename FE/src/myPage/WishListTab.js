@@ -98,7 +98,7 @@ const WishListTab = ({}) => {
         }
       } catch (error) {
         console.log("찜 삭제 실패", error);
-        alert("서버 오류");
+        alert("알 수 없는 요청입니다.");
       }
     }
   };
@@ -124,44 +124,54 @@ const WishListTab = ({}) => {
               <th scope="col" className="border-bottom"></th>
             </tr>
           </thead>
-          {wishProducts.map((product, key) => (
-            <tbody key={key}>
+          {wishProducts.length === 0 ? (
+            <tbody>
               <tr>
-                <th scope="row">{product.product_name}</th>
-                <td>{product.product_price.toLocaleString()}원</td>
-                <td className="text-success">
-                  <span
-                    className={`badge bg-${getBadgeColor(
-                      product.product_status
-                    )}`}
-                  >
-                    {product.product_status}
-                  </span>
-                </td>
-                <td>
-                  {" "}
-                  <Link
-                    to={`/detail/${product.category_id}/${product.product_id}`}
-                    className="text-primary"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    View <i className="uil uil-arrow-right"></i>
-                  </Link>
-                </td>
-                <td>
-                  <button
-                    className="dropdown-item"
-                    onClick={() =>
-                      deleteWish(userInfo.email, product.product_id)
-                    }
-                  >
-                    <i className="uil uil-multiply align-middle me-1"></i>
-                  </button>
+                <td colSpan="5" className="text-center py-4">
+                  찜한 상품이 없습니다.
                 </td>
               </tr>
             </tbody>
-          ))}
+          ) : (
+            wishProducts.map((product, key) => (
+              <tbody key={key}>
+                <tr>
+                  <th scope="row">{product.product_name}</th>
+                  <td>{product.product_price.toLocaleString()}원</td>
+                  <td className="text-success">
+                    <span
+                      className={`badge bg-${getBadgeColor(
+                        product.product_status
+                      )}`}
+                    >
+                      {product.product_status}
+                    </span>
+                  </td>
+                  <td>
+                    {" "}
+                    <Link
+                      to={`/detail/${product.category_id}/${product.product_id}`}
+                      className="text-primary"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View <i className="uil uil-arrow-right"></i>
+                    </Link>
+                  </td>
+                  <td>
+                    <button
+                      className="dropdown-item"
+                      onClick={() =>
+                        deleteWish(userInfo.email, product.product_id)
+                      }
+                    >
+                      <i className="uil uil-multiply align-middle me-1"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            ))
+          )}
         </Table>
       </div>
       <div className="text-center mt-3">

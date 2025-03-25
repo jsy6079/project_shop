@@ -115,7 +115,7 @@ public class KakaoLoginServiceImpe implements KakaoLoginService {
                 newUser.setProfileImg(profileImage);
                 newUser.setUser_phone("정보없음");
                 newUser.setUser_address("정보없음");
-                newUser.setUser_money(0L);
+                newUser.setUser_money(0L); // 금액 수정
                 newUser.setUser_reviewScore(0L);
                 return userRepository.save(newUser);
             });

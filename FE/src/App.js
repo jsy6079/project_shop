@@ -11,6 +11,7 @@ import ProductDetail from "./mainSection/ProductDetail";
 import Mypage from "./myPage/Mypage";
 import ProtectedRoute from "./ProtectedRoute";
 import ProductPayment from "./mainSection/ProductPayment";
+import Chatbot from "./components/Chatbot/Chatbot";
 import "react-loading-skeleton/dist/skeleton.css";
 import { UserProvider } from "./userContext"; // 전역 상태 관리
 
@@ -37,6 +38,7 @@ function App() {
           </Route>
           {/* */}
         </Routes>
+        <Chatbot />
         <Footer />
       </UserProvider>
     </Router>

@@ -15,19 +15,19 @@ public class DataInsert implements CommandLineRunner {
 	
 	private final CategoryData cd;
 //	private final UserData ud;
-	private final ProductData pd;
+//	private final ProductData pd;
 	private final SizeData sd;
-	private final WishData wd;
-	private final ReviewData rd;
+//	private final WishData wd;
+//	private final ReviewData rd;
 
 	@Override
 	public void run(String... args) throws Exception {
 		cd.insertDate();
 //		ud.insertDate();
-		pd.insertDate();
+//		pd.insertDate();
 		sd.insertDate();
-		wd.insertDate();
-		rd.insertDate();
+//		wd.insertDate();
+//		rd.insertDate();
 		
 	}
 

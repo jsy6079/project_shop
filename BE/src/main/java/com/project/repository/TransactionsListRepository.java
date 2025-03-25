@@ -19,5 +19,9 @@ public interface TransactionsListRepository extends JpaRepository<TransactionsLi
 
 	Page<TransactionsList> findBySellerAndTransactionStatusSellerNotIn(User user, List<String> excludeStatus, Pageable pageable);
 
+	@Query("SELECT t FROM TransactionsList t WHERE t.product.product_id = :productId")
+	TransactionsList findByProductId(@Param("productId") Long productId);
+
+
 
 }
