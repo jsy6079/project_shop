@@ -188,22 +188,20 @@ const Main = ({}) => {
         <Row>
           {cateData.map((item, key) => (
             <Col key={key} lg={2} md={4} xs={6} className="mt-4 pt-2">
-              <Card className="features feature-primary explore-feature border-0 rounded text-center">
-                <CardBody>
-                  <img
-                    src={item.img}
-                    className="avatar avatar-small rounded-circle shadow-md"
-                    alt=""
-                  />
-                  <div className="content mt-3">
-                    <h6 className="mb-0">
-                      <Link to={item.link} className="title text-dark">
-                        {item.title}
-                      </Link>
-                    </h6>
-                  </div>
-                </CardBody>
-              </Card>
+              <Link to={item.link} className="title text-dark">
+                <Card className="features feature-primary explore-feature border-0 rounded text-center">
+                  <CardBody>
+                    <img
+                      src={item.img}
+                      className="avatar avatar-small rounded-circle shadow-md"
+                      alt=""
+                    />
+                    <div className="content mt-3">
+                      <h6 className="mb-0">{item.title}</h6>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Link>
             </Col>
           ))}
         </Row>

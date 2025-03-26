@@ -3,6 +3,9 @@ package com.project.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.netty.handler.codec.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
@@ -51,6 +54,19 @@ public class JwtUtil {
                 .signWith(getSigningKey()) 
                 .compact();
     }
+    
+	// 어드민 유저 JWT 생성
+	public String createToken(String adminUserEmail, String role) {
+		return Jwts.builder()
+				.claim("email", adminUserEmail)
+				.claim("role", role)
+				.subject(adminUserEmail) 
+				.issuedAt(new Date())
+				.expiration(new Date(System.currentTimeMillis() + expirationTime))
+				.signWith(getSigningKey()) 
+				.compact();
+	}
+	
     
     // 리프레시를 통한 엑세스 토큰 생성 (사용자 이메일을 기반으로 생성)
     public String generateRefreshToken(String email, String username, String imgUrl, String phone, String address, Long money, Long score) {
@@ -170,6 +186,14 @@ public class JwtUtil {
 	public Long extractScore(String token) {
 		return extractAllClaims(token).get("score", Long.class);
 	}
+
+
+
+
+
+
+	
+
 
 
 }
