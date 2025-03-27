@@ -42,5 +42,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query(value = "SELECT * FROM Product WHERE product_id = :productId AND product_status != '판매자삭제'", nativeQuery = true)
     List<Product> findProductsDetail(@Param("productId") Long productId);
 
+    // 판매중인 상품 개수
+    @Query(value = "SELECT COUNT(*) FROM Product WHERE product_status != '판매자삭제'", nativeQuery = true)
+	Long countPossible();
+
     
 }

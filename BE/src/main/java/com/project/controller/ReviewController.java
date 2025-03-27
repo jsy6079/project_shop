@@ -41,7 +41,7 @@ public class ReviewController {
 		return ResponseEntity.ok(response);
 	}
 	
-	// 리뷰 조회
+	// 리뷰 조회 (내 정보)
 	@GetMapping("/mypage/view")
 	public ResponseEntity<Page<ReviewDTO>> getMypageReviewList(@RequestParam(name = "page",defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "5") int size){
 		
@@ -49,7 +49,7 @@ public class ReviewController {
 		
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "reviewTime"));
 
-		Page<ReviewDTO> response = rs.reviewList(email,pageable);
+		Page<ReviewDTO> response = rs.reviewMyList(email,pageable);
 		return ResponseEntity.ok(response);
 	}
 	

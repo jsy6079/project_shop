@@ -25,6 +25,20 @@ const AccountTab = ({ reviewGrade }) => {
   const [reviewPage, setReviewPage] = useState(0); // 리뷰 목록 페이지
   const [reviewTotalPages, setReviewTotalPages] = useState(1); // 리뷰 전체 페이지 수
 
+  // 뱃지 색
+  function getBadgeColor(status) {
+    switch (status) {
+      case "검토중":
+        return "secondary";
+      case "삭제반려":
+        return "danger";
+      case "삭제승인":
+        return "success";
+      default:
+        return "secondary";
+    }
+  }
+
   // 점수에 따른 거래 등급 부여
   function reviewGrade(score) {
     if (score >= 0 && score <= 20) {
@@ -131,6 +145,7 @@ const AccountTab = ({ reviewGrade }) => {
   useEffect(() => {
     if (userInfo?.email) {
       fetchReviewList(reviewPage); // 리뷰 목록 페이지 변화 감지
+      fetchUserInfo();
     }
   }, [userInfo?.email, reviewPage]);
 
@@ -237,46 +252,62 @@ const AccountTab = ({ reviewGrade }) => {
                 <th scope="col" className="border-bottom"></th>
               </tr>
             </thead>
-            {viewProducts.map((review, key) => (
-              <tbody key={key}>
+            {viewProducts.length === 0 ? (
+              <tbody>
                 <tr>
-                  <th scope="row">{review.buyer_name}</th>
-                  <td>
-                    {review.review_text.length > 12
-                      ? review.review_text.substring(0, 12) + "..."
-                      : review.review_text}
-                  </td>
-                  <td className="text-warning">
-                    {Array(review.review_score)
-                      .fill()
-                      .map((_, i) => (
-                        <li key={i} className="list-inline-item">
-                          <i className="mdi mdi-star"></i>
-                        </li>
-                      ))}
-                    {Array(5 - review.review_score)
-                      .fill()
-                      .map((_, i) => (
-                        <li key={`empty-${i}`} className="list-inline-item">
-                          <i className="mdi mdi-star-outline"></i>{" "}
-                        </li>
-                      ))}
-                  </td>
-                  <td>
-                    {review.review_request_delete === false ? (
-                      <button
-                        className="dropdown-item"
-                        onClick={() => requestAdminReview(review.review_id)}
-                      >
-                        <i className="uil uil-multiply align-middle me-1"></i>
-                      </button>
-                    ) : (
-                      <span class="badge bg-danger"> 검토 중 </span>
-                    )}
+                  <td colSpan="5" className="text-center py-4">
+                    등록 된 리뷰가 없습니다.
                   </td>
                 </tr>
               </tbody>
-            ))}
+            ) : (
+              viewProducts.map((review, key) => (
+                <tbody key={key}>
+                  <tr>
+                    <th scope="row">{review.buyer_name}</th>
+                    <td>
+                      {review.review_text.length > 12
+                        ? review.review_text.substring(0, 12) + "..."
+                        : review.review_text}
+                    </td>
+                    <td className="text-warning">
+                      {Array(review.review_score)
+                        .fill()
+                        .map((_, i) => (
+                          <li key={i} className="list-inline-item">
+                            <i className="mdi mdi-star"></i>
+                          </li>
+                        ))}
+                      {Array(5 - review.review_score)
+                        .fill()
+                        .map((_, i) => (
+                          <li key={`empty-${i}`} className="list-inline-item">
+                            <i className="mdi mdi-star-outline"></i>{" "}
+                          </li>
+                        ))}
+                    </td>
+                    <td>
+                      {review.review_request_delete === false ? (
+                        <button
+                          className="dropdown-item"
+                          onClick={() => requestAdminReview(review.review_id)}
+                        >
+                          <i className="uil uil-multiply align-middle me-1"></i>
+                        </button>
+                      ) : (
+                        <span
+                          className={`badge bg-${getBadgeColor(
+                            review.review_status
+                          )}`}
+                        >
+                          {review.review_status}
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                </tbody>
+              ))
+            )}
           </Table>
         </div>
         <div className="text-center mt-3">

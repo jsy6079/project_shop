@@ -41,8 +41,8 @@ public class TradeServiceImpe implements TradeService {
 		return "이미 요청확인을 한 상태입니다.";
 	} 
 		
-		transactionsList.setTransactionStatusBuyer("검수중");  // 요청확인
-		transactionsList.setTransactionStatusSeller("검수중"); // 발송대기
+		transactionsList.setTransactionStatusBuyer("검수대기");  // 요청확인
+		transactionsList.setTransactionStatusSeller("검수대기"); // 발송대기
 		
 		tr.save(transactionsList);
 

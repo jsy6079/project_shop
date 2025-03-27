@@ -54,9 +54,10 @@ public class JwtUtil {
     }
     
 	// 어드민 유저 JWT 생성
-	public String createToken(String adminUserEmail, String role) {
+	public String createToken(String adminUserEmail, String adminName, String role) {
 		return Jwts.builder()
 				.claim("email", adminUserEmail)
+				.claim("name", adminName)
 				.claim("role", role)
 				.subject(adminUserEmail) 
 				.issuedAt(new Date())
@@ -82,27 +83,6 @@ public class JwtUtil {
                 .compact();
     }
 
-
-    
-    // JWT 검증 및 사용자 정보 반환
-//    public String validateToken(String token) {
-//        try {
-//            return Jwts.parser() 
-//                    .verifyWith(getSigningKey()) 
-//                    .build()
-//                    .parseSignedClaims(token) 
-//                    .getPayload()
-//                    .getSubject(); 
-//        } catch (ExpiredJwtException e) {
-//            System.out.println("토큰이 만료되었습니다.");
-//            throw new ExpiredJwtException(e.getHeader(), e.getClaims(), "TOKEN_EXPIRED");
-//        } catch (JwtException e) {
-//            System.out.println("유효하지 않은 토큰입니다.");
-//            throw new JwtException("INVALID_TOKEN");
-//        }
-//
-//       
-//    }
     
  // JWT 검증 및 사용자 정보 반환
     public String validateToken(String token) {

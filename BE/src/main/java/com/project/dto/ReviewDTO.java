@@ -36,6 +36,9 @@ public class ReviewDTO {
 	private Long product_id;
 	private String product_name;
 	private boolean review_request_delete;
+	private LocalDateTime review_request_delete_time;
+	private Long category_id;
+	private String review_status;
 	
 
 	
@@ -54,7 +57,10 @@ public class ReviewDTO {
 	        review.getSeller().getUserEmail(),
 	        review.getProduct().getProduct_id(),
 	        review.getProduct().getProduct_name(),
-	        review.isReview_request_delete()
+	        review.isReview_request_delete(),
+	        review.getReview_request_delete_time(),
+	        review.getProduct().getCategory().getCategory_id(),
+	        review.getReviewStatus()
 	        
 	    );
 	}

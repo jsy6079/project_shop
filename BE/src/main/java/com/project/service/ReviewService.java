@@ -8,14 +8,19 @@ import com.project.dto.ReviewDTO;
 
 public interface ReviewService {
 
-	// 리뷰 조회
+	// 리뷰 조회 (상세페이지)
 	Page<ReviewDTO> reviewList(String email, Pageable pageable);
+	
+	// 리뷰 조회 (내 정보)
+	Page<ReviewDTO> reviewMyList(String email, Pageable pageable);
 	
 	// 관리자에게 리뷰 삭제 요청 : 요청 값 변경 (false -> true)
 	void reviewRequestDelete(Long review_id);
 
 	// 리뷰 등록
 	String registReview(ReviewDTO reviewDTO);
+
+
 
 	
 }

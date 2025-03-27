@@ -27,6 +27,11 @@ public class Review {
 	
 	private boolean review_request_delete;
 	
+    private LocalDateTime review_request_delete_time; 
+    
+    @Column(name = "review_status")
+    private String reviewStatus;
+	
     // 리뷰 작성자 (FK)
     @ManyToOne
     @JoinColumn(name = "buyer_id", nullable = false)

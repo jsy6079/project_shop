@@ -21,8 +21,10 @@ const ProductPage = () => {
   return (
     <>
       <div className="border-bottom pb-4">
-        <h5>물품 관리</h5>
-        <p className="text-muted mb-0">판매자의 물품을 관리하는 곳</p>
+        <h5>🛍️ 물품 관리</h5>
+        <p className="text-muted mb-0">
+          검수를 마친 물품들의 배송을 관리합니다.
+        </p>
       </div>
 
       <div className="border-bottom pb-4">
