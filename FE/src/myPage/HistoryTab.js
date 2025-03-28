@@ -42,10 +42,14 @@ const HistoryTab = ({ defaultInnerTab = "home" }) => {
         return "info";
       case "검수대기":
         return "info";
+      case "검수 중":
+        return "dark";
+      case "검수실패":
+        return "danger";
       case "검수완료":
         return "success";
       case "배송중":
-        return "dark";
+        return "warning";
       case "거래종료":
         return "secondary";
       case "거래취소":
@@ -65,10 +69,14 @@ const HistoryTab = ({ defaultInnerTab = "home" }) => {
         return "info";
       case "발송완료":
         return "success";
+      case "검수 대기":
+        return "info";
+      case "검수실패":
+        return "danger";
       case "검수 중":
         return "dark";
       case "검수완료":
-        return "secondary";
+        return "success";
       case "구매자 배송중":
         return "secondary";
       case "거래종료":
@@ -250,7 +258,9 @@ const HistoryTab = ({ defaultInnerTab = "home" }) => {
                           {product.transactionStatusBuyer}
                         </span>
                       </td>
-                      <td> </td>
+                      <td className="text-secondary">
+                        {product.orderHistoryComment}
+                      </td>
                       <td>{formatDate(product.orderHistoryTime)}</td>
                       <td>
                         {" "}
@@ -375,9 +385,11 @@ const HistoryTab = ({ defaultInnerTab = "home" }) => {
                           {product.transactionStatusSeller}
                         </span>
                       </td>
-                      <td> </td>
+                      <td className="text-secondary">
+                        {product.salesHistoryComment}
+                      </td>
                       <td>{formatDate(product.salesHistoryTime)}</td>
-                      {product.transactionStatusSeller !== "판매자삭제" ? (
+                      {product.transactionStatusSeller === "판매중" ? (
                         <>
                           <td>
                             <Link

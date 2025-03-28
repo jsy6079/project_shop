@@ -99,16 +99,22 @@ public class TradeServiceImpe implements TradeService {
 		transactionsList.setTransactionStatusBuyer("거래취소");
 		transactionsList.setTransactionStatusSeller("판매중");
 		
+		salesHistory.setTransactionsList(null);
+		sr.save(salesHistory);
+
+
+		
+		
 	    tr.save(transactionsList);
 	    
 	    // 4. 구매자 구매이력에 "거래취소" , 판매자 판매이력에 "거래취소"
-	    orderHistory.setOrderHistoryComment("구매자 거래취소");
-	    
-	    or.save(orderHistory);
-	    
-	    salesHistory.setSalesHistoryComment("구매자 거래취소");
-	    
-	    sr.save(salesHistory);
+//	    orderHistory.setOrderHistoryComment("구매자 거래취소");
+//	    
+//	    or.save(orderHistory);
+//	    
+//	    salesHistory.setSalesHistoryComment("구매자 거래취소");
+//	    
+//	    sr.save(salesHistory);
 		
 		// 5. 진행중인 거래에서 목록에서 사라지게, -> "거래취소" 또는 "거래종료" 일때 값이 안나타나게 하기
 		

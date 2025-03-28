@@ -22,6 +22,7 @@ public class SalesHistoryDTO {
 	private String transactionStatusSeller;
 	private String sellerEmail;
 	private Long categoryId;
+	private String salesHistoryComment;
 	
 	// 판매 이력 테이블
 	public static SalesHistoryDTO fromEntity(SalesHistory salesHistory) {
@@ -49,7 +50,8 @@ public class SalesHistoryDTO {
 				salesHistory.getProduct().getProduct_name(),
 				transactionStatusSeller,
 				salesHistory.getUser().getUserEmail(),
-				salesHistory.getProduct().getCategory().getCategory_id()
+				salesHistory.getProduct().getCategory().getCategory_id(),
+				salesHistory.getSalesHistoryComment()
 			);
 
 	}

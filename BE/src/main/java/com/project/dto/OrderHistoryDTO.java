@@ -22,6 +22,7 @@ public class OrderHistoryDTO {
 	private String transactionStatusBuyer;
 	private String buyerEmail;
 	private Long categoryId;
+	private String orderHistoryComment;
 	
 	// 구매 이력 테이블
 	public static OrderHistoryDTO fromEntity(OrderHistory orderHistory) {
@@ -32,7 +33,8 @@ public class OrderHistoryDTO {
 			    orderHistory.getProduct().getProduct_name(),
 			    orderHistory.getTransactionsList().getTransactionStatusBuyer(),
 			    orderHistory.getUser().getUserEmail(),
-			    orderHistory.getProduct().getCategory().getCategory_id()
+			    orderHistory.getProduct().getCategory().getCategory_id(),
+			    orderHistory.getOrderHistoryComment()
 			);
 
 	}

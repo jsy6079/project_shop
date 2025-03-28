@@ -69,9 +69,7 @@ const TransactionProductTab = ({}) => {
 
   // 요청 확인
   const requestConfirm = async (transactionId) => {
-    const result = window.confirm(
-      "요청을 수락하시겠습니까?\n1일 내로 물품을 배송하지 않으면 거래는 취소됩니다."
-    );
+    const result = window.confirm("요청을 수락하시겠습니까?");
     if (result) {
       try {
         const response = await axios.put(
@@ -91,17 +89,19 @@ const TransactionProductTab = ({}) => {
       case "거래가능":
         return "primary";
       case "거래대기":
-        return "warning";
+        return "dark";
       case "요청확인":
         return "info";
       case "검수대기":
         return "info";
       case "검수중":
+        return "primary";
+      case "검수실패":
         return "danger";
       case "검수완료":
         return "success";
       case "배송중":
-        return "dark";
+        return "warning";
       case "거래종료":
         return "secondary";
       case "거래취소":
@@ -122,11 +122,13 @@ const TransactionProductTab = ({}) => {
       case "발송완료":
         return "success";
       case "검수대기":
-        return "success";
-      case "검수중":
+        return "info";
+      case "검수실패":
         return "danger";
+      case "검수중":
+        return "primary";
       case "검수완료":
-        return "secondary";
+        return "success";
       case "구매자 배송중":
         return "secondary";
       case "거래종료":
@@ -281,6 +283,7 @@ const TransactionProductTab = ({}) => {
                       <td>
                         <Link
                           to={`/detail/${product.categoryId}/${product.productId}`}
+                          target="_blank"
                           className="text-primary"
                         >
                           View <i className="uil uil-arrow-right"></i>

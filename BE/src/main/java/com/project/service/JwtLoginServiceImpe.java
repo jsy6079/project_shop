@@ -49,7 +49,7 @@ public class JwtLoginServiceImpe implements JwtLoginService {
 	        String refreshToken = getRefreshTokenFromCookies(request);
 	        if (refreshToken == null) {
 	            logoutUser(response);
-	            System.out.println("리프레쉬 종료로 로그아웃");
+//	            System.out.println("리프레쉬 종료로 로그아웃");
 	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("TOKEN_EXPIRED");
 	        }
 
@@ -67,7 +67,7 @@ public class JwtLoginServiceImpe implements JwtLoginService {
 	        // 새로운 액세스 토큰을 쿠키에 저장 (쿠키시간) -> 굳이 필요할까 고민중
 	        addCookie("token", token, expiration, response);
 
-	        System.out.println("새로운 액세스 토큰 발급 완료" + token);
+//	        System.out.println("새로운 액세스 토큰 발급 완료" + token);
 	    } else {
 	        // 기존 액세스 토큰이 유효하면 그대로 사용
 	        email = ju.extractEmail(token);
@@ -110,7 +110,7 @@ public class JwtLoginServiceImpe implements JwtLoginService {
 	// 액세스 토큰이 만료되었는지 확인하는 메서드 (true = 만료됨, false = 유효함)
 	private boolean checkTokenExpired(String token) {
 	    if (token == null || token.trim().isEmpty()) {
-	        System.out.println("액세스 토큰 만료 -> 만료로 처리");
+//	        System.out.println("액세스 토큰 만료 -> 만료로 처리");
 	        return true;
 	    }
 
@@ -121,12 +121,12 @@ public class JwtLoginServiceImpe implements JwtLoginService {
 	        Instant nowUtc = Instant.now();  
 	        Instant expirationUtc = expiration.toInstant();  
 
-	        System.out.println("현재 시간 (UTC): " + nowUtc);
-	        System.out.println("만료 시간 (UTC): " + expirationUtc);
+//	        System.out.println("현재 시간 (UTC): " + nowUtc);
+//	        System.out.println("만료 시간 (UTC): " + expirationUtc);
 
 	        return expirationUtc.isBefore(nowUtc);
 	    } catch (ExpiredJwtException e) {
-	        System.out.println("리프레시 엑세스 토큰 만료 -> 재발급");
+//	        System.out.println("리프레시 엑세스 토큰 만료 -> 재발급");
 	        return true; // 토큰이 만료된 것으로 처리
 	    } catch (Exception e) {
 	        System.out.println("JWT 파싱 중 오류 발생: " + e.getMessage());

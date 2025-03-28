@@ -140,54 +140,64 @@ const ReviewPage = () => {
                     <th scope="col" className="border-bottom"></th>
                   </tr>
                 </thead>
-                {reviewList.map((review, key) => (
-                  <tbody key={key}>
+                {reviewList.length === 0 ? (
+                  <tbody>
                     <tr>
-                      <th scope="row">{review.seller_name}</th>
-                      <td>{review.buyer_name}</td>
-                      <td>
-                        <Link
-                          to={`/detail/${review.category_id}/${review.product_id}`}
-                          target="_blank"
-                        >
-                          {review.review_text.length > 15
-                            ? review.review_text.substring(0, 15) + "..."
-                            : review.review_text}
-                        </Link>
-                      </td>
-                      <td>
-                        {review.review_status !== "삭제승인" &&
-                        review.review_status !== "삭제반려" ? (
-                          <button
-                            className="btn btn-primary btn-sm"
-                            onClick={() =>
-                              requestPermitReview(review.review_id)
-                            }
-                          >
-                            승인
-                          </button>
-                        ) : (
-                          <></>
-                        )}
-                      </td>
-                      <td>
-                        {review.review_status !== "삭제승인" &&
-                        review.review_status !== "삭제반려" ? (
-                          <button
-                            className="btn btn-danger btn-sm"
-                            onClick={() =>
-                              requestRejectReview(review.review_id)
-                            }
-                          >
-                            반려
-                          </button>
-                        ) : (
-                          <p className="text-muted mb-0">처리완료</p>
-                        )}
+                      <td colSpan="5" className="text-center py-4">
+                        관리가 필요한 리뷰가 없습니다.
                       </td>
                     </tr>
                   </tbody>
-                ))}
+                ) : (
+                  reviewList.map((review, key) => (
+                    <tbody key={key}>
+                      <tr>
+                        <th scope="row">{review.seller_name}</th>
+                        <td>{review.buyer_name}</td>
+                        <td>
+                          <Link
+                            to={`/detail/${review.category_id}/${review.product_id}`}
+                            target="_blank"
+                          >
+                            {review.review_text.length > 15
+                              ? review.review_text.substring(0, 15) + "..."
+                              : review.review_text}
+                          </Link>
+                        </td>
+                        <td>
+                          {review.review_status !== "삭제승인" &&
+                          review.review_status !== "삭제반려" ? (
+                            <button
+                              className="btn btn-primary btn-sm"
+                              onClick={() =>
+                                requestPermitReview(review.review_id)
+                              }
+                            >
+                              승인
+                            </button>
+                          ) : (
+                            <></>
+                          )}
+                        </td>
+                        <td>
+                          {review.review_status !== "삭제승인" &&
+                          review.review_status !== "삭제반려" ? (
+                            <button
+                              className="btn btn-danger btn-sm"
+                              onClick={() =>
+                                requestRejectReview(review.review_id)
+                              }
+                            >
+                              반려
+                            </button>
+                          ) : (
+                            <p className="text-muted mb-0">처리완료</p>
+                          )}
+                        </td>
+                      </tr>
+                    </tbody>
+                  ))
+                )}
               </Table>
             </div>
             <div className="text-center mt-3">

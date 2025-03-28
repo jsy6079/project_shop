@@ -3,6 +3,7 @@ package com.project.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -158,40 +159,76 @@ public class ProductServiceImpe implements ProductService {
  	    salesHistory.setTransactionsList(null);
  	    
  	    sr.save(salesHistory);
- 		
+
  		
  		return "물품이 등록되었습니다.";
 		
 	}
 	
-	// 판매 물품 삭제 요청
+//	// 판매 물품 삭제 요청
+//	@Override
+//	public String deleteProduct(String email, Long product_id) {
+//		
+//		// 유저
+//		User user = ur.findByUserEmail(email).orElseThrow(()-> new IllegalArgumentException("해당 판매자의 이메일이 존재하지 않습니다."));
+//		
+//		Product product = pr.findById(product_id).orElseThrow(()-> new IllegalArgumentException("해당 물품이 존재하지 않습니다."));
+//		
+//		TransactionsList transactionsList = tr.findByProductId(product_id);
+//		
+//		SalesHistory salesHistory = sr.findById(product_id).orElseThrow(()-> new IllegalArgumentException("해당 판매 내역이 존재하지 않습니다."));
+//
+//		
+//		if(product.getProduct_status().equals("판매자삭제")) {
+//			return "이미 삭제한 물품입니다.";
+//		}
+//		
+//
+//		if(transactionsList == null) {
+//			
+//			product.setProduct_status("판매자삭제");
+//			
+//			pr.save(product);
+//		}
+//		
+//		return "등록된 물품이 삭제되었습니다.";
+//	}
+	
 	@Override
+	@Transactional
 	public String deleteProduct(String email, Long product_id) {
-		
-		// 유저
-		User user = ur.findByUserEmail(email).orElseThrow(()-> new IllegalArgumentException("해당 판매자의 이메일이 존재하지 않습니다."));
-		
-		Product product = pr.findById(product_id).orElseThrow(()-> new IllegalArgumentException("해당 물품이 존재하지 않습니다."));
-		
-		TransactionsList transactionsList = tr.findByProductId(product_id);
 
-		if(transactionsList != null) {
-			return "구매자의 요청을 확인했기 때문에 판매물품 삭제가 불가능합니다.";
-		}
-		
-		if(product.getProduct_status().equals("판매자삭제")) {
-			return "이미 삭제한 물품입니다.";
-		}
-		
-		if(transactionsList == null) {
-			
-			product.setProduct_status("판매자삭제");
-			
-			pr.save(product);
-		}
-		
-		return "등록된 물품이 삭제되었습니다.";
+	    User user = ur.findByUserEmail(email)
+	            .orElseThrow(() -> new IllegalArgumentException("해당 판매자의 이메일이 존재하지 않습니다."));
+
+	    Product product = pr.findById(product_id)
+	            .orElseThrow(() -> new IllegalArgumentException("해당 물품이 존재하지 않습니다."));
+
+	    if (product.getProduct_status().equals("판매자삭제")) {
+	        return "이미 삭제한 물품입니다.";
+	    }
+
+	    List<SalesHistory> salesHistories = sr.findAllByProductId(product_id);
+
+
+	    boolean hasActiveSellerTransaction = salesHistories.stream()
+	            .map(SalesHistory::getTransactionsList)
+	            .filter(Objects::nonNull)
+	            .anyMatch(t -> {
+	                String status = t.getTransactionStatusSeller();
+	                return !"거래취소".equals(status); // 판매자 기준 거래중 or 완료인 경우
+	            });
+
+	    if (hasActiveSellerTransaction) {
+	        return "구매자의 요청을 확인했기 때문에 판매물품 삭제가 불가능합니다.";
+	    }
+
+	    product.setProduct_status("판매자삭제");
+	    pr.save(product);
+
+	    return "등록된 물품이 삭제되었습니다.";
 	}
+
 	
 	// 단 거래상태가 이미 거래중으로 바뀌었거나, 본인이 등록한 상품은 등록 불가능
 
