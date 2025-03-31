@@ -6,6 +6,7 @@ import MileageTab from "./MileageTab";
 import RegistProductTab from "./RegistProductTab";
 import TransactionProductTab from "./TransactionProductTab";
 import HistoryTab from "./HistoryTab";
+import Inquiry from "./Inquiry";
 import { Container, Row, Col, TabContent } from "reactstrap";
 import { useUser } from "../userContext";
 import { useSearchParams } from "react-router-dom";
@@ -113,6 +114,9 @@ const AccountManagement = ({}) => {
                     userInfo={userInfo}
                     defaultInnerTab={defaultHistoryTab}
                   />
+                )}
+                {activeTab === "7" && (
+                  <Inquiry userInfo={userInfo} setUserInfo={setUserInfo} />
                 )}
               </TabContent>
             </Col>

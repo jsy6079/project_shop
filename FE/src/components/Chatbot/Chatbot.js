@@ -17,11 +17,7 @@ const ChatbotComponent = () => {
     const handleScroll = () => {
       const chatbotBtn = document.getElementById("chatbot-button");
       if (chatbotBtn) {
-        if (window.scrollY > 100) {
-          chatbotBtn.style.display = "block";
-        } else {
-          chatbotBtn.style.display = "none";
-        }
+        chatbotBtn.style.display = window.scrollY > 100 ? "block" : "none";
       }
     };
 
@@ -45,42 +41,41 @@ const ChatbotComponent = () => {
           color: "white",
           border: "none",
           borderRadius: "50%",
-          display: "flex",
+          display: "none",
           alignItems: "center",
           justifyContent: "center",
           cursor: "pointer",
           boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
           transition: "background 0.3s",
           zIndex: 1000,
-          display: "none",
         }}
       >
         <MessageSquare size={24} color="white" />
       </button>
 
       {/* 챗봇 창 */}
-      {isOpen && (
-        <div
-          style={{
-            position: "fixed",
-            bottom: "100px",
-            right: "20px",
-            width: "270px",
-            height: "500px",
-            background: "white",
-            borderRadius: "10px",
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
-            zIndex: 1000,
-            overflow: "hidden",
-          }}
-        >
-          <Chatbot
-            config={config}
-            messageParser={MessageParser}
-            actionProvider={ActionProvider}
-          />
-        </div>
-      )}
+
+      <div
+        style={{
+          position: "fixed",
+          bottom: "100px",
+          right: "20px",
+          width: "270px",
+          height: "500px",
+          background: "white",
+          borderRadius: "10px",
+          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+          zIndex: 1000,
+          overflow: "hidden",
+          display: isOpen ? "block" : "none",
+        }}
+      >
+        <Chatbot
+          config={config}
+          messageParser={MessageParser}
+          actionProvider={ActionProvider}
+        />
+      </div>
     </>
   );
 };

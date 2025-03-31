@@ -35,8 +35,8 @@ const widgetsData = [
     id: 2,
     icon: "uil uil-transaction",
     className: "navbar-item account-menu px-0 mt-2",
-    title: "물품 관리",
-    link: "/admin/products",
+    title: "채팅 관리",
+    link: "/admin/chat",
   },
   {
     id: 3,

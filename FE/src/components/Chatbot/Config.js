@@ -2,6 +2,7 @@ import { createChatBotMessage } from "react-chatbot-kit";
 
 const config = {
   botName: "Moa 챗봇",
+
   initialMessages: [
     createChatBotMessage(
       <>
@@ -12,7 +13,7 @@ const config = {
         2️⃣ 판매 안내 <br />
         3️⃣ 정품 검사 안내 <br />
         4️⃣ 배송 안내 <br />
-        5️⃣ 고객센터 안내
+        5️⃣ 기타 문의
       </>
     ),
   ],

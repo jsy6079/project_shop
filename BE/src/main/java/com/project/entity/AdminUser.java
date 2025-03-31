@@ -21,5 +21,7 @@ public class AdminUser {
 	private String adminUserPassword;
 	
 	private String adminName;
+	
+	private String adminImgUrl;
 
 }

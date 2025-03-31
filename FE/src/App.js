@@ -69,7 +69,7 @@ import Chatbot from "./components/Chatbot/Chatbot";
 import AdminLogin from "./admin/AdminLogin";
 import AdminLayout from "./admin/AdminLayout";
 import ReviewPage from "./admin/ReviewPage";
-import ProductPage from "./admin/ProductPage";
+import ChatPage from "./admin/ChatPage";
 import InspectionPage from "./admin/InspectionPage";
 import { UserProvider } from "./userContext";
 import AdminProtectedRoute from "./AdminProtectedRoute";
@@ -88,7 +88,7 @@ function App() {
           <Route element={<AdminProtectedRoute />}>
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<InspectionPage />} />
-              <Route path="products" element={<ProductPage />} />
+              <Route path="chat" element={<ChatPage />} />
               <Route path="review" element={<ReviewPage />} />
             </Route>
           </Route>

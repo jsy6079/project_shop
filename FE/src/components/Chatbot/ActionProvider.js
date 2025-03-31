@@ -73,12 +73,12 @@ class ActionProvider {
   handleCustomerSupport = () => {
     const message = this.createChatBotMessage(
       <>
-        📞 고객센터 안내:
+        📞 기타 문의 안내:
         <br />
         <br />
-        궁금한 점이 있으시면 '02-123-123'을 입력 후 연락주세요.
+        기타 문의는 '내 정보' 내
         <br />
-        운영시간: 평일 10:00 ~ 18:00
+        '관리자 문의' 탭을 이용해주세요.
         <br />
       </>
     );

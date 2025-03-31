@@ -12,6 +12,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
     { id: "4", icon: "uil-store", label: "판매물품 등록" },
     { id: "5", icon: "uil-transaction", label: "진행중인 거래" },
     { id: "6", icon: "uil-clipboard-notes", label: "구매/판매 이력" },
+    { id: "7", icon: "uil-clipboard-notes", label: "관리자 문의" },
   ];
 
   return (
