@@ -363,6 +363,12 @@ const ChatPage = () => {
                       placeholder="메시지를 입력하세요"
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSend();
+                        }
+                      }}
                     />
                   </div>
                   <div className="col-auto">
