@@ -44,6 +44,8 @@ let isConnected = false;
 //   stompClient.activate();
 // };
 
+const ApiUrl = process.env.REACT_APP_API_BASE_URL;
+
 export const connectWebSocket = (onMessageReceived) => {
   if (isConnected) {
     console.log("🛑 이미 WebSocket에 연결되어 있음 - 콜백 재등록만");
@@ -60,7 +62,7 @@ export const connectWebSocket = (onMessageReceived) => {
 
   console.log("🧪 WebSocket 연결 시도");
 
-  const socket = new SockJS("http://localhost:8080/ws-chat");
+  const socket = new SockJS(ApiUrl + "/api/ws-chat");
 
   stompClient = new Client({
     webSocketFactory: () => socket,
