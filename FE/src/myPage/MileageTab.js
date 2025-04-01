@@ -14,7 +14,7 @@ const ApiUrl = process.env.REACT_APP_API_BASE_URL;
 
 const MileageTab = ({}) => {
   const { userInfo, setUserInfo, fetchUserInfo } = useUser(); // 전역 상태 사용
-  const [selectMoney, setSelectMoney] = useState(100); // 기본 100원
+  const [selectMoney, setSelectMoney] = useState(10000); // 기본 10,000원
   const [moneyProducts, setMoneyProducts] = useState([]); // 마일리지
   const [moneyPage, setMoneyPage] = useState(0); // 마일리지 목록 페이지
   const [moneyTotalPages, setMoneyTotalPages] = useState(1); // 마일리지 전체 페이지 수
@@ -131,25 +131,25 @@ const MileageTab = ({}) => {
         <div>
           <button
             className="btn btn-warning btn-sm me-2"
-            onClick={() => setSelectMoney(100)}
+            onClick={() => setSelectMoney(10000)}
           >
             10,000원
           </button>
           <button
             className="btn btn-warning btn-sm me-2"
-            onClick={() => setSelectMoney(300)}
+            onClick={() => setSelectMoney(30000)}
           >
             30,000원
           </button>
           <button
             className="btn btn-warning btn-sm me-2"
-            onClick={() => setSelectMoney(400)}
+            onClick={() => setSelectMoney(40000)}
           >
             50,000원
           </button>
           <button
             className="btn btn-warning btn-sm me-2"
-            onClick={() => setSelectMoney(500)}
+            onClick={() => setSelectMoney(50000)}
           >
             100,000원
           </button>
