@@ -240,6 +240,11 @@ const Main = ({}) => {
                             : "https://moa-upload-files.s3.ap-northeast-2.amazonaws.com/products/noImage.png"
                         }
                         className="img-fluid"
+                        style={{
+                          height: "320px",
+                          objectFit: "cover",
+                          width: "100%",
+                        }}
                       />
                     </Link>
                     {userInfo ? (
@@ -314,6 +319,11 @@ const Main = ({}) => {
                             : "https://moa-upload-files.s3.ap-northeast-2.amazonaws.com/products/noImage.png"
                         }
                         className="img-fluid"
+                        style={{
+                          height: "320px",
+                          objectFit: "cover",
+                          width: "100%",
+                        }}
                       />
                     </Link>
                     {userInfo ? (
@@ -411,6 +421,11 @@ const Main = ({}) => {
                             : "https://moa-upload-files.s3.ap-northeast-2.amazonaws.com/products/noImage.png"
                         }
                         className="img-fluid"
+                        style={{
+                          height: "320px",
+                          objectFit: "cover",
+                          width: "100%",
+                        }}
                       />
                     </Link>
                     {userInfo ? (

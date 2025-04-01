@@ -312,15 +312,20 @@ const CategoryList = ({}) => {
                                 : "https://moa-upload-files.s3.ap-northeast-2.amazonaws.com/products/noImage.png"
                             }
                             className="img-fluid"
+                            style={{
+                              height: "320px",
+                              objectFit: "cover",
+                              width: "100%",
+                            }}
                           />
                         </Link>
-                        <ul className="list-unstyled shop-icons">
-                          <li>
-                            <Link
-                              to="#"
-                              className="btn btn-icon btn-pills btn-soft-danger"
-                            >
-                              {userInfo ? (
+                        {userInfo ? (
+                          <ul className="list-unstyled shop-icons">
+                            <li>
+                              <Link
+                                to="#"
+                                className="btn btn-icon btn-pills btn-soft-danger"
+                              >
                                 <Heart
                                   className="icons"
                                   onClick={() =>
@@ -330,10 +335,10 @@ const CategoryList = ({}) => {
                                     )
                                   }
                                 />
-                              ) : null}
-                            </Link>
-                          </li>
-                        </ul>
+                              </Link>
+                            </li>
+                          </ul>
+                        ) : null}
                       </div>
                       <CardBody className="content pt-4 p-2">
                         <Link
